@@ -1,0 +1,94 @@
+{
+  "hero": {
+    "name": "Phixalek",
+    "subtitle": "Software Developer (.NET/Angular) & Game Dev. Mobile-first portfolio template.",
+    "ctaPrimary": {
+      "text": "Get in touch",
+      "href": "#contact"
+    },
+    "ctaSecondary": {
+      "text": "See projects",
+      "href": "#work"
+    }
+  },
+"about": {
+  "eyebrow": "Software • Research • Game Dev",
+  "title": "Who is Phixalek?",
+  "lead": "Miguel Segura was born in Colombia and is currently pursuing a Multimedia Engineering degree. He moves between [[software development]], [[research in computing and physics]], and personal projects mixing technology with storytelling.",
+  "body": "He is the creator of **FinBit**, an experimental fintech project built with ((.NET + DDD + Clean Architecture)); and **Bloomink**, his indie studio where he is building *No Witness*, a survival narrative inspired by Resident Evil and Silent Hill using ((UE5 + C++)).\n\nHis focus isn’t only shipping — it’s understanding the [[science behind technology]] and turning it into clean, maintainable systems.\n\nNow based in Colombia, he is studying Multimedia Engineering and teaching programming.",
+  "bullets": [
+    "Backend: ((.NET, DDD, Clean Architecture)) → scalable & maintainable systems",
+    "Frontend: ((Angular, TypeScript)) → real-world apps with clean UX",
+    "Game Dev: ((UE5, C++)) + [[Pixel Art]] → optimized pipelines & storytelling"
+  ]
+},
+  "projects": {
+    "title": "Selected Work",
+    "items": [
+      {
+        "title": "FinBit",
+        "desc": "Personal fintech app to manage money with pockets and budgets. Built with .NET + Angular, focused on security and a clean user experience.",
+        "tags": [".NET", "Angular", "PostgreSQL"],
+        "badges": ["Open Source"],
+        "actions": [
+          { "className": "btn-primary", "text": "Live demo", "href": "#" },
+          { "className": "btn-ghost",   "text": "Repo",     "href": "https://github.com/PhixAlek/Finbit" }
+        ],
+        "imageId": "finbit-01"
+      },
+      {
+        "title": "Consulting",
+        "desc": "Helping startups and teams scale APIs with secure, high-performance backends. Book a call and get a clear roadmap in days, not months.",
+        "tags": ["APIs", "Security", "Scale"],
+        "badges": ["Freelance", "Contractor"],
+        "actions": [
+         { "className": "btn-primary", "text": "Book a call", "href": "javascript:void(0)", "data-book": true }
+        ],
+        "imageId": "consultoria-01"
+      },
+      {
+        "title": "Demo Me - Interactive CV",
+        "desc": "A small JS/Canvas platformer that tells my story as a developer. Vanilla JavaScript, HTML5 Canvas, and a lightweight game loop. Playable on mobile and desktop.",
+        "tags": ["JavaScript", "HTML5 Canvas", "Game Loop"],
+        "badges": ["Interactive CV", "Playable"],
+        "actions": [
+          { "className": "btn-primary", "text": "In dev"},
+          { "className": "btn-ghost",   "text": "Repo",     "href": "https://github.com/PhixAlek/MEG.js" }
+        ],
+        "imageId": "demome-01"
+      }
+    ]
+  },
+  "contact": {
+    "title": "Contact Me",
+    "mailTo": "hi@phixalek.com"
+  },
+  "footer": {
+    "location": "Bogotá",
+    "language": "English / Spanish",
+    "role": "Software Developer & Game Dev",
+    "email": "hi@phixalek.com",
+    "social": [
+      {
+        "name": "GitHub",
+        "href": "https://github.com/phixalek",
+        "icon": "github"
+      },
+      {
+        "name": "LinkedIn",
+        "href": "https://linkedin.com/in/phixalek",
+        "icon": "linkedin"
+      },
+      {
+        "name": "YouTube",
+        "href": "https://www.youtube.com/@PhixAlek",
+        "icon": "youtube"
+      },
+      {
+        "name": "X",
+        "href": "https://x.com/phixalek",
+        "icon": "x"
+      }
+    ]
+  }
+}

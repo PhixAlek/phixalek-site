@@ -1,0 +1,29 @@
+{
+  "name": "phixalek-site",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "webpack serve --config webpack.config.mjs --mode development",
+    "dev:netlify": "netlify dev",
+    "build": "webpack --config webpack.config.mjs --mode production",
+    "start": "npm run dev"
+  },
+  "type": "module",
+  "devDependencies": {
+    "copy-webpack-plugin": "^13.0.1",
+    "cross-env": "^7.0.3",
+    "css-loader": "^7.1.2",
+    "dotenv": "^17.2.2",
+    "html-webpack-plugin": "^5.6.4",
+    "mini-css-extract-plugin": "^2.9.4",
+    "netlify-cli": "^21.6.0",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.2.2"
+  },
+  "dependencies": {
+    "@emailjs/browser": "^4.4.1",
+    "googleapis": "^159.0.0"
+  }
+}
