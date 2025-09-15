@@ -1,4 +1,5 @@
-import path from 'path'; 
+import path from 'path';
+import webpack from 'webpack';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
@@ -53,12 +54,11 @@ export default {
         { from: 'public', to: '.', globOptions: { ignore: ['**/index.html'] } },
       ],
     }),
-     // webpack.config.mjs (solo el plugin)
-new webpack.DefinePlugin({
-  __EMAILJS_SERVICE__: JSON.stringify(process.env.PUBLIC_EMAILJS_SERVICE_ID || ''),
-  __EMAILJS_TEMPLATE__: JSON.stringify(process.env.PUBLIC_EMAILJS_TEMPLATE_ID || ''),
-  __EMAILJS_PUBLIC__:  JSON.stringify(process.env.PUBLIC_EMAILJS_PUBLIC_KEY  || ''),
-})
+        new webpack.DefinePlugin({
+      __EMAILJS_SERVICE__: JSON.stringify(process.env.EMAILJS_SERVICE_ID || ''),
+      __EMAILJS_TEMPLATE__: JSON.stringify(process.env.EMAILJS_TEMPLATE_ID || ''),
+      __EMAILJS_PUBLIC__: JSON.stringify(process.env.EMAILJS_PUBLIC_KEY || '')
+    })
   ],
   resolve: { extensions: ['.js'] },
 };
