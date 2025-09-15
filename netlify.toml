@@ -20,6 +20,9 @@
 #  to = "/index.html"
 #  status = 200
 
+[build.environment]
+  SECRETS_SCAN_ENABLED = "false"
+
 [context.deploy-preview.environment]
   NPM_FLAGS = "--include=dev"
 
