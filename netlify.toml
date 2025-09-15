@@ -20,6 +20,9 @@
 #  to = "/index.html"
 #  status = 200
 
+[context.deploy-preview.environment]
+  NPM_FLAGS = "--include=dev"
+
 [dev]
   command    = "npm run dev"   # tu webpack serve
   port       = 8888            # puerto público de Netlify Dev
