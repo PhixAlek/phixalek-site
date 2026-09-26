@@ -1,0 +1,11 @@
+.booking-time-picker { min-width:0; color:#cbd5e1; font-size:.85rem; }
+.booking-time-frame { position:relative; height:134px; margin:6px 0; overflow:hidden; background:#0b152a; border:1px solid #24304a; border-radius:14px; }
+.booking-time-frame::before { content:''; position:absolute; top:44px; left:10px; right:10px; height:44px; background:rgba(124,58,237,.16); border-block:1px solid rgba(167,139,250,.35); border-radius:8px; pointer-events:none; }
+.booking-time-wheel { position:relative; height:132px; box-sizing:border-box; padding-block:44px; overflow-y:auto; overscroll-behavior-y:contain; scroll-snap-type:y mandatory; scrollbar-width:none; touch-action:pan-y; outline-offset:-3px; }
+.booking-time-wheel::-webkit-scrollbar { display:none; }
+.booking-time-option { height:44px; display:flex; align-items:center; justify-content:center; scroll-snap-align:center; font-size:1.2rem; font-variant-numeric:tabular-nums; letter-spacing:.08em; color:#aab4d6; cursor:pointer; user-select:none; }
+.booking-time-option[aria-selected="true"] { color:#fff; font-weight:650; font-size:1.4rem; }
+.booking-time-empty { position:absolute; inset:0; display:grid; place-items:center; padding:16px; text-align:center; color:#aab4d6; }
+.booking-time-empty[hidden] { display:none; }
+.booking-time-picker.is-empty .booking-time-frame::before { display:none; }
+.booking-time-picker.is-disabled .booking-time-wheel { overflow-y:hidden; opacity:.6; }

@@ -25,7 +25,7 @@ export default {
       { directory: path.join(__dirname, 'dist') },   // y dist
     ],
     port: 5173,
-    open: true,
+    open: false,
     hot: true,
     compress: true,
     historyApiFallback: true,
