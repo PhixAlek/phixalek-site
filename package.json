@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "webpack serve --config webpack.config.mjs --mode development",
+    "dev": "netlify dev",
     "dev:netlify": "netlify dev",
     "build": "webpack --config webpack.config.mjs --mode production",
-    "start": "npm run dev"
+    "start": "npm run dev",
+    "dev:web": "webpack serve --config webpack.config.mjs --mode development",
+    "predev": "node scripts/check-node.mjs",
+    "predev:netlify": "node scripts/check-node.mjs"
   },
   "type": "module",
   "devDependencies": {
@@ -25,5 +28,8 @@
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
     "googleapis": "^159.0.0"
+  },
+  "engines": {
+    "node": ">=24.18.0 <25"
   }
 }
