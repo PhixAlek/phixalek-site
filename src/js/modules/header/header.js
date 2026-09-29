@@ -1,4 +1,4 @@
-import { content, ui } from '../../../content/index.js';
+import { content, ui, bind, text, languageButton } from '../../../content/index.js';
 // src/js/modules/header/header.js
 export function Header(){
   const header = document.createElement('header');
@@ -22,12 +22,13 @@ export function Header(){
     ui.navigation.items.forEach((item, i) => {
       const link = document.createElement('a'); link.href = item.href;
       const label = emphasize && i > 0 ? document.createElement('strong') : link;
-      label.textContent = item.label;
+      text(label, () => ui.navigation.items[i].label);
       if (label !== link) link.append(label);
       target.append(link);
     });
   };
   fillNavigation(nav, true);
+  nav.append(languageButton('language-desktop'));
 
   // Burger
   const btn = document.createElement('button');
@@ -35,7 +36,7 @@ export function Header(){
   btn.type = 'button';
   btn.setAttribute('aria-controls', 'mobile-menu');
   btn.className = 'nav-toggle';
-  btn.setAttribute('aria-label',ui.navigation.open);
+  bind(btn, 'attr:aria-label', () => ui.navigation.open);
   btn.setAttribute('aria-expanded','false');
   btn.innerHTML = `<span class="burger" aria-hidden="true"></span>`;
 
@@ -47,14 +48,14 @@ export function Header(){
   drawer.inert = true;
   drawer.setAttribute('role', 'dialog');
   drawer.setAttribute('aria-modal', 'true');
-  drawer.setAttribute('aria-label', ui.navigation.label);
+  bind(drawer, 'attr:aria-label', () => ui.navigation.label);
   drawer.setAttribute('aria-hidden','true');
   const closeButton = document.createElement('button');
   closeButton.type = 'button'; closeButton.className = 'drawer-close';
-  closeButton.setAttribute('aria-label', ui.navigation.close);
+  bind(closeButton, 'attr:aria-label', () => ui.navigation.close);
   const mobileNav = document.createElement('nav'); mobileNav.className = 'drawer-nav';
   fillNavigation(mobileNav);
-  drawer.append(closeButton, mobileNav);
+  drawer.append(closeButton, mobileNav, languageButton('language-drawer'));
 
   const desktop = window.matchMedia('(min-width: 768px)');
   let previousOverflow = '';

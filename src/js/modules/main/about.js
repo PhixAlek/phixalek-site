@@ -1,5 +1,5 @@
 // src/js/modules/main/about.js
-import { content } from '../../../content/index.js';
+import { content, bind, text } from '../../../content/index.js';
 
 export function About(){
   const A = content.about || {};
@@ -18,21 +18,21 @@ export function About(){
   if (A.eyebrow){
     const k = document.createElement('span');
     k.className = 'about-eyebrow';
-    k.textContent = A.eyebrow;
+    text(k, () => A.eyebrow);
     box.appendChild(k);
   }
 
   // Título
   const h2 = document.createElement('h2');
   h2.className = 'about-title';
-  h2.textContent = A.title;
+  text(h2, () => A.title);
   box.appendChild(h2);
 
   // Lede con énfasis [[..]] y ((..))
   if (A.lead){
     const lede = document.createElement('p');
     lede.className = 'about-lede';
-    lede.innerHTML = transformInline(A.lead);
+    bind(lede, 'innerHTML', () => transformInline(A.lead));
     box.appendChild(lede);
   }
 
@@ -40,9 +40,9 @@ export function About(){
   if (A.body){
     const body = document.createElement('div');
     body.className = 'about-body';
-    splitParagraphs(A.body).forEach(html => {
+    splitParagraphs(A.body).forEach((html, i) => {
       const p = document.createElement('p');
-      p.innerHTML = transformInline(html);
+      bind(p, 'innerHTML', () => transformInline(splitParagraphs(A.body)[i]));
       body.appendChild(p);
     });
     box.appendChild(body);
@@ -52,9 +52,9 @@ export function About(){
   if (A.bullets?.length){
     const list = document.createElement('ul');
     list.className = 'about-list';
-    A.bullets.forEach(t => {
+    A.bullets.forEach((t, i) => {
       const li = document.createElement('li');
-      li.innerHTML = transformInline(t);
+      bind(li, 'innerHTML', () => transformInline(A.bullets[i]));
       list.appendChild(li);
     });
     box.appendChild(list);

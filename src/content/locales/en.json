@@ -38,12 +38,13 @@
       "required": "Please complete all fields.",
       "sending": "Sending...",
       "success": "Message sent. I will get back to you soon.",
-      "error": "Error sending the message. Please try again later."
+      "error": "Error sending the message. Please try again later.",
+      "unavailable": "The form is currently unavailable. Please contact me by email."
     },
     "work": {
       "book": "Book a call",
       "open": "Open",
-      "image": "{title} — image"
+      "image": "{title} — project image"
     },
     "booking": {
       "close": "Close",
@@ -84,13 +85,17 @@
       },
       "hours": "Mon–Fri 07:00–13:00 / 14:00–16:00 ({tz}). All times are in Hermosillo.",
       "minutes": "{duration} min",
-      "selected": "Selected: {date} ({tz}) · {duration} min"
+      "selected": "Selected: {date} ({tz}) · {duration} min",
+      "dateButton": "Open date picker"
     },
     "wheel": {
       "label": "Available time · Hermosillo",
       "hint": "Scroll, tap a time, or use ↑ and ↓.",
       "empty": "No available times",
       "choose": "Choose a date"
+    },
+    "language": {
+      "switch": "Cambiar a español"
     }
   }
 }

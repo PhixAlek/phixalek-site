@@ -1,4 +1,4 @@
-import { content, ui, format } from '../../../content/index.js';
+import { content, ui, format, bind, text } from '../../../content/index.js';
 import { loadImageRegistry, resolveImage } from '../images/registry.js';
 
 export function Projects(){
@@ -6,14 +6,14 @@ export function Projects(){
   sec.id = 'work';
   sec.className = 'section reveal';
 
-  const wrap = document.createElement('div'); 
+  const wrap = document.createElement('div');
   wrap.className = 'container';
 
-  const h2 = document.createElement('h2');  
+  const h2 = document.createElement('h2');
   h2.className = 'h2';
-  h2.textContent = content.projects.title;
+  text(h2, () => content.projects.title);
 
-  const grid = document.createElement('div'); 
+  const grid = document.createElement('div');
   grid.className = 'grid';
 
   wrap.append(h2, grid);
@@ -43,21 +43,22 @@ export function Projects(){
 
 // ------------------------------ card --------------------------------
 
-function card({ title, desc, tags = [], actions = [], badges = [], bullets = [], image }){
-  const art   = document.createElement('article'); 
+function card({ id, title, desc, tags = [], actions = [], badges = [], bullets = [], image }){
+  const current = () => content.projects.items.find(item => item.id === id);
+  const art   = document.createElement('article');
   art.className = 'card';
 
   // Media
-  const media = document.createElement('div');     
+  const media = document.createElement('div');
   media.className = 'media';
 
   if (image?.src){
     const el = new Image();
     el.src = image.src;
-    el.alt = image.alt || format(ui.work.image, { title });
+    bind(el, 'alt', () => format(ui.work.image, { title: current().title }));
     el.loading = 'lazy';
     el.decoding = 'async';
-    el.width = 1600; 
+    el.width = 1600;
     el.height = 900;
     el.style.width = '100%';
     el.style.height = '100%';
@@ -68,54 +69,54 @@ function card({ title, desc, tags = [], actions = [], badges = [], bullets = [],
   }
 
   // Título (enlazado al CTA primario si existe)
-  const h3 = document.createElement('h3'); 
+  const h3 = document.createElement('h3');
   h3.className = 'h3';
 
   const primary = pickPrimary(actions);
   const linkTitle = primary ? createActionElement(primary) : document.createElement('span');
   linkTitle.className = 'card-title-link';
-  linkTitle.textContent = title || '';
-  if (primary) linkTitle.setAttribute('aria-label', `${title}: ${primary.text}`);
+  text(linkTitle, () => current().title);
+  if (primary) bind(linkTitle, 'attr:aria-label', () => `${current().title}: ${pickPrimary(current().actions).text}`);
   h3.appendChild(linkTitle);
 
   // Badges (debajo del título)
   let meta = null;
   if (badges.length){
-    meta = document.createElement('div'); 
+    meta = document.createElement('div');
     meta.className = 'badges';
-    badges.forEach(b => { 
-      const s = document.createElement('span'); 
-      s.textContent = b; 
-      meta.appendChild(s); 
+    badges.forEach((b, i) => {
+      const s = document.createElement('span');
+      text(s, () => current().badges[i]);
+      meta.appendChild(s);
     });
   }
 
   // Descripción
-  const p = document.createElement('p'); 
-  p.textContent = desc || '';
+  const p = document.createElement('p');
+  text(p, () => current().desc);
 
   // Bullets especiales (solo para "Consulting")
   let ul = null;
   if (bullets.length){
-    ul = document.createElement('ul'); 
+    ul = document.createElement('ul');
     ul.className = 'value-list';
     bullets
-      .forEach(t => { const li = document.createElement('li'); li.textContent = t; ul.appendChild(li); });
+      .forEach((t, i) => { const li = document.createElement('li'); text(li, () => current().bullets[i]); ul.appendChild(li); });
   }
 
   // Tags
-  const tagsBox = document.createElement('div'); 
+  const tagsBox = document.createElement('div');
   tagsBox.className = 'tags';
-  tags.forEach(t => { 
-    const s = document.createElement('span'); 
-    s.textContent = t; 
-    tagsBox.appendChild(s); 
+  tags.forEach((t, i) => {
+    const s = document.createElement('span');
+    text(s, () => current().tags[i]);
+    tagsBox.appendChild(s);
   });
 
   // Acciones (soporta <a> normales y botón con data-book)
-  const acts = document.createElement('div'); 
+  const acts = document.createElement('div');
   acts.className = 'card-actions';
-  (actions || []).forEach(act => acts.appendChild(createActionElement(act)));
+  (actions || []).forEach((act, i) => { const node = createActionElement(act); text(node, () => current().actions[i].text); acts.appendChild(node); });
 
   // Orden final
   if (image?.src) art.append(media);

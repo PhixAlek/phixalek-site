@@ -1,14 +1,14 @@
-import { ui } from '../../../content/index.js';
+import { ui, bind, text } from '../../../content/index.js';
 import '../../../css/booking-time-wheel.css';
 const ROW = 44;
 export function createTimeWheel(onChange) {
   const root = document.createElement('div'); root.className = 'booking-time-picker';
-  const label = document.createElement('div'); label.textContent = ui.wheel.label;
+  const label = document.createElement('div'); text(label, () => ui.wheel.label);
   const frame = document.createElement('div'); frame.className = 'booking-time-frame';
   const wheel = document.createElement('div'); wheel.className = 'booking-time-wheel';
-  wheel.setAttribute('role','listbox'); wheel.setAttribute('aria-label',label.textContent);
+  wheel.setAttribute('role','listbox'); bind(wheel, 'attr:aria-label', () => ui.wheel.label);
   const empty = document.createElement('div'); empty.className = 'booking-time-empty';
-  const hint = document.createElement('small'); hint.textContent = ui.wheel.hint;
+  const hint = document.createElement('small'); text(hint, () => ui.wheel.hint);
   frame.append(wheel,empty); root.append(label,frame,hint);
   let slots = [], index = -1, disabled = true;
   function paint() {
@@ -48,11 +48,11 @@ export function createTimeWheel(onChange) {
         option.id=`booking-time-${i}`;option.setAttribute('role','option');option.dataset.index=String(i);
         option.textContent=slot.time;wheel.appendChild(option);
       });
-      empty.hidden=Boolean(items.length);empty.textContent=ui.wheel.empty;
+      empty.hidden=Boolean(items.length);text(empty, () => ui.wheel.empty);
       root.classList.toggle('is-empty',!items.length);
       picker.disabled=!items.length;paint();wheel.scrollTop=Math.max(0,index)*ROW;
     },
-    setEmpty(message){picker.ready([]);empty.textContent=message;},
+    setEmpty(message){picker.ready([]);text(empty, typeof message === 'function' ? message : () => message);},
   };
-  picker.setEmpty(ui.wheel.choose);return picker;
+  picker.setEmpty(() => ui.wheel.choose);return picker;
 }

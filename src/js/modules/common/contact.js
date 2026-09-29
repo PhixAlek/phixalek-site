@@ -1,4 +1,4 @@
-import { ui } from '../../../content/index.js';
+import { ui, bind, text } from '../../../content/index.js';
 // src/js/modules/common/contact.js
 import emailjs from '@emailjs/browser';
 
@@ -9,12 +9,6 @@ import emailjs from '@emailjs/browser';
  * Status: <div id="form-status">
  */
 export function mountContactEmailJS({ serviceId, templateId, publicKey }){
-  // Validaciones mínimas de config
-  if (!serviceId || !templateId || !publicKey) {
-    console.warn('[contact] Missing EmailJS config');
-    return;
-  }
-
   const form   = document.getElementById('contact-form');
   const status = document.getElementById('form-status');
   if (!form || !status) {
@@ -23,6 +17,13 @@ export function mountContactEmailJS({ serviceId, templateId, publicKey }){
   }
 
   const submitBtn = form.querySelector('button[type="submit"]');
+
+  if (!serviceId || !templateId || !publicKey) {
+    form.addEventListener('submit', e => e.preventDefault());
+    submitBtn.disabled = true;
+    text(status, () => ui.contact.unavailable);
+    return;
+  }
 
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
@@ -38,32 +39,32 @@ export function mountContactEmailJS({ serviceId, templateId, publicKey }){
 
     // Honeypot: si viene con algo, no enviar
     const hp = fd.get('company')?.toString().trim();
-    if (hp) { status.textContent = ui.contact.thanks; form.reset(); return; }
+    if (hp) { text(status, () => ui.contact.thanks); form.reset(); return; }
 
     if (!payload.from_name || !payload.reply_to || !payload.message) {
-      status.textContent = ui.contact.required;
+      text(status, () => ui.contact.required);
       return;
     }
 
     // UI feedback
-    status.textContent = ui.contact.sending;
-    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = ui.contact.sending; }
+    text(status, () => ui.contact.sending);
+    if (submitBtn) { submitBtn.disabled = true; text(submitBtn, () => ui.contact.sending); }
 
     try{
       // Init + send
       emailjs.init(publicKey);
       const res = await emailjs.send(serviceId, templateId, payload);
       if (res.status >= 200 && res.status < 300) {
-        status.textContent = ui.contact.success;
+        text(status, () => ui.contact.success);
         form.reset();
       } else {
         throw new Error('EmailJS error: ' + res.text);
       }
     }catch(err){
       console.error(err);
-      status.textContent = ui.contact.error;
+      text(status, () => ui.contact.error);
     }finally{
-      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = ui.contact.submit; }
+      if (submitBtn) { submitBtn.disabled = false; text(submitBtn, () => ui.contact.submit); }
     }
   });
 }

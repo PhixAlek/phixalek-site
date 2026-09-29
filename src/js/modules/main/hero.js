@@ -1,4 +1,4 @@
-import { content, ui } from '../../../content/index.js';
+import { content, ui, bind, text } from '../../../content/index.js';
 
 export function Hero() {
   const H = content.hero || {};
@@ -14,11 +14,13 @@ export function Hero() {
   const span = document.createElement('span');
   span.className = 'accent';
   span.textContent = H.name || '';
-  h1.append(ui.hero.greeting, span, ui.hero.ending);
+  const greeting = document.createTextNode(''), ending = document.createTextNode('');
+  text(greeting, () => ui.hero.greeting); text(ending, () => ui.hero.ending);
+  h1.append(greeting, span, ending);
 
   const lead = document.createElement('p');
   lead.className = 'lead';
-  lead.textContent = H.subtitle || '';
+  text(lead, () => H.subtitle || '');
 
   const actions = document.createElement('div');
   actions.className = 'actions';
@@ -27,7 +29,7 @@ export function Hero() {
     const a1 = document.createElement('a');
     a1.className = 'btn';
     a1.href = H.ctaPrimary.href || '#contact';
-    a1.textContent = H.ctaPrimary.text;
+    text(a1, () => H.ctaPrimary.text);
     actions.appendChild(a1);
   }
 
@@ -35,7 +37,7 @@ export function Hero() {
     const a2 = document.createElement('a');
     a2.className = 'btn-outline';
     a2.href = H.ctaSecondary.href || '#work';
-    a2.textContent = H.ctaSecondary.text;
+    text(a2, () => H.ctaSecondary.text);
     actions.appendChild(a2);
   }
 

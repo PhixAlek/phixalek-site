@@ -91,3 +91,22 @@ export function validateContent(content, catalogs, sections) {
   }
   return errors;
 }
+
+/** Translations may alter prose, never routes, project IDs or action behavior. */
+export function validateTranslation(base, translated) {
+  const errors = [];
+  function walk(a, b, path = '') {
+    if (Array.isArray(a)) {
+      if (!Array.isArray(b) || a.length !== b.length) { errors.push(`${path}: different structure`); return; }
+      a.forEach((v, i) => walk(v, b[i], `${path}.${i}`));
+    } else if (a && typeof a === 'object') {
+      if (!b || typeof b !== 'object') { errors.push(`${path}: missing object`); return; }
+      Object.keys(a).forEach(key => {
+        if (['href','id','imageId','kind','publication','className','mailTo','email','icon','name'].includes(key) && a[key] !== b[key]) errors.push(`${path}.${key}: translated invariant`);
+        walk(a[key], b[key], `${path}.${key}`);
+      });
+    } else if (typeof a !== typeof b || (typeof b === 'string' && (!b.trim() || /\bTODO\b/.test(b)))) errors.push(`${path}: missing translation`);
+  }
+  walk(base, translated);
+  return errors;
+}

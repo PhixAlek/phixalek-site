@@ -1,10 +1,101 @@
 {
   "locale": "es",
-  "publication": "draft",
-  "fallback": "en",
-  "messages": {},
-  "editorial": {},
-  "todo": [
-    "Traducciones del propietario pendientes de revisión. No habilitar español antes de completarlas."
-  ]
+  "publication": "published",
+  "messages": {
+    "navigation": {
+      "open": "Abrir menú",
+      "close": "Cerrar menú",
+      "label": "Navegación",
+      "items": [
+        {
+          "label": "Inicio",
+          "href": "#home"
+        },
+        {
+          "label": "Sobre mí",
+          "href": "#about"
+        },
+        {
+          "label": "Proyectos",
+          "href": "#work"
+        },
+        {
+          "label": "Contacto",
+          "href": "#contact"
+        }
+      ]
+    },
+    "hero": {
+      "greeting": "Hola, soy ",
+      "ending": "."
+    },
+    "contact": {
+      "name": "Tu nombre",
+      "email": "Tu correo electrónico",
+      "message": "¿En qué puedo ayudarte?",
+      "submit": "Enviar",
+      "thanks": "Gracias.",
+      "required": "Completa todos los campos.",
+      "sending": "Enviando…",
+      "success": "Mensaje enviado. Te responderé pronto.",
+      "error": "No se pudo enviar el mensaje. Inténtalo más tarde.",
+      "unavailable": "El formulario no está disponible. Puedes contactarme por correo electrónico."
+    },
+    "work": {
+      "book": "Agendar una llamada",
+      "open": "Abrir",
+      "image": "{title} — imagen del proyecto"
+    },
+    "booking": {
+      "close": "Cerrar",
+      "title": "Agendar una llamada",
+      "name": "Tu nombre",
+      "email": "Tu correo electrónico",
+      "date": "Elige una fecha",
+      "duration": "Duración",
+      "subject": "Asunto (opcional)",
+      "location": "Lugar (opcional, p. ej., Google Meet)",
+      "initial": "Elige una fecha y una hora.",
+      "submit": "Agendar",
+      "cancel": "Cancelar",
+      "loading": "Cargando horarios disponibles…",
+      "checking": "Consultando disponibilidad…",
+      "empty": "No hay horarios disponibles para esta fecha",
+      "emptyHelp": "No hay horarios disponibles para esta fecha. Elige otro día entre semana.",
+      "unavailable": "No se pudo consultar la disponibilidad",
+      "localHelp": "Ejecuta npm run dev y abre http://localhost:8888 para usar la agenda.",
+      "availabilityError": "No se pudo consultar la agenda. Inténtalo de nuevo o contáctame.",
+      "retry": "Consultar de nuevo",
+      "choose": "Elige una fecha y una hora disponibles.",
+      "sending": "Agendando…",
+      "failed": "No se pudo agendar este horario. Inténtalo de nuevo.",
+      "success": "Cita agendada. Guarda aquí los datos de la reunión. ",
+      "openMeeting": "Abrir reunión",
+      "openCalendar": "Abrir calendario",
+      "unconfirmed": "No se pudo confirmar la reserva",
+      "unconfirmedHelp": "No se pudo confirmar la reserva. Revisa tu calendario o contáctame antes de volver a intentarlo.",
+      "errors": {
+        "slot_not_available": "Alguien acaba de reservar ese horario. Elige otro.",
+        "next_business_day_required": "Elige el siguiente día hábil o una fecha posterior.",
+        "past_slot": "Ese horario ya pasó. Elige otro.",
+        "calendar_unavailable": "No se pudo verificar la disponibilidad. Inténtalo de nuevo.",
+        "outside_hours": "Elige un horario de atención fuera de la pausa para comer.",
+        "weekday_required": "Las citas están disponibles de lunes a viernes.",
+        "invalid_email": "Introduce un correo electrónico válido."
+      },
+      "hours": "Lun–vie 07:00–13:00 / 14:00–16:00 ({tz}). Todos los horarios corresponden a Hermosillo.",
+      "minutes": "{duration} min",
+      "selected": "Horario elegido: {date} ({tz}) · {duration} min",
+      "dateButton": "Abrir calendario"
+    },
+    "wheel": {
+      "label": "Hora disponible · Hermosillo",
+      "hint": "Desliza, toca una hora o usa ↑ y ↓.",
+      "empty": "No hay horarios disponibles",
+      "choose": "Elige una fecha"
+    },
+    "language": {
+      "switch": "Switch to English"
+    }
+  }
 }

@@ -6,9 +6,9 @@ Rama: AS-arquitectura-contenido-2026-09-28, basada en las correcciones de UX ant
 
 - `src/data/content.json`: contenido editorial actual, conservado sin reescritura de voz. IDs y publication identifican los proyectos de la versión anterior.
 - `src/content/locales/en.json`: textos actuales de navegación, formularios, acciones y agenda. Se extrajeron sin traducir ni cambiar promesas.
-- `src/content/locales/es.json`: borrador de traducción. No se publica ni se mezcla parcialmente con inglés.
+- `src/content/locales/es.json`: mensajes de interfaz en español.
 - `src/content/sections.json`: estructura futura de Experience, Work y Writing. Flowly tiene un borrador con .NET 10 declarado por el propietario, pendiente de inspección del repo. No se muestra todavía.
-- `src/content/index.js`: adaptador único consumido por componentes; filtra proyectos no publicados y acciones inválidas. No importa borradores al bundle del navegador.
+- `src/content/index.js`: adaptador único consumido por componentes; filtra proyectos no publicados y acciones inválidas. Los borradores de secciones futuras permanecen fuera de la interfaz.
 - `src/content/model.js`: tipos JSDoc, contratos, validación y helpers independientes del DOM.
 
 `publication` controla visibilidad editorial: draft/published. `status` describe madurez del proyecto: planned/in-progress/released. Son conceptos distintos. Un proyecto en desarrollo puede publicarse cuando su descripción esté lista.
@@ -19,7 +19,13 @@ Las secciones nuevas no tienen renderizador todavía: sus modelos se preparan ah
 
 ## Idiomas
 
-Inglés sigue siendo el idioma visible. `resolveCatalog` proporciona fallback completo a inglés para idiomas no publicados. La selección automática/manual y actualizaciones sin perder formularios se conectarán en fase 2. El propietario debe completar/revisar traducciones antes de marcar español como publicado. Las plantillas mantienen parámetros como `{tz}`, `{date}` y `{duration}`; nunca traducir claves del payload ni reglas de Hermosillo.
+`src/data/content.json` conserva el contenido editorial inglés; `src/data/content.es.json` contiene su adaptación al español. `src/content/locales/en.json` y `es.json` contienen mensajes de interfaz, validación y agenda. Ambas versiones están activas. Editar ambas cuando cambie contenido; la validación comprueba la estructura y mantiene iguales rutas, IDs, imágenes y tipos de acción.
+
+Prioridad: elección manual → primer idioma compatible de `navigator.languages` → inglés. No se usa geolocalización. Se guarda la preferencia en localStorage (`phixalek-language`); si está bloqueado, la selección funciona durante la sesión. `document.lang` se actualiza sin recargar.
+
+El control muestra el idioma de destino (ES/EN): a la derecha de Contact en escritorio, al pie del menú móvil y antes del copyright en el footer móvil. Se actualizan textos y atributos sobre los mismos nodos: no se reconstruyen formularios, no se reinicia la agenda, no se duplican listeners ni animaciones. La API y America/Hermosillo no dependen del idioma.
+
+La traducción adapta los textos existentes por petición del propietario. No añade experiencia ni cambia las afirmaciones profesionales pendientes de revisión. Esto no implementa URLs localizadas ni SEO bilingüe por rutas.
 
 ## Experiencia y proyectos
 
