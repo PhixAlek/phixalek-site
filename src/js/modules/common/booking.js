@@ -1,4 +1,4 @@
-import { ui, format } from '../../../content/index.js';
+import { ui, format, bind, text, locale, unbind } from '../../../content/index.js';
 import { createTimeWheel } from './time-wheel.js';
 import { TIME_ZONE, DURATIONS, firstBookingDate, isBusinessDay, daySlots, nextDate, validateSlot } from '../../../shared/booking-policy.js';
 
@@ -29,8 +29,8 @@ export function mountBooking(){
   btnCloseX.textContent = '×';
   Object.assign(btnCloseX.style,{ position:'absolute', right:'12px', top:'10px', width:'36px', height:'36px', borderRadius:'10px' });
 
-  const h3  = el('h3','booking-title',{ id:'booking-title' }); h3.textContent=copy.title;
-  const sub = el('p','booking-subtitle'); sub.textContent=format(copy.hours, { tz });
+  const h3  = el('h3','booking-title',{ id:'booking-title' }); text(h3, () => copy.title);
+  const sub = el('p','booking-subtitle'); text(sub, () => format(copy.hours, { tz }));
 
   const form = el('form', null, { id:'booking-form' });
   const grid = div('booking-grid');
@@ -54,7 +54,7 @@ export function mountBooking(){
   inputDuration.className = 'booking-input';
   inputDuration.setAttribute('aria-label', copy.duration);
   DURATIONS.forEach(m=>{
-    const o=document.createElement('option'); o.value=m; o.textContent=format(copy.minutes, { duration: m }); inputDuration.appendChild(o);
+    const o=document.createElement('option'); o.value=m; text(o, () => format(copy.minutes, { duration: m })); inputDuration.appendChild(o);
   });
   inputDuration.value = '30';
   inputDuration.querySelector('[value="30"]').defaultSelected = true;
@@ -65,7 +65,7 @@ export function mountBooking(){
   const inputLocation = inp(copy.location,'location','text'); inputLocation.required=false;
 
   // Resumen + estado
-  const summaryEl = div('booking-status'); summaryEl.textContent=copy.initial;
+  const summaryEl = div('booking-status'); text(summaryEl, () => copy.initial);
   const statusEl  = div('booking-status',{ id:'booking-status', role:'status', 'aria-live':'polite' });
 
   // Honeypot
@@ -99,7 +99,7 @@ export function mountBooking(){
   const open = () => {
     if (modal.classList.contains('is-open')) return;
     returnFocus = document.activeElement;
-    form.reset(); booked = false; statusEl.textContent = '';
+    form.reset(); booked = false; text(statusEl, () => '');
     [inputDate, inputDuration, inputTime].forEach(n => n.disabled = false);
     inputDate.min = firstBookingDate();
     let date = inputDate.min;
@@ -143,13 +143,13 @@ export function mountBooking(){
       if (inputDate.value < inputDate.min) inputDate.value = inputDate.min;
       while (!isBusinessDay(inputDate.value)) inputDate.value = nextDate(inputDate.value);
     }
-    slots = []; loading = true; inputTime.setEmpty(copy.loading);
-    statusEl.textContent = copy.checking; updateSummary();
+    slots = []; loading = true; inputTime.setEmpty(() => copy.loading);
+    text(statusEl, () => copy.checking); updateSummary();
     try {
       // Invalid, past and weekend dates do not need a calendar request.
       if (!inputDate.value || !daySlots(inputDate.value, Number(inputDuration.value)).length) {
-        inputTime.setEmpty(copy.empty);
-        statusEl.textContent = copy.emptyHelp;
+        inputTime.setEmpty(() => copy.empty);
+        text(statusEl, () => copy.emptyHelp);
         return;
       }
       const res = await fetch(`${FN_BASE}/freebusy`, {
@@ -162,14 +162,14 @@ export function mountBooking(){
       if (!res.ok || !Array.isArray(data.slots) || data.tz !== tz) throw new Error('calendar_unavailable');
       slots = data.slots;
       inputTime.ready(slots, previous);
-      statusEl.textContent = slots.length ? '' : copy.emptyHelp;
+      text(statusEl, () => slots.length ? '' : copy.emptyHelp);
     } catch (error) {
       if (version !== requestVersion) return;
-      inputTime.setEmpty(copy.unavailable);
+      inputTime.setEmpty(() => copy.unavailable);
       const local = ['localhost','127.0.0.1'].includes(location.hostname);
-      statusEl.textContent = local && error.message === 'functions_unavailable'
+      text(statusEl, () => local && error.message === 'functions_unavailable'
         ? copy.localHelp
-        : copy.availabilityError;
+        : copy.availabilityError);
     } finally {
       if (version === requestVersion) { loading = false; updateSummary(); }
     }
@@ -179,9 +179,9 @@ export function mountBooking(){
   grid.insertBefore(retry, statusEl);
   function updateSummary() {
     const slot = slots.find(s => s.start === inputTime.value);
-    summaryEl.textContent = slot
-      ? format(copy.selected, { date: new Date(slot.start).toLocaleString(undefined, { timeZone: tz, weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }), tz, duration: inputDuration.value })
-      : copy.choose;
+    text(summaryEl, () => slot
+      ? format(copy.selected, { date: new Date(slot.start).toLocaleString(locale, { timeZone: tz, weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }), tz, duration: inputDuration.value })
+      : copy.choose);
     btnSubmit.disabled = loading || submitting || booked || !slot || !inputName.value.trim() || !inputEmail.validity.valid || !inputEmail.value.trim();
     retry.disabled = loading || submitting || booked;
   }
@@ -196,7 +196,7 @@ export function mountBooking(){
     submitting = true; inputTime.disabled = true;
     const controls = [...form.querySelectorAll('input, select, button'), btnCloseX];
     controls.forEach(n => n.disabled = true);
-    statusEl.textContent = copy.sending;
+    text(statusEl, () => copy.sending);
     try {
       const res = await fetch(`${FN_BASE}/create-event`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -206,22 +206,24 @@ export function mountBooking(){
       const data = await res.json();
       if (!res.ok || !data.ok) {
         if (data.error === 'slot_not_available' || data.error === 'past_slot') await refreshSlots();
-        statusEl.textContent = messages[data.error] || copy.failed;
+        text(statusEl, () => messages[data.error] || copy.failed);
         return;
       }
       booked = true;
-      statusEl.textContent = copy.success;
+      text(statusEl, () => ''); unbind(statusEl, 'textContent');
+      const successText = document.createTextNode('');
+      text(successText, () => copy.success); statusEl.append(successText);
       const url = data.meet || data.htmlLink;
       if (typeof url === 'string' && /^https:\/\//.test(url)) {
         const link = document.createElement('a'); link.href = url;
         link.target = '_blank'; link.rel = 'noopener noreferrer';
-        link.textContent = data.meet ? copy.openMeeting : copy.openCalendar;
+        text(link, () => data.meet ? copy.openMeeting : copy.openCalendar);
         statusEl.appendChild(link);
       }
     } catch {
       // A dropped response may still mean Google created the event; do not auto-retry insertion.
-      slots = []; inputTime.setEmpty(copy.unconfirmed);
-      statusEl.textContent = copy.unconfirmedHelp;
+      slots = []; inputTime.setEmpty(() => copy.unconfirmed);
+      text(statusEl, () => copy.unconfirmedHelp);
     } finally {
       submitting = false;
       controls.forEach(n => n.disabled = false);
@@ -230,5 +232,12 @@ export function mountBooking(){
       updateSummary();
     }
   });
+  [[inputName, 'name'], [inputEmail, 'email'], [inputDate, 'date'], [inputSubject, 'subject'], [inputLocation, 'location']].forEach(([field, key]) => {
+    bind(field, 'placeholder', () => copy[key]); bind(field, 'attr:aria-label', () => copy[key]);
+  });
+  bind(btnCloseX, 'attr:aria-label', () => copy.close);
+  bind(btnDate, 'attr:aria-label', () => copy.dateButton);
+  bind(inputDuration, 'attr:aria-label', () => copy.duration);
+  text(btnSubmit, () => copy.submit); text(btnCancel, () => copy.cancel); text(retry, () => copy.retry);
   updateSummary();
 }

@@ -436,3 +436,19 @@ main[id], section[id] { scroll-margin-top: 5rem; }
 }
 
 button.card-title-link { padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: inherit; cursor: pointer; }
+
+/* Language controls keep the current navigation hierarchy. */
+.language-toggle { appearance:none; background:none; border:0; color:var(--fg); font:inherit; font-size:.85rem; font-weight:600; min-width:44px; min-height:44px; padding:10px; cursor:pointer; }
+.language-toggle:hover { color:var(--accent); }
+.language-desktop { margin-left:clamp(24px,5vw,72px); }
+.nav { align-items:center; }
+.language-drawer { position:absolute; right:calc(8% - 10px); bottom:max(24px,env(safe-area-inset-bottom)); }
+.menu-drawer { overflow-y:auto; }
+.drawer-nav { position:static; margin:80px 8% 100px; }
+.language-footer { justify-self:center; }
+@media (min-width:768px) { .language-footer { display:none; } }
+@media (max-height:420px) { .language-drawer { position:static; display:block; margin:0 8% 24px auto; } .drawer-nav { margin-bottom:24px; } }
+
+.language-toggle { white-space:nowrap; }
+.language-footer { font-weight:400; }
+.language-toggle strong { font-weight:700; }

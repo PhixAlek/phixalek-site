@@ -5,7 +5,7 @@ import { validDestination, validAction, publishedItems, resolveCatalog, format, 
 const read = path => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
 const fixtures = () => ({ content: read('../src/data/content.json'), catalogs: { en: read('../src/content/locales/en.json'), es: read('../src/content/locales/es.json') }, sections: read('../src/content/sections.json') });
 const check = f => validateContent(f.content, f.catalogs, f.sections);
-test('current content validates with unpublished Spanish and future sections', () => assert.deepEqual(check(fixtures()), []));
+test('current content validates with both languages and draft future sections', () => assert.deepEqual(check(fixtures()), []));
 test('reject empty, unsafe, unimplemented and credential-bearing destinations', () => {
   for (const url of ['', '#', '#experience', 'javascript:void(0)', '//example.com', 'https://user:pass@example.com', '/work/flowly', ' https://example.com']) assert.equal(validDestination(url), false, url);
   assert.equal(validDestination('#work'), true); assert.equal(validDestination('https://github.com/phixalek'), true);
@@ -21,11 +21,11 @@ test('drafts never enter the published collection', () => {
 });
 test('unavailable languages fall back completely to English', () => {
   const {catalogs}=fixtures();
-  assert.equal(resolveCatalog('es',catalogs),catalogs.en);
+  assert.equal(resolveCatalog('es',catalogs),catalogs.es);
   assert.equal(resolveCatalog('fr',catalogs),catalogs.en);
 });
 test('publishing incomplete Spanish fails validation', () => {
-  const f=fixtures(); f.catalogs.es.publication='published';
+  const f=fixtures(); f.catalogs.es.publication='published'; f.catalogs.es.messages = {};
   assert.ok(check(f).some(e=>e.includes('missing translation')));
 });
 test('translated templates must preserve substitution tokens', () => {

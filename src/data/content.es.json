@@ -1,0 +1,135 @@
+{
+  "hero": {
+    "name": "Phixalek",
+    "subtitle": "Desarrollo software con .NET y Angular y creo mundos para videojuegos. Trabajo en sistemas fáciles de mantener y experiencias inmersivas.",
+    "ctaPrimary": {
+      "text": "Hablemos",
+      "href": "#contact"
+    },
+    "ctaSecondary": {
+      "text": "Ver proyectos",
+      "href": "#work"
+    }
+  },
+  "about": {
+    "eyebrow": "Software • Investigación • Videojuegos",
+    "title": "¿Quién es Phixalek?",
+    "lead": "Miguel Segura nació en Colombia y estudia Ingeniería Multimedia. Su trabajo combina el [[desarrollo de software]], la [[investigación en computación y física]] y proyectos personales que unen tecnología y narrativa.",
+    "body": "Está desarrollando **Flowly**, un proyecto de finanzas personales que comienza con ((.NET 10)), y **Bloomink**, su estudio independiente, donde trabaja en *No Witness*: una experiencia narrativa de supervivencia inspirada en Resident Evil y Silent Hill, creada con ((UE5 + C++)).\n\nSu enfoque va más allá de entregar software: busca comprender la [[ciencia detrás de la tecnología]] y aplicarla en sistemas claros y fáciles de mantener.\n\nActualmente vive en Hermosillo, México, estudia Ingeniería Multimedia y enseña programación.",
+    "bullets": [
+      "Backend: ((.NET, DDD, Clean Architecture)) → sistemas escalables y fáciles de mantener",
+      "Frontend: ((Angular, TypeScript)) → aplicaciones con una experiencia de uso clara",
+      "Videojuegos: ((UE5, C++)) + [[Pixel Art]] → procesos optimizados y narrativa"
+    ]
+  },
+  "projects": {
+    "title": "Proyectos destacados",
+    "items": [
+      {
+        "title": "Flowly",
+        "desc": "Aplicación de finanzas personales para organizar el dinero en bolsillos y presupuestos. Desarrollada con .NET y Angular, con énfasis en la seguridad y una experiencia de uso clara.",
+        "tags": [
+          ".NET 10",
+          "Angular SPA",
+          "PostgreSQL",
+          "GitHub",
+          "GitHub Actions",
+          "CI/CD"
+        ],
+        "badges": [
+          "En desarrollo"
+        ],
+        "actions": [
+          {
+            "className": "btn-ghost",
+            "text": "Repositorio",
+            "href": "https://github.com/PhixAlek/Flowly",
+            "kind": "link"
+          }
+        ],
+        "id": "flowly",
+        "publication": "published",
+        "imageId": "finbit-01"
+      },
+      {
+        "title": "Consultoría",
+        "desc": "Ayudo a startups y equipos a escalar sus API con backends seguros y de alto rendimiento. Agenda una llamada para definir una hoja de ruta en días, no en meses.",
+        "tags": [
+          "Integraciones",
+          "Escalabilidad",
+          "Refactorización"
+        ],
+        "badges": [
+          "Freelance",
+          "Por contrato"
+        ],
+        "actions": [
+          {
+            "className": "btn-primary",
+            "text": "Agendar una llamada",
+            "kind": "booking"
+          }
+        ],
+        "imageId": "consultoria-01",
+        "id": "consulting",
+        "publication": "published",
+        "bullets": [
+          "Revisión exprés (48 h)",
+          "Plan de mejora y hoja de ruta",
+          "Implementación guiada"
+        ]
+      },
+      {
+        "id": "phixalek-site",
+        "publication": "published",
+        "title": "PhixAlek — Portafolio",
+        "desc": "Este sitio usa JavaScript para la interfaz, EmailJS para los mensajes de contacto y la API de Google Calendar para consultar disponibilidad y agendar llamadas.",
+        "tags": [
+          "JavaScript",
+          "EmailJS",
+          "Calendar API",
+          "Netlify"
+        ],
+        "badges": [
+          "Portafolio"
+        ],
+        "actions": [
+          {
+            "kind": "link",
+            "className": "btn-ghost",
+            "text": "Documentación",
+            "href": "https://github.com/PhixAlek/phixalek-site/blob/AS-arquitectura-contenido-2026-09-28/docs/ARCHITECTURE.md"
+          }
+        ],
+        "imageId": "demome-01"
+      }
+    ]
+  },
+  "contact": {
+    "title": "Contacto",
+    "mailTo": "hi@phixalek.com"
+  },
+  "footer": {
+    "location": "Hermosillo, México",
+    "language": "Inglés / Español",
+    "role": "Desarrollador de software y videojuegos",
+    "email": "hi@phixalek.com",
+    "social": [
+      {
+        "name": "GitHub",
+        "href": "https://github.com/phixalek",
+        "icon": "github"
+      },
+      {
+        "name": "LinkedIn",
+        "href": "https://linkedin.com/in/phixalek",
+        "icon": "linkedin"
+      },
+      {
+        "name": "YouTube",
+        "href": "https://www.youtube.com/@PhixAlek",
+        "icon": "youtube"
+      }
+    ]
+  }
+}

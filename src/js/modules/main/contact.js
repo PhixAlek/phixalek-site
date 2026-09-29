@@ -1,4 +1,4 @@
-import { content, ui } from '../../../content/index.js';
+import { content, ui, bind, text } from '../../../content/index.js';
 
 export function Contact(){
   const C = content.contact || {};
@@ -12,7 +12,7 @@ export function Contact(){
 
   const h2 = document.createElement('h2');
   h2.className = 'h2';
-  h2.textContent = C.title;
+  text(h2, () => C.title);
 
   const form = document.createElement('form');
   form.id = 'contact-form';
@@ -51,6 +51,12 @@ export function Contact(){
     id:'form-status', className:'muted'
   });
 
+  [[name, 'name'], [email, 'email'], [msg, 'message']].forEach(([field, key]) => {
+    bind(field, 'placeholder', () => ui.contact[key]);
+    bind(field, 'attr:aria-label', () => ui.contact[key]);
+  });
+  text(send, () => ui.contact.submit);
+  status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite');
   form.append(name, email, msg, hp, send, status);
   wrap.append(h2, form);
   sec.appendChild(wrap);
