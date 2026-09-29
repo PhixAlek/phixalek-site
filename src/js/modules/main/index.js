@@ -10,15 +10,6 @@ export function Main(){
   main.className = 'site';
   main.style.position = 'relative';
 
-  // helper: centra y limita ancho SIN tocar tu contenido
-  const wrapInContainer = (section) => {
-    const wrap = document.createElement('div');
-    wrap.className = 'container';
-    while (section.firstChild) wrap.appendChild(section.firstChild);
-    section.appendChild(wrap);
-    return section;
-  };
-
   // capa orbes
   const orbs = document.createElement('div');
   orbs.id = 'orbs';
@@ -36,12 +27,6 @@ export function Main(){
 
   // --- Contact ---
   const contact = Contact();
-
-  // envuelve cada sección en .container
-  wrapInContainer(hero);
-  wrapInContainer(about);
-  wrapInContainer(work);     // ← también al Projects dinámico
-  wrapInContainer(contact);
 
   main.append(hero, about, work, contact);
   return main;

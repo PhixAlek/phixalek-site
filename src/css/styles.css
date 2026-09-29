@@ -426,3 +426,11 @@ body.wireframe input,
 body.wireframe textarea,
 body.wireframe .footer,
 body.wireframe .header{ outline:1px dashed #888; border:none !important }
+
+/* Structural accessibility fixes; preserve the current visual identity. */
+.menu-drawer[hidden] { display: none; }
+:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; }
+main[id], section[id] { scroll-margin-top: 5rem; }
+@media (prefers-reduced-motion: reduce) {
+  .menu-drawer, .burger, .burger::before, .burger::after { transition: none; }
+}

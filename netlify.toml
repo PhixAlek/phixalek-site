@@ -21,7 +21,9 @@
 #  status = 200
 
 [build.environment]
-  SECRETS_SCAN_ENABLED = "false"
+  SECRETS_SCAN_ENABLED = "true"
+  # Timezone names are public configuration, not credentials.
+  SECRETS_SCAN_OMIT_KEYS = "DEFAULT_TZ"
 
 [context.deploy-preview.environment]
   NPM_FLAGS = "--include=dev"

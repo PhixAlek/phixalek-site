@@ -6,8 +6,8 @@ export function Header(){
   const wrap = document.createElement('div');
   wrap.className = 'container row between center';
 
-  // Brand como H1 (SEO). Si prefieres evitar 2 H1, baja el hero a <h2>.
-  const brand = document.createElement('h1');
+  // The page heading belongs to the hero.
+  const brand = document.createElement('div');
   brand.className = 'brand';
   const home = document.createElement('a');
   home.href = '#home';
@@ -27,6 +27,8 @@ export function Header(){
   // Burger
   const btn = document.createElement('button');
   btn.id = 'nav-toggle';
+  btn.type = 'button';
+  btn.setAttribute('aria-controls', 'mobile-menu');
   btn.className = 'nav-toggle';
   btn.setAttribute('aria-label','Open menu');
   btn.setAttribute('aria-expanded','false');
@@ -35,6 +37,12 @@ export function Header(){
   // Drawer overlay
   const drawer = document.createElement('aside');
   drawer.className = 'menu-drawer';
+  drawer.id = 'mobile-menu';
+  drawer.hidden = true;
+  drawer.inert = true;
+  drawer.setAttribute('role', 'dialog');
+  drawer.setAttribute('aria-modal', 'true');
+  drawer.setAttribute('aria-label', 'Navigation');
   drawer.setAttribute('aria-hidden','true');
   drawer.innerHTML = `
     <button class="drawer-close" aria-label="Close menu"></button>
@@ -46,28 +54,64 @@ export function Header(){
     </nav>
   `;
 
-  // Toggle
-  const open = () => {
-    drawer.classList.add('open');
-    drawer.setAttribute('aria-hidden','false');
-    btn.setAttribute('aria-expanded','true');
-    document.body.style.overflow = 'hidden';
-    btn.classList.add('x');
-  };
-  const close = () => {
+  const desktop = window.matchMedia('(min-width: 768px)');
+  let previousOverflow = '';
+  let background = [];
+  const controls = () => [...drawer.querySelectorAll('button, a[href]')];
+  const close = (restoreFocus = true) => {
+    if (drawer.hidden) return;
     drawer.classList.remove('open');
-    drawer.setAttribute('aria-hidden','true');
-    btn.setAttribute('aria-expanded','false');
-    document.body.style.overflow = '';
+    drawer.hidden = true;
+    drawer.inert = true;
+    drawer.setAttribute('aria-hidden', 'true');
+    btn.setAttribute('aria-expanded', 'false');
     btn.classList.remove('x');
+    document.body.style.overflow = previousOverflow;
+    background.forEach(([node, wasInert]) => { node.inert = wasInert; });
+    background = [];
+    if (restoreFocus) (desktop.matches ? home : btn).focus();
   };
-
-  btn.addEventListener('click', ()=> drawer.classList.contains('open') ? close() : open());
-  drawer.querySelector('.drawer-close').addEventListener('click', close);
-  drawer.addEventListener('click', (e)=> {
-    if(e.target === drawer) close(); // click en backdrop cierra
+  const open = () => {
+    if (desktop.matches || !drawer.hidden) return;
+    previousOverflow = document.body.style.overflow;
+    // Isolate siblings at each ancestor, without hiding the dialog itself.
+    for (let node = drawer; node.parentElement && node !== document.body; node = node.parentElement) {
+      for (const sibling of node.parentElement.children) {
+        if (sibling !== node) {
+          background.push([sibling, sibling.inert]);
+          sibling.inert = true;
+        }
+      }
+    }
+    drawer.hidden = false;
+    drawer.inert = false;
+    drawer.classList.add('open');
+    drawer.setAttribute('aria-hidden', 'false');
+    btn.setAttribute('aria-expanded', 'true');
+    btn.classList.add('x');
+    document.body.style.overflow = 'hidden';
+    controls()[0].focus();
+  };
+  drawer.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { e.preventDefault(); close(); }
+    if (e.key !== 'Tab') return;
+    const items = controls(), first = items[0], last = items.at(-1);
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   });
-  drawer.querySelectorAll('a').forEach(a=> a.addEventListener('click', close));
+  btn.addEventListener('click', open);
+  drawer.querySelector('.drawer-close').addEventListener('click', () => close());
+  drawer.addEventListener('click', e => { if (e.target === drawer) close(); });
+  drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    close(false);
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      target.setAttribute('tabindex', '-1');
+      target.focus({ preventScroll: true });
+      target.addEventListener('blur', () => target.removeAttribute('tabindex'), { once: true });
+    }
+  }));
+  desktop.addEventListener('change', () => { if (desktop.matches) close(); });
 
   wrap.append(brand, nav, btn);
   header.append(wrap, drawer);
