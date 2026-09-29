@@ -9,7 +9,10 @@
     "start": "npm run dev",
     "dev:web": "webpack serve --config webpack.config.mjs --mode development",
     "predev": "node scripts/check-node.mjs",
-    "predev:netlify": "node scripts/check-node.mjs"
+    "predev:netlify": "node scripts/check-node.mjs",
+    "validate:content": "node scripts/validate-content.mjs",
+    "prebuild": "npm run validate:content",
+    "test": "node --test tests/*.test.js"
   },
   "type": "module",
   "devDependencies": {

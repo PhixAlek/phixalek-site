@@ -1,4 +1,4 @@
-import content from '../../../data/content.json' assert { type: 'json' };
+import { content, ui } from '../../../content/index.js';
 
 export function Hero() {
   const H = content.hero || {};
@@ -14,7 +14,7 @@ export function Hero() {
   const span = document.createElement('span');
   span.className = 'accent';
   span.textContent = H.name || '';
-  h1.append('Hello, I\'m ', span, '.');
+  h1.append(ui.hero.greeting, span, ui.hero.ending);
 
   const lead = document.createElement('p');
   lead.className = 'lead';
@@ -27,7 +27,7 @@ export function Hero() {
     const a1 = document.createElement('a');
     a1.className = 'btn';
     a1.href = H.ctaPrimary.href || '#contact';
-    a1.textContent = H.ctaPrimary.text || 'Get in touch';
+    a1.textContent = H.ctaPrimary.text;
     actions.appendChild(a1);
   }
 
@@ -35,7 +35,7 @@ export function Hero() {
     const a2 = document.createElement('a');
     a2.className = 'btn-outline';
     a2.href = H.ctaSecondary.href || '#work';
-    a2.textContent = H.ctaSecondary.text || 'See projects';
+    a2.textContent = H.ctaSecondary.text;
     actions.appendChild(a2);
   }
 

@@ -1,4 +1,4 @@
-import content from '../../../data/content.json' assert { type: 'json' };
+import { content } from '../../../content/index.js';
 
 const ICONS = {
   github:  `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5A11.5 11.5 0 0 0 .5 12.3c0 5.24 3.4 9.68 8.12 11.25.6.1.82-.26.82-.58v-2.1c-3.3.73-4-1.42-4-1.42-.55-1.4-1.35-1.78-1.35-1.78-1.1-.77.08-.75.08-.75 1.22.09 1.86 1.27 1.86 1.27 1.08 1.86 2.82 1.32 3.5 1.01.11-.8.42-1.32.76-1.63-2.64-.3-5.42-1.36-5.42-6.05 0-1.34.46-2.43 1.22-3.29-.12-.3-.53-1.52.11-3.17 0 0 1-.33 3.3 1.25a11.2 11.2 0 0 1 6 0c2.3-1.58 3.3-1.25 3.3-1.25.64 1.65.23 2.87.11 3.17.76.86 1.22 1.95 1.22 3.29 0 4.7-2.78 5.74-5.43 6.04.43.38.81 1.12.81 2.26v3.35c0 .32.21.69.83.57a11.52 11.52 0 0 0 8.1-11.24A11.5 11.5 0 0 0 12 .5Z"/></svg>`,
@@ -21,7 +21,7 @@ export function Footer(){
 
   const left = document.createElement('div');
   left.className = 'ft-copy';
-  left.textContent = `© ${new Date().getFullYear()} Phixalek`;
+  left.textContent = `© ${new Date().getFullYear()} ${content.hero.name}`;
 
   const center = document.createElement('div');
   center.className = 'ft-info';

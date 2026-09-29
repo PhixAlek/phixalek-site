@@ -1,3 +1,4 @@
+import { ui } from '../../../content/index.js';
 // src/js/modules/common/contact.js
 import emailjs from '@emailjs/browser';
 
@@ -37,32 +38,32 @@ export function mountContactEmailJS({ serviceId, templateId, publicKey }){
 
     // Honeypot: si viene con algo, no enviar
     const hp = fd.get('company')?.toString().trim();
-    if (hp) { status.textContent = 'Thanks.'; form.reset(); return; }
+    if (hp) { status.textContent = ui.contact.thanks; form.reset(); return; }
 
     if (!payload.from_name || !payload.reply_to || !payload.message) {
-      status.textContent = 'Please complete all fields.'; 
+      status.textContent = ui.contact.required;
       return;
     }
 
     // UI feedback
-    status.textContent = 'Sending...';
-    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending...'; }
+    status.textContent = ui.contact.sending;
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = ui.contact.sending; }
 
     try{
       // Init + send
       emailjs.init(publicKey);
       const res = await emailjs.send(serviceId, templateId, payload);
       if (res.status >= 200 && res.status < 300) {
-        status.textContent = 'Message sent. I will get back to you soon.';
+        status.textContent = ui.contact.success;
         form.reset();
       } else {
         throw new Error('EmailJS error: ' + res.text);
       }
     }catch(err){
       console.error(err);
-      status.textContent = 'Error sending the message. Please try again later.';
+      status.textContent = ui.contact.error;
     }finally{
-      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Send'; }
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = ui.contact.submit; }
     }
   });
 }

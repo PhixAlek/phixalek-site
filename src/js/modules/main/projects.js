@@ -1,4 +1,4 @@
-import content from '../../../data/content.json' assert { type: 'json' };
+import { content, ui, format } from '../../../content/index.js';
 import { loadImageRegistry, resolveImage } from '../images/registry.js';
 
 export function Projects(){
@@ -11,7 +11,7 @@ export function Projects(){
 
   const h2 = document.createElement('h2');  
   h2.className = 'h2';
-  h2.textContent = content?.projects?.title || 'Selected Work';
+  h2.textContent = content.projects.title;
 
   const grid = document.createElement('div'); 
   grid.className = 'grid';
@@ -43,7 +43,7 @@ export function Projects(){
 
 // ------------------------------ card --------------------------------
 
-function card({ title, desc, tags = [], actions = [], badges = [], image }){
+function card({ title, desc, tags = [], actions = [], badges = [], bullets = [], image }){
   const art   = document.createElement('article'); 
   art.className = 'card';
 
@@ -54,7 +54,7 @@ function card({ title, desc, tags = [], actions = [], badges = [], image }){
   if (image?.src){
     const el = new Image();
     el.src = image.src;
-    el.alt = image.alt || `${title} — image`;
+    el.alt = image.alt || format(ui.work.image, { title });
     el.loading = 'lazy';
     el.decoding = 'async';
     el.width = 1600; 
@@ -71,20 +71,11 @@ function card({ title, desc, tags = [], actions = [], badges = [], image }){
   const h3 = document.createElement('h3'); 
   h3.className = 'h3';
 
-  const linkTitle = document.createElement('a');
+  const primary = pickPrimary(actions);
+  const linkTitle = primary ? createActionElement(primary) : document.createElement('span');
   linkTitle.className = 'card-title-link';
   linkTitle.textContent = title || '';
-
-  const primary = pickPrimary(actions);
-  if (primary?.href){
-    linkTitle.href = primary.href;
-    linkTitle.target = '_blank';
-    linkTitle.rel = 'noopener noreferrer';
-    linkTitle.setAttribute('aria-label', `${title}: ${primary.text}`);
-  } else {
-    // si no hay href, mantiene el aspecto de link pero sin navegación
-    linkTitle.href = 'javascript:void(0)';
-  }
+  if (primary) linkTitle.setAttribute('aria-label', `${title}: ${primary.text}`);
   h3.appendChild(linkTitle);
 
   // Badges (debajo del título)
@@ -105,10 +96,10 @@ function card({ title, desc, tags = [], actions = [], badges = [], image }){
 
   // Bullets especiales (solo para "Consulting")
   let ul = null;
-  if ((title || '').toLowerCase() === 'consulting'){
+  if (bullets.length){
     ul = document.createElement('ul'); 
     ul.className = 'value-list';
-    ['Express audit (48h)', 'Improvement plan + roadmap', 'Guided implementation']
+    bullets
       .forEach(t => { const li = document.createElement('li'); li.textContent = t; ul.appendChild(li); });
   }
 
@@ -127,7 +118,8 @@ function card({ title, desc, tags = [], actions = [], badges = [], image }){
   (actions || []).forEach(act => acts.appendChild(createActionElement(act)));
 
   // Orden final
-  art.append(media, h3);
+  if (image?.src) art.append(media);
+  art.append(h3);
   if (meta) art.appendChild(meta);
   art.append(p);
   if (ul) art.appendChild(ul);
@@ -145,8 +137,8 @@ function pickPrimary(actions){
 }
 
 function createActionElement(act = {}){
-  const isBook = !!act['data-book'];
-  const text = act.text || (isBook ? 'Book a call' : 'Open');
+  const isBook = act.kind === 'booking';
+  const text = act.text || (isBook ? ui.work.book : ui.work.open);
   const className = act.className || '';
 
   if (isBook){
@@ -161,7 +153,7 @@ function createActionElement(act = {}){
   const a = document.createElement('a');
   a.className = className;
   a.textContent = text;
-  const href = act.href ?? 'javascript:void(0)';
+  const href = act.href;
   a.href = href;
 
   // enlaces externos seguros

@@ -434,3 +434,5 @@ main[id], section[id] { scroll-margin-top: 5rem; }
 @media (prefers-reduced-motion: reduce) {
   .menu-drawer, .burger, .burger::before, .burger::after { transition: none; }
 }
+
+button.card-title-link { padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: inherit; cursor: pointer; }

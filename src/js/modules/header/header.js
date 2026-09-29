@@ -1,3 +1,4 @@
+import { content, ui } from '../../../content/index.js';
 // src/js/modules/header/header.js
 export function Header(){
   const header = document.createElement('header');
@@ -11,18 +12,22 @@ export function Header(){
   brand.className = 'brand';
   const home = document.createElement('a');
   home.href = '#home';
-  home.textContent = 'Phixalek';
+  home.textContent = content.hero.name;
   brand.appendChild(home);
 
   // Nav desktop
   const nav = document.createElement('nav');
   nav.className = 'nav';
-  nav.innerHTML = `
-    <a href="#home">Home</a>
-    <a href="#about"><strong>About</strong></a>
-    <a href="#work"><strong>Projects</strong></a>
-    <a href="#contact"><strong>Contact</strong></a>
-  `;
+  const fillNavigation = (target, emphasize = false) => {
+    ui.navigation.items.forEach((item, i) => {
+      const link = document.createElement('a'); link.href = item.href;
+      const label = emphasize && i > 0 ? document.createElement('strong') : link;
+      label.textContent = item.label;
+      if (label !== link) link.append(label);
+      target.append(link);
+    });
+  };
+  fillNavigation(nav, true);
 
   // Burger
   const btn = document.createElement('button');
@@ -30,7 +35,7 @@ export function Header(){
   btn.type = 'button';
   btn.setAttribute('aria-controls', 'mobile-menu');
   btn.className = 'nav-toggle';
-  btn.setAttribute('aria-label','Open menu');
+  btn.setAttribute('aria-label',ui.navigation.open);
   btn.setAttribute('aria-expanded','false');
   btn.innerHTML = `<span class="burger" aria-hidden="true"></span>`;
 
@@ -42,17 +47,14 @@ export function Header(){
   drawer.inert = true;
   drawer.setAttribute('role', 'dialog');
   drawer.setAttribute('aria-modal', 'true');
-  drawer.setAttribute('aria-label', 'Navigation');
+  drawer.setAttribute('aria-label', ui.navigation.label);
   drawer.setAttribute('aria-hidden','true');
-  drawer.innerHTML = `
-    <button class="drawer-close" aria-label="Close menu"></button>
-    <nav class="drawer-nav">
-      <a href="#home">Home</a>
-      <a href="#about">About</a>
-      <a href="#work">Projects</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  `;
+  const closeButton = document.createElement('button');
+  closeButton.type = 'button'; closeButton.className = 'drawer-close';
+  closeButton.setAttribute('aria-label', ui.navigation.close);
+  const mobileNav = document.createElement('nav'); mobileNav.className = 'drawer-nav';
+  fillNavigation(mobileNav);
+  drawer.append(closeButton, mobileNav);
 
   const desktop = window.matchMedia('(min-width: 768px)');
   let previousOverflow = '';

@@ -1,0 +1,40 @@
+{
+  "experience": {
+    "publication": "draft",
+    "items": []
+  },
+  "work": {
+    "publication": "draft",
+    "items": [
+      {
+        "id": "flowly",
+        "slug": "flowly",
+        "publication": "draft",
+        "title": "Flowly",
+        "status": "in-progress",
+        "overview": "TODO: descripción del propietario",
+        "problem": "TODO: problema",
+        "role": "TODO: contribución personal",
+        "implementedStack": [
+          ".NET 10"
+        ],
+        "inProgress": [],
+        "planned": [],
+        "screenshots": [],
+        "decisions": [],
+        "architecture": [],
+        "repository": "https://github.com/PhixAlek/Flowly",
+        "liveDemo": null,
+        "lessons": []
+      }
+    ]
+  },
+  "writing": {
+    "publication": "draft",
+    "source": {
+      "provider": "substack",
+      "url": null
+    },
+    "items": []
+  }
+}

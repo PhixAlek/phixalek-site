@@ -1,5 +1,5 @@
 // src/js/modules/main/about.js
-import content from '../../../data/content.json' assert { type: 'json' };
+import { content } from '../../../content/index.js';
 
 export function About(){
   const A = content.about || {};
@@ -25,7 +25,7 @@ export function About(){
   // Título
   const h2 = document.createElement('h2');
   h2.className = 'about-title';
-  h2.textContent = A.title || 'About me';
+  h2.textContent = A.title;
   box.appendChild(h2);
 
   // Lede con énfasis [[..]] y ((..))
