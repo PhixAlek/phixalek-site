@@ -1,4 +1,4 @@
-import content from '../../../data/content.json' assert { type: 'json' };
+import { content, ui } from '../../../content/index.js';
 
 export function Contact(){
   const C = content.contact || {};
@@ -12,7 +12,7 @@ export function Contact(){
 
   const h2 = document.createElement('h2');
   h2.className = 'h2';
-  h2.textContent = C.title || 'Contact';
+  h2.textContent = C.title;
 
   const form = document.createElement('form');
   form.id = 'contact-form';
@@ -21,19 +21,19 @@ export function Contact(){
 
   const name  = Object.assign(document.createElement('input'), {
     type:'text', name:'name',
-    placeholder: C.namePlaceholder || 'Your name',
+    placeholder: C.namePlaceholder || ui.contact.name,
     required:true
   });
 
   const email = Object.assign(document.createElement('input'), {
     type:'email', name:'email',
-    placeholder: C.emailPlaceholder || 'Your email',
+    placeholder: C.emailPlaceholder || ui.contact.email,
     required:true
   });
 
   const msg   = Object.assign(document.createElement('textarea'), {
     name:'message', rows:5,
-    placeholder: C.messagePlaceholder || 'How can I help?',
+    placeholder: C.messagePlaceholder || ui.contact.message,
     required:true
   });
 
@@ -44,7 +44,7 @@ export function Contact(){
   });
 
   const send  = Object.assign(document.createElement('button'), {
-    type:'submit', className:'btn', textContent: C.submitText || 'Send'
+    type:'submit', className:'btn', textContent: C.submitText || ui.contact.submit
   });
 
   const status= Object.assign(document.createElement('div'), {

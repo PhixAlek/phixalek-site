@@ -1,8 +1,10 @@
+import { ui, format } from '../../../content/index.js';
 import { createTimeWheel } from './time-wheel.js';
 import { TIME_ZONE, DURATIONS, firstBookingDate, isBusinessDay, daySlots, nextDate, validateSlot } from '../../../shared/booking-policy.js';
 
 // src/js/modules/common/booking.js
 export function mountBooking(){
+  const copy = ui.booking;
   // --- Config horario ---
   let loading = false, submitting = false, booked = false;
   let requestVersion = 0, abortAvailability, returnFocus;
@@ -23,22 +25,22 @@ export function mountBooking(){
   const modal = div('booking-modal', { id:'booking-modal','aria-hidden':'true' });
   const box   = div('booking-box',   { role:'dialog','aria-modal':'true','aria-labelledby':'booking-title' });
 
-  const btnCloseX = el('button','booking-secondary',{ 'aria-label':'Close', type:'button' });
+  const btnCloseX = el('button','booking-secondary',{ 'aria-label':copy.close, type:'button' });
   btnCloseX.textContent = '×';
   Object.assign(btnCloseX.style,{ position:'absolute', right:'12px', top:'10px', width:'36px', height:'36px', borderRadius:'10px' });
 
-  const h3  = el('h3','booking-title',{ id:'booking-title' }); h3.textContent='Book a call';
-  const sub = el('p','booking-subtitle'); sub.textContent=`Mon–Fri 07:00–13:00 / 14:00–16:00 (${tz}). All times are in Hermosillo.`;
+  const h3  = el('h3','booking-title',{ id:'booking-title' }); h3.textContent=copy.title;
+  const sub = el('p','booking-subtitle'); sub.textContent=format(copy.hours, { tz });
 
   const form = el('form', null, { id:'booking-form' });
   const grid = div('booking-grid');
 
-  const inputName  = inp('Your name','name');
-  const inputEmail = inp('Your email','email','email');
+  const inputName  = inp(copy.name,'name');
+  const inputEmail = inp(copy.email,'email','email');
 
   // Fecha
   const rowDate = div(null,{ style:'display:grid;grid-template-columns:1fr auto;gap:8px;position:relative' });
-  const inputDate = inp('Pick a date','date','date');
+  const inputDate = inp(copy.date,'date','date');
   inputDate.min = firstBookingDate();
   const btnDate   = btn('booking-secondary','📅');
   rowDate.append(inputDate, btnDate);
@@ -50,20 +52,20 @@ export function mountBooking(){
   const durationRow = div(null,{ style:'display:grid;grid-template-columns:1fr;gap:8px' });
   const inputDuration = document.createElement('select');
   inputDuration.className = 'booking-input';
-  inputDuration.setAttribute('aria-label', 'Duration');
+  inputDuration.setAttribute('aria-label', copy.duration);
   DURATIONS.forEach(m=>{
-    const o=document.createElement('option'); o.value=m; o.textContent=`${m} min`; inputDuration.appendChild(o);
+    const o=document.createElement('option'); o.value=m; o.textContent=format(copy.minutes, { duration: m }); inputDuration.appendChild(o);
   });
   inputDuration.value = '30';
   inputDuration.querySelector('[value="30"]').defaultSelected = true;
   durationRow.appendChild(inputDuration);
 
   // Opcionales
-  const inputSubject  = inp('Subject (optional)','subject','text');  inputSubject.required=false;
-  const inputLocation = inp('Location (optional, e.g. Google Meet)','location','text'); inputLocation.required=false;
+  const inputSubject  = inp(copy.subject,'subject','text');  inputSubject.required=false;
+  const inputLocation = inp(copy.location,'location','text'); inputLocation.required=false;
 
   // Resumen + estado
-  const summaryEl = div('booking-status'); summaryEl.textContent='Pick a date and time.';
+  const summaryEl = div('booking-status'); summaryEl.textContent=copy.initial;
   const statusEl  = div('booking-status',{ id:'booking-status', role:'status', 'aria-live':'polite' });
 
   // Honeypot
@@ -71,8 +73,8 @@ export function mountBooking(){
   inputHp.tabIndex = -1; inputHp.setAttribute('aria-hidden', 'true');
   Object.assign(inputHp.style,{position:'absolute',left:'-9999px'});
 
-  const btnSubmit = btn('booking-primary','Book'); btnSubmit.type='submit'; btnSubmit.disabled=true;
-  const btnCancel = btn('booking-secondary','Cancel');
+  const btnSubmit = btn('booking-primary',copy.submit); btnSubmit.type='submit'; btnSubmit.disabled=true;
+  const btnCancel = btn('booking-secondary',copy.cancel);
 
   // Ensamblar DOM
   Object.assign(box.style, { position: 'relative', maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto' });
@@ -130,15 +132,7 @@ export function mountBooking(){
   inputDuration.addEventListener('change', () => { booked = false; refreshSlots(); });
   [inputName, inputEmail].forEach(n => n.addEventListener('input', updateSummary));
 
-  const messages = {
-    slot_not_available: 'That time was just booked. Please choose another time.',
-    next_business_day_required: 'Choose the next business day or later.',
-    past_slot: 'That time has passed. Please choose another time.',
-    calendar_unavailable: 'Availability could not be verified. Please try again.',
-    outside_hours: 'Choose a time within business hours, excluding lunch.',
-    weekday_required: 'Appointments are available Monday–Friday.',
-    invalid_email: 'Please enter a valid email address.',
-  };
+  const messages = copy.errors;
   async function refreshSlots() {
     const version = ++requestVersion;
     abortAvailability?.abort();
@@ -149,13 +143,13 @@ export function mountBooking(){
       if (inputDate.value < inputDate.min) inputDate.value = inputDate.min;
       while (!isBusinessDay(inputDate.value)) inputDate.value = nextDate(inputDate.value);
     }
-    slots = []; loading = true; inputTime.setEmpty('Loading available times…');
-    statusEl.textContent = 'Checking available times...'; updateSummary();
+    slots = []; loading = true; inputTime.setEmpty(copy.loading);
+    statusEl.textContent = copy.checking; updateSummary();
     try {
       // Invalid, past and weekend dates do not need a calendar request.
       if (!inputDate.value || !daySlots(inputDate.value, Number(inputDuration.value)).length) {
-        inputTime.setEmpty('No available times on this date');
-        statusEl.textContent = 'No available times on this date. Choose another weekday.';
+        inputTime.setEmpty(copy.empty);
+        statusEl.textContent = copy.emptyHelp;
         return;
       }
       const res = await fetch(`${FN_BASE}/freebusy`, {
@@ -168,26 +162,26 @@ export function mountBooking(){
       if (!res.ok || !Array.isArray(data.slots) || data.tz !== tz) throw new Error('calendar_unavailable');
       slots = data.slots;
       inputTime.ready(slots, previous);
-      statusEl.textContent = slots.length ? '' : 'No available times on this date. Choose another weekday.';
+      statusEl.textContent = slots.length ? '' : copy.emptyHelp;
     } catch (error) {
       if (version !== requestVersion) return;
-      inputTime.setEmpty('Availability is unavailable');
+      inputTime.setEmpty(copy.unavailable);
       const local = ['localhost','127.0.0.1'].includes(location.hostname);
       statusEl.textContent = local && error.message === 'functions_unavailable'
-        ? 'Start npm run dev and open http://localhost:8888 to use the calendar.'
-        : 'Could not verify calendar availability. Please retry or contact me.';
+        ? copy.localHelp
+        : copy.availabilityError;
     } finally {
       if (version === requestVersion) { loading = false; updateSummary(); }
     }
   }
-  const retry = btn('booking-secondary', 'Retry availability');
+  const retry = btn('booking-secondary', copy.retry);
   retry.addEventListener('click', () => { booked = false; refreshSlots(); });
   grid.insertBefore(retry, statusEl);
   function updateSummary() {
     const slot = slots.find(s => s.start === inputTime.value);
     summaryEl.textContent = slot
-      ? `Selected: ${new Date(slot.start).toLocaleString(undefined, { timeZone: tz, weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' })} (${tz}) · ${inputDuration.value} min`
-      : 'Choose an available date and time.';
+      ? format(copy.selected, { date: new Date(slot.start).toLocaleString(undefined, { timeZone: tz, weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }), tz, duration: inputDuration.value })
+      : copy.choose;
     btnSubmit.disabled = loading || submitting || booked || !slot || !inputName.value.trim() || !inputEmail.validity.valid || !inputEmail.value.trim();
     retry.disabled = loading || submitting || booked;
   }
@@ -202,7 +196,7 @@ export function mountBooking(){
     submitting = true; inputTime.disabled = true;
     const controls = [...form.querySelectorAll('input, select, button'), btnCloseX];
     controls.forEach(n => n.disabled = true);
-    statusEl.textContent = 'Booking...';
+    statusEl.textContent = copy.sending;
     try {
       const res = await fetch(`${FN_BASE}/create-event`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -212,22 +206,22 @@ export function mountBooking(){
       const data = await res.json();
       if (!res.ok || !data.ok) {
         if (data.error === 'slot_not_available' || data.error === 'past_slot') await refreshSlots();
-        statusEl.textContent = messages[data.error] || 'Could not book this time. Please try again.';
+        statusEl.textContent = messages[data.error] || copy.failed;
         return;
       }
       booked = true;
-      statusEl.textContent = 'Booked. Save your meeting details here. ';
+      statusEl.textContent = copy.success;
       const url = data.meet || data.htmlLink;
       if (typeof url === 'string' && /^https:\/\//.test(url)) {
         const link = document.createElement('a'); link.href = url;
         link.target = '_blank'; link.rel = 'noopener noreferrer';
-        link.textContent = data.meet ? 'Open meeting' : 'Open Calendar';
+        link.textContent = data.meet ? copy.openMeeting : copy.openCalendar;
         statusEl.appendChild(link);
       }
     } catch {
       // A dropped response may still mean Google created the event; do not auto-retry insertion.
-      slots = []; inputTime.setEmpty('Booking could not be confirmed');
-      statusEl.textContent = 'The booking could not be confirmed. Check your calendar or contact me before retrying.';
+      slots = []; inputTime.setEmpty(copy.unconfirmed);
+      statusEl.textContent = copy.unconfirmedHelp;
     } finally {
       submitting = false;
       controls.forEach(n => n.disabled = false);
