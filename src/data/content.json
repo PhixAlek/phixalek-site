@@ -27,9 +27,14 @@
     "items": [
       {
         "title": "Flowly",
-        "desc": "A personal finance project in early development, starting with a .NET 10 backend.",
+        "desc": "Personal fintech app to manage money with pockets and budgets. Built with .NET + Angular, focused on security and a clean user experience.",
         "tags": [
-          ".NET 10"
+          ".NET 10",
+          "Angular SPA",
+          "PostgreSQL",
+          "GitHub",
+          "GitHub Actions",
+          "CI/CD"
         ],
         "badges": [
           "In development"
@@ -43,15 +48,16 @@
           }
         ],
         "id": "flowly",
-        "publication": "published"
+        "publication": "published",
+        "imageId": "finbit-01"
       },
       {
         "title": "Consulting",
         "desc": "Helping startups and teams scale APIs with secure, high-performance backends. Book a call and get a clear roadmap in days, not months.",
         "tags": [
-          "APIs",
-          "Security",
-          "Scale"
+          "Integrations",
+          "Scale",
+          "Refactoring"
         ],
         "badges": [
           "Freelance",
@@ -77,12 +83,12 @@
         "id": "phixalek-site",
         "publication": "published",
         "title": "PhixAlek — Portfolio",
-        "desc": "This site uses JavaScript for the interface, EmailJS for contact messages, and Netlify Functions with the Google Calendar API to check availability and book calls.",
+        "desc": "This site uses JavaScript for the interface, EmailJS for contact messages, and the Google Calendar API to check availability and book calls.",
         "tags": [
           "JavaScript",
           "EmailJS",
-          "Netlify Functions",
-          "Google Calendar API"
+          "Calendar API",
+          "Netlify"
         ],
         "badges": [
           "Portfolio"
@@ -94,7 +100,8 @@
             "text": "Documentation",
             "href": "https://github.com/PhixAlek/phixalek-site/blob/AS-arquitectura-contenido-2026-09-28/docs/ARCHITECTURE.md"
           }
-        ]
+        ],
+        "imageId": "demome-01"
       }
     ]
   },
