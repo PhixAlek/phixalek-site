@@ -23,7 +23,8 @@
           "label": "Contact",
           "href": "#contact"
         }
-      ]
+      ],
+      "skip": "Skip to content"
     },
     "hero": {
       "greeting": "Hello, I'm ",

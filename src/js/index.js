@@ -8,6 +8,8 @@ import { mountBackground } from './modules/background/background.js';
 import { mountBooking }    from './modules/common/booking.js';
 import { mountContactEmailJS } from './modules/common/contact.js';
 
+import { mountNavigation } from './modules/common/navigation.js';
+
 async function bootstrap(){
 
   const app = document.getElementById('app');
@@ -19,6 +21,7 @@ async function bootstrap(){
   const footer = Footer();
   app.append(header, main, footer);
 
+  mountNavigation(header, main);
   mountBackground(main);
   mountBooking();
   if (typeof __EMAILJS_SERVICE__ !== 'undefined') {

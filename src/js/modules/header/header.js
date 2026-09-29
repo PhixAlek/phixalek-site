@@ -3,6 +3,9 @@ import { content, ui, bind, text, languageButton } from '../../../content/index.
 export function Header(){
   const header = document.createElement('header');
   header.className = 'header';
+  const skip = document.createElement('a');
+  skip.className = 'skip-link'; skip.href = '#main-content';
+  text(skip, () => ui.navigation.skip);
 
   const wrap = document.createElement('div');
   wrap.className = 'container row between center';
@@ -107,16 +110,11 @@ export function Header(){
   drawer.addEventListener('click', e => { if (e.target === drawer) close(); });
   drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
     close(false);
-    const target = document.querySelector(a.getAttribute('href'));
-    if (target) {
-      target.setAttribute('tabindex', '-1');
-      target.focus({ preventScroll: true });
-      target.addEventListener('blur', () => target.removeAttribute('tabindex'), { once: true });
-    }
+
   }));
   desktop.addEventListener('change', () => { if (desktop.matches) close(); });
 
   wrap.append(brand, nav, btn);
-  header.append(wrap, drawer);
+  header.append(skip, wrap, drawer);
   return header;
 }

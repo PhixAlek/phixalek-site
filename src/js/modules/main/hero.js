@@ -5,6 +5,7 @@ export function Hero() {
 
   const sec  = document.createElement('section');
   sec.className = 'hero';
+  sec.id = 'home';
 
   const wrap = document.createElement('div');
   wrap.className = 'container';
