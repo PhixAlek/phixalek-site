@@ -21,9 +21,9 @@ Las secciones nuevas no tienen renderizador todavía: sus modelos se preparan ah
 
 `src/data/content.json` conserva el contenido editorial inglés; `src/data/content.es.json` contiene su adaptación al español. `src/content/locales/en.json` y `es.json` contienen mensajes de interfaz, validación y agenda. Ambas versiones están activas. Editar ambas cuando cambie contenido; la validación comprueba la estructura y mantiene iguales rutas, IDs, imágenes y tipos de acción.
 
-Prioridad: elección manual → primer idioma compatible de `navigator.languages` → inglés. No se usa geolocalización. Se guarda la preferencia en localStorage (`phixalek-language`); si está bloqueado, la selección funciona durante la sesión. `document.lang` se actualiza sin recargar.
+Prioridad: elección manual → primer idioma compatible de `navigator.languages` → inglés. No se usa geolocalización. Se guarda la preferencia en sessionStorage (`phixalek-language`); si está bloqueado, la selección funciona durante la sesión. `document.lang` se actualiza sin recargar. La elección dura durante la sesión de la pestaña, incluidas las recargas. Una pestaña nueva vuelve a detectar el idioma del navegador. Restaurar una pestaña cerrada puede restaurar también su sesión, según el navegador. Las preferencias antiguas de localStorage ya no se leen.
 
-El control muestra el idioma de destino (ES/EN): a la derecha de Contact en escritorio, al pie del menú móvil y antes del copyright en el footer móvil. Se actualizan textos y atributos sobre los mismos nodos: no se reconstruyen formularios, no se reinicia la agenda, no se duplican listeners ni animaciones. La API y America/Hermosillo no dependen del idioma.
+El control muestra solo el idioma de destino (Es o En) a la derecha de Contact en escritorio y al pie del menú móvil. Solo el footer móvil muestra ambos idiomas, con el activo primero y en negrita (En / es o Es / en), antes del copyright. Se actualizan textos y atributos sobre los mismos nodos: no se reconstruyen formularios, no se reinicia la agenda, no se duplican listeners ni animaciones. La API y America/Hermosillo no dependen del idioma.
 
 La traducción adapta los textos existentes por petición del propietario. No añade experiencia ni cambia las afirmaciones profesionales pendientes de revisión. Esto no implementa URLs localizadas ni SEO bilingüe por rutas.
 

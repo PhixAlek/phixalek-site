@@ -6,7 +6,7 @@ import { validAction, publishedItems } from './model.js';
 import { detectLanguage, readPreference, savePreference } from './language.js';
 export { format } from './model.js';
 let storage;
-try { storage = window.localStorage; } catch { /* Private browsing may deny access. */ }
+try { storage = window.sessionStorage; } catch { /* Private browsing may deny access. */ }
 let manualPreference = readPreference(storage);
 export let locale = detectLanguage(manualPreference, navigator.languages || [navigator.language]);
 const catalogs = { en: english, es: spanish };
@@ -62,7 +62,17 @@ window.addEventListener('languagechange', () => setLanguage(detectLanguage(manua
 export function languageButton(className = '') {
   const button = document.createElement('button');
   button.type = 'button'; button.className = `language-toggle ${className}`;
-  text(button, () => locale === 'en' ? 'ES' : 'EN');
+  if (className === 'language-footer') {
+    const active = document.createElement('strong');
+    const alternative = document.createElement('span');
+    text(active, () => locale === 'en' ? 'En' : 'Es');
+    text(alternative, () => locale === 'en' ? 'es' : 'en');
+    bind(active, 'attr:lang', () => locale);
+    bind(alternative, 'attr:lang', () => locale === 'en' ? 'es' : 'en');
+    button.append(active, document.createTextNode(' / '), alternative);
+  } else {
+    text(button, () => locale === 'en' ? 'Es' : 'En');
+  }
   bind(button, 'attr:aria-label', () => ui.language.switch);
   bind(button, 'attr:lang', () => locale === 'en' ? 'es' : 'en');
   button.addEventListener('click', () => setLanguage(locale === 'en' ? 'es' : 'en'));

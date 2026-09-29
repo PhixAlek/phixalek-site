@@ -448,3 +448,7 @@ button.card-title-link { padding: 0; border: 0; background: transparent; color: 
 .language-footer { justify-self:center; }
 @media (min-width:768px) { .language-footer { display:none; } }
 @media (max-height:420px) { .language-drawer { position:static; display:block; margin:0 8% 24px auto; } .drawer-nav { margin-bottom:24px; } }
+
+.language-toggle { white-space:nowrap; }
+.language-footer { font-weight:400; }
+.language-toggle strong { font-weight:700; }
