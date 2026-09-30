@@ -23,7 +23,8 @@
           "label": "Contact",
           "href": "#contact"
         }
-      ]
+      ],
+      "skip": "Skip to content"
     },
     "hero": {
       "greeting": "Hello, I'm ",
@@ -51,12 +52,12 @@
       "title": "Book a call",
       "name": "Your name",
       "email": "Your email",
-      "date": "Pick a date",
+      "date": "Date",
       "duration": "Duration",
       "subject": "Subject (optional)",
       "location": "Location (optional, e.g. Google Meet)",
       "initial": "Pick a date and time.",
-      "submit": "Book",
+      "submit": "Book call",
       "cancel": "Cancel",
       "loading": "Loading available times…",
       "checking": "Checking available times...",
@@ -83,13 +84,17 @@
         "weekday_required": "Appointments are available Monday–Friday.",
         "invalid_email": "Please enter a valid email address."
       },
-      "hours": "Mon–Fri 07:00–13:00 / 14:00–16:00 ({tz}). All times are in Hermosillo.",
+      "hours": "Choose a time that works for you.",
       "minutes": "{duration} min",
-      "selected": "Selected: {date} ({tz}) · {duration} min",
-      "dateButton": "Open date picker"
+      "selected": "{date} · {duration} min",
+      "dateButton": "Open date picker",
+      "details": "Add details (optional)",
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "weekdays": "Monday–Friday."
     },
     "wheel": {
-      "label": "Available time · Hermosillo",
+      "label": "Available time · Arizona / Sonora (UTC−7)",
       "hint": "Scroll, tap a time, or use ↑ and ↓.",
       "empty": "No available times",
       "choose": "Choose a date"

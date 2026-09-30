@@ -23,7 +23,8 @@
           "label": "Contacto",
           "href": "#contact"
         }
-      ]
+      ],
+      "skip": "Saltar al contenido"
     },
     "hero": {
       "greeting": "Hola, soy ",
@@ -51,12 +52,12 @@
       "title": "Agendar una llamada",
       "name": "Tu nombre",
       "email": "Tu correo electrónico",
-      "date": "Elige una fecha",
+      "date": "Fecha",
       "duration": "Duración",
       "subject": "Asunto (opcional)",
       "location": "Lugar (opcional, p. ej., Google Meet)",
       "initial": "Elige una fecha y una hora.",
-      "submit": "Agendar",
+      "submit": "Agendar llamada",
       "cancel": "Cancelar",
       "loading": "Cargando horarios disponibles…",
       "checking": "Consultando disponibilidad…",
@@ -83,13 +84,17 @@
         "weekday_required": "Las citas están disponibles de lunes a viernes.",
         "invalid_email": "Introduce un correo electrónico válido."
       },
-      "hours": "Lun–vie 07:00–13:00 / 14:00–16:00 ({tz}). Todos los horarios corresponden a Hermosillo.",
+      "hours": "Elige el horario que te convenga.",
       "minutes": "{duration} min",
-      "selected": "Horario elegido: {date} ({tz}) · {duration} min",
-      "dateButton": "Abrir calendario"
+      "selected": "{date} · {duration} min",
+      "dateButton": "Abrir calendario",
+      "details": "Añadir detalles (opcional)",
+      "previousMonth": "Mes anterior",
+      "nextMonth": "Mes siguiente",
+      "weekdays": "Lunes a viernes."
     },
     "wheel": {
-      "label": "Hora disponible · Hermosillo",
+      "label": "Hora disponible · Arizona / Sonora (UTC−7)",
       "hint": "Desliza, toca una hora o usa ↑ y ↓.",
       "empty": "No hay horarios disponibles",
       "choose": "Elige una fecha"

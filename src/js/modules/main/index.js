@@ -6,7 +6,7 @@ import { Contact } from './contact.js';
 
 export function Main(){
   const main = document.createElement('main');
-  main.id = 'home';
+  main.id = 'main-content';
   main.className = 'site';
   main.style.position = 'relative';
 

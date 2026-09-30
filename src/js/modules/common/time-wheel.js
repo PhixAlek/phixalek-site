@@ -8,9 +8,10 @@ export function createTimeWheel(onChange) {
   const wheel = document.createElement('div'); wheel.className = 'booking-time-wheel';
   wheel.setAttribute('role','listbox'); bind(wheel, 'attr:aria-label', () => ui.wheel.label);
   const empty = document.createElement('div'); empty.className = 'booking-time-empty';
-  const hint = document.createElement('small'); text(hint, () => ui.wheel.hint);
+  const hint = document.createElement('small'); hint.className = 'booking-sr-only'; hint.id = 'booking-time-hint'; text(hint, () => ui.wheel.hint);
+  wheel.setAttribute('aria-describedby', hint.id);
   frame.append(wheel,empty); root.append(label,frame,hint);
-  let slots = [], index = -1, disabled = true;
+  let slots = [], index = -1, disabled = true, manualScroll = false;
   function paint() {
     [...wheel.children].forEach((item,i)=>item.setAttribute('aria-selected',String(i===index)));
     if(index>=0) wheel.setAttribute('aria-activedescendant',`booking-time-${index}`);
@@ -23,7 +24,9 @@ export function createTimeWheel(onChange) {
     if(align) wheel.scrollTop=i*ROW;
     if(changed) onChange();
   }
-  wheel.addEventListener('scroll',()=>select(Math.round(wheel.scrollTop/ROW),false));
+  wheel.addEventListener('wheel', () => { manualScroll = true; }, { passive:true });
+  wheel.addEventListener('pointerdown', () => { manualScroll = true; });
+  wheel.addEventListener('scroll',()=>{ if (manualScroll) select(Math.round(wheel.scrollTop/ROW),false); });
   wheel.addEventListener('click',e=>{
     const option=e.target.closest('[role="option"]');
     if(option && !disabled) {wheel.focus();select(Number(option.dataset.index));}
@@ -41,7 +44,8 @@ export function createTimeWheel(onChange) {
       root.classList.toggle('is-disabled',disabled);
     },
     ready(items,preferred=''){
-      slots=items;index=items.length?Math.max(0,items.findIndex(s=>s.start===preferred)):-1;
+      manualScroll=false;
+      slots=items;index=preferred?items.findIndex(s=>s.start===preferred):-1;
       wheel.replaceChildren();
       items.forEach((slot,i)=>{
         const option=document.createElement('div');option.className='booking-time-option';

@@ -65,10 +65,10 @@ export function languageButton(className = '') {
   if (className === 'language-footer') {
     const active = document.createElement('strong');
     const alternative = document.createElement('span');
-    text(active, () => locale === 'en' ? 'En' : 'Es');
-    text(alternative, () => locale === 'en' ? 'es' : 'en');
-    bind(active, 'attr:lang', () => locale);
-    bind(alternative, 'attr:lang', () => locale === 'en' ? 'es' : 'en');
+    text(active, () => locale === 'en' ? 'ES' : 'EN');
+    text(alternative, () => locale);
+    bind(active, 'attr:lang', () => locale === 'en' ? 'es' : 'en');
+    bind(alternative, 'attr:lang', () => locale);
     button.append(active, document.createTextNode(' / '), alternative);
   } else {
     text(button, () => locale === 'en' ? 'Es' : 'En');

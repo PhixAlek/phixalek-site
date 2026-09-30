@@ -9,3 +9,35 @@
 .booking-time-empty[hidden] { display:none; }
 .booking-time-picker.is-empty .booking-time-frame::before { display:none; }
 .booking-time-picker.is-disabled .booking-time-wheel { overflow-y:hidden; opacity:.6; }
+
+.booking-duration { border:0; padding:0; margin:0; display:flex; gap:8px; min-width:0; }
+.booking-duration legend { margin-bottom:8px; }
+.booking-duration label { flex:1; position:relative; cursor:pointer; }
+.booking-duration input { position:absolute; opacity:0; width:1px; height:1px; }
+.booking-duration span { display:grid; place-items:center; min-height:44px; border:1px solid #24304a; border-radius:10px; }
+.booking-duration input:checked + span { border-color:var(--accent-1); background:rgba(124,58,237,.16); }
+.booking-duration input:focus-visible + span { outline:2px solid var(--accent-2); outline-offset:2px; }
+.booking-duration input:disabled + span { opacity:.6; cursor:default; }
+.booking-details summary { cursor:pointer; padding-block:12px; }
+.booking-details .booking-input { width:100%; margin-bottom:8px; }
+.booking-grid [hidden] { display:none !important; }
+.booking-status:empty { display:none; }
+.booking-sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+
+.booking-box .booking-grid { gap:24px; }
+.booking-box .booking-subtitle { margin-bottom:24px; line-height:1.6; padding-right:28px; }
+.booking-box .booking-title { padding-right:44px; }
+.booking-identity { display:grid; gap:12px; }
+.booking-box input, .booking-box button { font:inherit; }
+.booking-summary { text-align:center; line-height:1.7; }
+.booking-calendar { padding:16px; border:1px solid #24304a; border-radius:14px; background:#0b152a; }
+.booking-calendar-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.booking-calendar-days { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:4px; text-align:center; }
+.booking-calendar button { min-height:40px; border:1px solid transparent; border-radius:8px; color:inherit; background:transparent; cursor:pointer; }
+.booking-calendar button:hover:not(:disabled), .booking-calendar [aria-current] { background:#7c3aed; }
+.booking-calendar button:disabled { opacity:.3; cursor:default; }
+.booking-calendar-days > span { font-size:.75rem; padding-block:8px; }
+#booking-date::-webkit-calendar-picker-indicator { display:none; }
+#booking-date { width:100%; min-width:0; }
+
+@media (max-width:767px) { .booking-weekdays { display:block; } }
