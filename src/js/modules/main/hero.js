@@ -21,7 +21,7 @@ export function Hero() {
 
   const lead = document.createElement('p');
   lead.className = 'lead';
-  text(lead, () => H.subtitle || '');
+  bind(lead, 'innerHTML', () => highlight(H.subtitle || ''));
 
   const actions = document.createElement('div');
   actions.className = 'actions';
@@ -47,3 +47,9 @@ export function Hero() {
   return sec;
 }
 
+
+// Keep editorial emphasis in JSON and reuse the existing color treatment.
+function highlight(value) {
+  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\[\[(.+?)\]\]/g, '<span class="em">$1</span>');
+}

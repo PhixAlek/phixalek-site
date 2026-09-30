@@ -1,7 +1,7 @@
 {
   "hero": {
     "name": "Phixalek",
-    "subtitle": "Desarrollo software con .NET y Angular y creo mundos para videojuegos. Trabajo en sistemas fáciles de mantener y experiencias inmersivas.",
+    "subtitle": "Desarrollador de software enfocado en [[.NET]], [[Angular]] y [[aplicaciones web]].",
     "ctaPrimary": {
       "text": "Hablemos",
       "href": "#contact"
@@ -12,14 +12,15 @@
     }
   },
   "about": {
-    "eyebrow": "Software • Investigación • Videojuegos",
+    "eyebrow": "Software • Consulting • Game Dev",
     "title": "¿Quién es Phixalek?",
-    "lead": "Miguel Segura nació en Colombia y estudia Ingeniería Multimedia. Su trabajo combina el [[desarrollo de software]], la [[investigación en computación y física]] y proyectos personales que unen tecnología y narrativa.",
-    "body": "Está desarrollando **Flowly**, un proyecto de finanzas personales que comienza con ((.NET 10)), y **Bloomink**, su estudio independiente, donde trabaja en *No Witness*: una experiencia narrativa de supervivencia inspirada en Resident Evil y Silent Hill, creada con ((UE5 + C++)).\n\nSu enfoque va más allá de entregar software: busca comprender la [[ciencia detrás de la tecnología]] y aplicarla en sistemas claros y fáciles de mantener.\n\nActualmente vive en Hermosillo, México, estudia Ingeniería Multimedia y enseña programación.",
+    "lead": "Alejandro Segura nació en Colombia y estudia Ingeniería Multimedia. Su trabajo combina el [[desarrollo de software]] y proyectos personales que unen tecnología y narrativa.",
+    "body": "Está desarrollando **Flowly**, un proyecto de finanzas personales que comienza con ((.NET 10)), y **Bloomink**, su estudio independiente, donde trabaja en *No Witness*: una experiencia narrativa de supervivencia inspirada en Resident Evil y Silent Hill, creada con ((UE5 + C++)).\n\nActualmente vive en Hermosillo, México, estudia Ingeniería Multimedia y enseña programación.",
     "bullets": [
-      "Backend: ((.NET, DDD, Clean Architecture)) → sistemas escalables y fáciles de mantener",
+      "Backend: ((.NET, C#, DDD, Clean Architecture)) → sistemas escalables y fáciles de mantener",
       "Frontend: ((Angular, TypeScript)) → aplicaciones con una experiencia de uso clara",
-      "Videojuegos: ((UE5, C++)) + [[Pixel Art]] → procesos optimizados y narrativa"
+      "Videojuegos: ((UE5, C++)) + [[Pixel Art]] → procesos optimizados y narrativa",
+      "Prácticas: ((CI/CD, Clean Code))"
     ]
   },
   "projects": {
@@ -112,7 +113,7 @@
   "footer": {
     "location": "Hermosillo, México",
     "language": "Inglés / Español",
-    "role": "Desarrollador de software y videojuegos",
+    "role": "Desarrollador de software",
     "email": "hi@phixalek.com",
     "social": [
       {
@@ -129,6 +130,16 @@
         "name": "YouTube",
         "href": "https://www.youtube.com/@PhixAlek",
         "icon": "youtube"
+      },
+      {
+        "name": "Substack",
+        "href": "https://substack.com/@phixalek",
+        "icon": "substack"
+      },
+      {
+        "name": "HackerRank",
+        "href": "https://www.hackerrank.com/profile/PhixAlek",
+        "icon": "hackerrank"
       }
     ]
   }

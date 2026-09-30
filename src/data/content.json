@@ -1,7 +1,7 @@
 {
   "hero": {
     "name": "Phixalek",
-    "subtitle": "Building software (.NET/Angular) and crafting game worlds. Building clean, maintainable systems and immersive experiences.",
+    "subtitle": "Software developer focused on [[.NET]], [[Angular]] and [[web applications]].",
     "ctaPrimary": {
       "text": "Get in touch",
       "href": "#contact"
@@ -12,14 +12,15 @@
     }
   },
   "about": {
-    "eyebrow": "Software • Research • Game Dev",
+    "eyebrow": "Software • Consulting • Game Dev",
     "title": "Who is Phixalek?",
-    "lead": "Miguel Segura was born in Colombia and is currently pursuing a Multimedia Engineering degree. He moves between [[software development]], [[research in computing and physics]], and personal projects mixing technology with storytelling.",
-    "body": "He is developing **Flowly**, a personal finance project starting with ((.NET 10)); and **Bloomink**, his indie studio where he is building *No Witness*, a survival narrative inspired by Resident Evil and Silent Hill using ((UE5 + C++)).\n\nHis focus isn’t only shipping — it’s understanding the [[science behind technology]] and turning it into clean, maintainable systems.\n\nNow based in Hermosillo, Mexico, he is studying Multimedia Engineering and teaching programming.",
+    "lead": "Alejandro Segura was born in Colombia and is currently pursuing a Multimedia Engineering degree. He moves between [[software development]] and personal projects mixing technology with storytelling.",
+    "body": "He is developing **Flowly**, a personal finance project starting with ((.NET 10)); and **Bloomink**, his indie studio where he is building *No Witness*, a survival narrative inspired by Resident Evil and Silent Hill using ((UE5 + C++)).\n\nNow based in Hermosillo, Mexico, he is studying Multimedia Engineering and teaching programming.",
     "bullets": [
-      "Backend: ((.NET, DDD, Clean Architecture)) → scalable & maintainable systems",
+      "Backend: ((.NET, C#, DDD, Clean Architecture)) → scalable & maintainable systems",
       "Frontend: ((Angular, TypeScript)) → real-world apps with clean UX",
-      "Game Dev: ((UE5, C++)) + [[Pixel Art]] → optimized pipelines & storytelling"
+      "Game Dev: ((UE5, C++)) + [[Pixel Art]] → optimized pipelines & storytelling",
+      "Practices: ((CI/CD, Clean Code))"
     ]
   },
   "projects": {
@@ -112,7 +113,7 @@
   "footer": {
     "location": "Hermosillo, México",
     "language": "English / Spanish",
-    "role": "Software Developer & Game Dev",
+    "role": "Software Developer",
     "email": "hi@phixalek.com",
     "social": [
       {
@@ -129,6 +130,16 @@
         "name": "YouTube",
         "href": "https://www.youtube.com/@PhixAlek",
         "icon": "youtube"
+      },
+      {
+        "name": "Substack",
+        "href": "https://substack.com/@phixalek",
+        "icon": "substack"
+      },
+      {
+        "name": "HackerRank",
+        "href": "https://www.hackerrank.com/profile/PhixAlek",
+        "icon": "hackerrank"
       }
     ]
   }
