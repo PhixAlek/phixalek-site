@@ -21,12 +21,14 @@ export function focusDestination(target) {
 }
 export function mountNavigation(header, main) {
   const links = [...header.querySelectorAll('nav a[href^="#"]')];
-  const ids = [...new Set(links.map(link => link.hash.slice(1)))];
-  const sections = ids.map(id => document.getElementById(id)).filter(Boolean);
+  // Navigation order can differ from page order (Projects before About).
+  const sections = [...main.querySelectorAll('section[id]')];
   let frame = 0;
   function update() {
     frame = 0;
-    const offset = header.getBoundingClientRect().height + 16;
+    const headerHeight = header.getBoundingClientRect().height;
+    document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
+    const offset = headerHeight + 16;
     document.documentElement.style.setProperty('--anchor-offset', `${offset}px`);
     const atBottom = window.scrollY > 0 && window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
     const current = activeSection(sections.map(section => ({ id: section.id, top: section.getBoundingClientRect().top })), offset, atBottom);

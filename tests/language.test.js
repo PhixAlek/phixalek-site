@@ -29,4 +29,6 @@ test('Spanish preserves every route, image and action', () => {
   assert.deepEqual(validateTranslation(en,es),[]);
   es.projects.items[0].actions[0].href='https://wrong.example';
   assert.ok(validateTranslation(en,es).some(e=>e.includes('invariant')));
+  es.hero.avatarId='another-avatar';
+  assert.ok(validateTranslation(en,es).some(e=>e.includes('avatarId')));
 });
