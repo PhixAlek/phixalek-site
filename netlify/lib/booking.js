@@ -61,17 +61,21 @@ export function createBookingHandlers({ getCalendar, getCalendarId, now = () => 
         if (overlaps(slot, busy)) throw new BookingError('slot_not_available', 409);
         validateSlot(slot.start, data.duration ?? 30, now());
         const eventResult = await calendar.events.insert({
-          calendarId: id, conferenceDataVersion: 1,
+          calendarId: id, conferenceDataVersion: 1, sendUpdates: 'all',
           requestBody: {
             summary: `${subject} — ${name}`, description: `Intro call with ${name} <${email}>`, location,
             start: { dateTime: slot.start, timeZone: TIME_ZONE },
             end: { dateTime: slot.end, timeZone: TIME_ZONE },
+            attendees: [{ email, displayName: name }],
             transparency: 'opaque', reminders: { useDefault: true },
             conferenceData: { createRequest: { requestId: randomUUID() } },
           },
         });
         const result = eventResult.data;
-        return response(200, { ok: true, id: result.id, start: slot.start, end: slot.end, tz: TIME_ZONE,
+        // Do not claim confirmation if the provider omitted the requested guest.
+        const attendee = result.attendees?.find(a => a.email?.toLowerCase() === email.toLowerCase());
+        if (!result.id || !attendee) throw new BookingError('booking_confirmation_unavailable', 503);
+        return response(200, { ok: true, id: result.id, start: slot.start, end: slot.end, tz: TIME_ZONE, invitationRequested: true,
           meet: result.hangoutLink || result.conferenceData?.entryPoints?.find(e => e.entryPointType === 'video')?.uri || null,
           htmlLink: result.htmlLink || null });
       } catch (error) { return fail(error); }

@@ -32,11 +32,13 @@ test('Calendar SDK preserves event insertion with conference data', async () => 
     request: async options => { request = options; return { data: { id: 'test-event' } }; },
   } });
   const response = await calendar.events.insert({
-    calendarId: 'calendar-test', conferenceDataVersion: 1, requestBody: payload,
+    calendarId: 'calendar-test', conferenceDataVersion: 1, sendUpdates: 'all', requestBody: payload,
   });
   assert.equal(request.method, 'POST');
   assert.equal(new URL(request.url).pathname, '/calendar/v3/calendars/calendar-test/events');
   assert.equal(request.params.conferenceDataVersion, 1);
+  assert.equal(request.params.sendUpdates, 'all');
+  assert.equal(Object.hasOwn(request.data, 'sendUpdates'), false);
   assert.deepEqual(request.data, payload);
   assert.equal(response.data.id, 'test-event');
 });

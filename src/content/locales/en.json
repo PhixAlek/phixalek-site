@@ -82,7 +82,9 @@
         "calendar_unavailable": "Availability could not be verified. Please try again.",
         "outside_hours": "Choose a time within business hours, excluding lunch.",
         "weekday_required": "Appointments are available Monday–Friday.",
-        "invalid_email": "Please enter a valid email address."
+        "invalid_email": "Please enter a valid email address.",
+        "booking_invitations_unavailable": "Call booking is temporarily unavailable. Please contact me.",
+        "booking_confirmation_unavailable": "The booking could not be confirmed. Check your calendar or contact me before retrying."
       },
       "hours": "Choose a time that works for you.",
       "minutes": "{duration} min",

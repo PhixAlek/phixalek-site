@@ -82,7 +82,9 @@
         "calendar_unavailable": "No se pudo verificar la disponibilidad. Inténtalo de nuevo.",
         "outside_hours": "Elige un horario de atención fuera de la pausa para comer.",
         "weekday_required": "Las citas están disponibles de lunes a viernes.",
-        "invalid_email": "Introduce un correo electrónico válido."
+        "invalid_email": "Introduce un correo electrónico válido.",
+        "booking_invitations_unavailable": "La agenda no está disponible por el momento. Contáctame para reservar.",
+        "booking_confirmation_unavailable": "No se pudo confirmar la reserva. Revisa tu calendario o contáctame antes de volver a intentarlo."
       },
       "hours": "Elige el horario que te convenga.",
       "minutes": "{duration} min",

@@ -223,6 +223,7 @@ export function mountBooking(){
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
+        if (data.error === 'booking_confirmation_unavailable') { booked = true; slots = []; inputTime.setEmpty(() => copy.unconfirmed); }
         if (data.error === 'slot_not_available' || data.error === 'past_slot') await refreshSlots();
         text(statusEl, () => messages[data.error] || copy.failed);
         return;

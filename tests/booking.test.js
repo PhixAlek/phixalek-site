@@ -9,7 +9,7 @@ function setup(entry = { busy: [] }) {
   const calls = { queries: [], inserts: [] };
   const calendar = {
     freebusy: { query: async x => { calls.queries.push(x); return { data: { calendars: { test: entry } } }; } },
-    events: { insert: async x => { calls.inserts.push(x); return { data: { id: 'fake', hangoutLink: 'https://meet.google.com/test' } }; } },
+    events: { insert: async x => { calls.inserts.push(x); return { data: { id: 'fake', attendees: x.requestBody.attendees, hangoutLink: 'https://meet.google.com/test' } }; } },
   };
   const api = createBookingHandlers({ getCalendar: () => calendar, getCalendarId: () => 'test', now: () => now });
   return { api, calls, calendar };
@@ -106,4 +106,24 @@ test('Google transport failures return a generic error, not credential details',
   calendar.freebusy.query = async () => { throw new Error('sensitive details'); };
   const result = await api.book(request(valid));
   assert.equal(result.statusCode, 503); assert.equal(result.body.includes('sensitive'), false);
+});
+
+test('creation requests Google invitations with the visitor and existing Meet setup', async () => {
+  const { api, calls } = setup();
+  const result = await api.book(request(valid));
+  const options = calls.inserts[0];
+  assert.equal(options.sendUpdates, 'all');
+  assert.equal(Object.hasOwn(options.requestBody, 'sendUpdates'), false);
+  assert.deepEqual(options.requestBody.attendees, [{ email: valid.email, displayName: valid.name }]);
+  assert.equal(options.conferenceDataVersion, 1);
+  assert.ok(options.requestBody.conferenceData.createRequest.requestId);
+  assert.equal(JSON.parse(result.body).invitationRequested, true);
+  assert.equal(JSON.parse(result.body).meet, 'https://meet.google.com/test');
+});
+test('a provider response without the guest is not reported as confirmed', async () => {
+  const { api, calendar } = setup();
+  calendar.events.insert = async () => ({ data: { id:'created-without-guest' } });
+  const result = await api.book(request(valid));
+  assert.equal(result.statusCode, 503);
+  assert.equal(JSON.parse(result.body).error, 'booking_confirmation_unavailable');
 });

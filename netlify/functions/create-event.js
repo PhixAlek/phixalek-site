@@ -3,6 +3,6 @@ import { getAuth } from './_auth.js';
 import { createBookingHandlers } from '../lib/booking.js';
 
 export const handler = createBookingHandlers({
-  getCalendar: () => google.calendar({ version: 'v3', auth: getAuth() }),
+  getCalendar: () => google.calendar({ version: 'v3', auth: getAuth({ requireInvitations: true }) }),
   getCalendarId: () => process.env.GOOGLE_CALENDAR_ID,
 }).book;
