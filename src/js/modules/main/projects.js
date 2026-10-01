@@ -65,7 +65,7 @@ function card({ id, title, desc, tags = [], actions = [], badges = [], bullets =
     el.style.objectFit = 'cover';
     media.appendChild(el);
   } else {
-    media.style.background = 'linear-gradient(135deg,#2a3350,#171e33)';
+    media.classList.add('media-placeholder');
   }
 
   // Título (enlazado al CTA primario si existe)
