@@ -64,7 +64,7 @@ main.site{
 
 /* Animación de entrada sutil */
 @media (prefers-reduced-motion: no-preference){
-  .section:not(.hero):not(.projects):not(.evidence) .container{
+  .section:not(.hero):not(.projects):not(.evidence):not(.writing) .container{
     opacity:0; transform: translateY(8px);
     animation: fade-in .5s ease-out .05s forwards;
   }
@@ -483,4 +483,45 @@ input,textarea{ line-height:1.5; }
 
 @media(max-width:767px) and (prefers-reduced-motion:no-preference){
   .evidence-value{ transform-origin:center; }
+}
+
+/* One writing entry; the real profile is the fallback until a post is supplied. */
+.site > .writing{ min-height:0; padding:var(--space-8) 0 var(--space-12); border-top:0; }
+.writing .container{ max-width:var(--work-max); }
+.writing-header{ display:flex; align-items:center; justify-content:space-between; gap:var(--space-6); margin-bottom:var(--space-6); }
+.writing .h2{ margin:0; }
+.writing-all{ display:inline-flex; align-items:center; justify-content:center; gap:var(--space-6); min-height:44px; padding:10px 20px; border:1px solid var(--line); border-radius:999px; color:var(--fg); background:var(--panel); font-weight:700; }
+.writing-all:hover{ text-decoration:none; border-color:var(--line-strong); }
+.writing-all:focus-visible,.writing-entry:focus-visible{ outline:2px solid var(--focus); outline-offset:4px; }
+.writing-entry{ display:grid; grid-template-columns:32px minmax(0,1fr) 24px; align-items:center; gap:var(--space-6); padding:12px 16px 12px 32px; min-height:152px; border:1px solid var(--line); border-radius:var(--radius); background:var(--panel); color:var(--fg); }
+.writing-entry.has-cover{ grid-template-columns:32px minmax(0,1fr) 24px minmax(0,46%); }
+.writing-entry:hover{ text-decoration:none; border-color:var(--line-strong); }
+.writing-entry h3{ margin:0; font-size:clamp(1.1rem,2vw,1.5rem); line-height:1.4; }
+.writing-entry-copy{ min-width:0; }
+.writing-label{ display:block; color:var(--muted); margin-bottom:var(--space-2); font-size:.85rem; }
+.writing-action{ font-size:1.6rem; line-height:1; }
+.writing-mark{ width:32px; height:32px; border-radius:50%; background:color-mix(in srgb,var(--terracotta) 55%,white); }
+.writing-cover{ height:128px; border-radius:var(--radius-sm); overflow:hidden; background:var(--accent-soft); }
+.writing-cover img{ width:100%; height:100%; object-fit:cover; }
+@media(max-width:767px){
+  .writing-header{ flex-direction:column; gap:var(--space-4); }
+  .writing .h2{ text-align:center; }
+  .writing-entry,.writing-entry.has-cover{ grid-template-columns:20px minmax(0,1fr) 24px; padding:var(--space-4); gap:var(--space-4); }
+  .writing-mark{ width:20px; height:20px; }
+  .writing-cover{ grid-column:1/-1; height:128px; }
+}
+
+@media(prefers-reduced-motion:no-preference){
+  .writing-header{ transition:opacity 800ms ease,transform 1000ms cubic-bezier(.22,1,.36,1); }
+  .writing-entry{ transition:opacity 900ms ease 140ms,transform 1100ms cubic-bezier(.22,1,.36,1) 140ms,border-color 200ms ease; }
+  .writing-cover{ transition:opacity 1000ms ease 240ms,transform 1100ms cubic-bezier(.22,1,.36,1) 240ms; }
+  .writing-entry-copy{ transition:opacity 900ms ease 380ms,transform 1100ms cubic-bezier(.22,1,.36,1) 380ms; }
+  .writing-pending{ opacity:0; transform:translateY(20px); }
+  .writing-pending .writing-cover{ opacity:0; transform:translateY(12px) scale(.98); }
+  .writing-pending .writing-entry-copy{ opacity:0; transform:translateY(12px); }
+  .writing-action,.writing-all > span:last-child{ transition:transform 250ms ease; }
+  .writing-entry:hover .writing-action,.writing-all:hover > span:last-child{ transform:translateX(4px); }
+  .writing-header:focus-within,.writing-entry:focus-visible,.writing-entry:focus-visible .writing-cover,.writing-entry:focus-visible .writing-entry-copy{
+    opacity:1; transform:none; transition:none;
+  }
 }

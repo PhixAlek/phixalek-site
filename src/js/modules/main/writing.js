@@ -1,0 +1,76 @@
+import { writingContent, content, ui, text } from '../../../content/index.js';
+import { publishedItems, validDestination } from '../../../content/model.js';
+import { loadImageRegistry, resolveImage } from '../images/registry.js';
+
+export function Writing() {
+  const source = writingContent?.source?.url;
+  if (writingContent?.publication !== 'published' || !validDestination(source)) return null;
+  const entry = publishedItems(writingContent)[0];
+  const section = document.createElement('section');
+  section.className = 'section writing';
+  section.setAttribute('aria-labelledby', 'writing-title');
+  const container = document.createElement('div');
+  container.className = 'container';
+  const heading = document.createElement('h2');
+  heading.id = 'writing-title';
+  heading.className = 'h2';
+  text(heading, () => ui.writing.title);
+  const header = document.createElement('div');
+  header.className = 'writing-header';
+  const allPosts = document.createElement('a');
+  allPosts.className = 'writing-all';
+  allPosts.href = source;
+  allPosts.target = '_blank';
+  allPosts.rel = 'noopener noreferrer';
+  const allText = document.createElement('span');
+  text(allText, () => ui.writing.allPosts);
+  const allArrow = document.createElement('span');
+  allArrow.textContent = '→';
+  allArrow.setAttribute('aria-hidden', 'true');
+  allPosts.append(allText, allArrow);
+  header.append(heading, allPosts);
+  const link = document.createElement('a');
+  link.className = 'writing-entry';
+  link.href = entry?.kind === 'article' ? entry.url : source;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  const mark = document.createElement('span');
+  mark.className = 'writing-mark';
+  mark.setAttribute('aria-hidden', 'true');
+  const copy = document.createElement('div');
+  copy.className = 'writing-entry-copy';
+  const label = document.createElement('span');
+  label.className = 'writing-label';
+  text(label, () => entry?.kind === 'preview' ? ui.writing.preview : 'Substack');
+  const title = document.createElement('h3');
+  text(title, () => entry ? ui.writing.entries[entry.id].title : content.hero.name);
+  copy.append(label, title);
+  const action = document.createElement('span');
+  action.className = 'writing-action';
+  const arrow = document.createElement('span');
+  arrow.textContent = '→';
+  arrow.setAttribute('aria-hidden', 'true');
+  action.append(arrow);
+  link.append(mark, copy, action);
+  if (entry?.imageId) {
+    link.classList.add('has-cover');
+    const cover = document.createElement('div');
+    cover.className = 'writing-cover';
+    link.append(cover);
+    loadImageRegistry().then(registry => {
+      const image = resolveImage(registry, entry.imageId);
+      if (!image?.src) return;
+      const img = document.createElement('img');
+      img.src = image.src;
+      img.alt = '';
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.width = image.width;
+      img.height = image.height;
+      cover.append(img);
+    }).catch(error => console.error('[writing image]', error));
+  }
+  container.append(header, link);
+  section.append(container);
+  return section;
+}

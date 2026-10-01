@@ -25,6 +25,7 @@ function live(getter) {
     return value;
   }});
 }
+export const writingContent = sections.writing;
 export const evidenceMetrics = publishedItems(sections.evidence);
 export const ui = live(() => catalogs[locale].messages);
 export const content = live(() => ({

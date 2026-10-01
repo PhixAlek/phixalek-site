@@ -112,6 +112,16 @@
         "teaching": "Estudiantes y desarrolladores formados o mentorizados en educación y capacitación empresarial."
       },
       "loadTime": "De aproximadamente seis segundos a aproximadamente dos segundos"
+    },
+    "writing": {
+      "title": "Últimas publicaciones",
+      "preview": "Vista previa · Sin publicar",
+      "entries": {
+        "building-flowly": {
+          "title": "Lo que estoy aprendiendo al construir Flowly"
+        }
+      },
+      "allPosts": "Ver todas las publicaciones"
     }
   }
 }
