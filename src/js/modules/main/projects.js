@@ -1,10 +1,11 @@
 import { content, ui, format, bind, text } from '../../../content/index.js';
 import { loadImageRegistry, resolveImage } from '../images/registry.js';
+import { mountProjectReveal } from '../common/project-reveal.js';
 
 export function Projects(){
   const sec  = document.createElement('section');
   sec.id = 'work';
-  sec.className = 'section reveal';
+  sec.className = 'section projects';
 
   const wrap = document.createElement('div');
   wrap.className = 'container';
@@ -14,7 +15,7 @@ export function Projects(){
   text(h2, () => content.projects.title);
 
   const grid = document.createElement('div');
-  grid.className = 'grid';
+  grid.className = 'projects-layout';
 
   wrap.append(h2, grid);
   sec.appendChild(wrap);
@@ -24,15 +25,16 @@ export function Projects(){
       const reg = await loadImageRegistry();
       const items = content?.projects?.items || [];
 
-      items.forEach(item => {
+      items.forEach((item, index) => {
         const meta = item.imageId ? resolveImage(reg, item.imageId) : null;
         const fallback = item.imageId
           ? { src: `media/${String(item.imageId).trim()}.webp`, alt: item.title }
           : null;
         const image = (meta && meta.src) ? meta : fallback;
 
-        grid.append(card({ ...item, image }));
+        grid.append(card({ ...item, image, featured: index === 0 }));
       });
+      mountProjectReveal(grid);
     }catch(err){
       console.error('[images.json error]', err);
     }
@@ -43,10 +45,10 @@ export function Projects(){
 
 // ------------------------------ card --------------------------------
 
-function card({ id, title, desc, tags = [], actions = [], badges = [], bullets = [], image }){
+function card({ id, title, desc, tags = [], actions = [], badges = [], bullets = [], image, featured }){
   const current = () => content.projects.items.find(item => item.id === id);
   const art   = document.createElement('article');
-  art.className = 'card';
+  art.className = featured ? 'project project-featured' : 'project project-secondary';
 
   // Media
   const media = document.createElement('div');
@@ -68,16 +70,11 @@ function card({ id, title, desc, tags = [], actions = [], badges = [], bullets =
     media.classList.add('media-placeholder');
   }
 
-  // Título (enlazado al CTA primario si existe)
+  const body = document.createElement('div');
+  body.className = 'project-body';
   const h3 = document.createElement('h3');
   h3.className = 'h3';
-
-  const primary = pickPrimary(actions);
-  const linkTitle = primary ? createActionElement(primary) : document.createElement('span');
-  linkTitle.className = 'card-title-link';
-  text(linkTitle, () => current().title);
-  if (primary) bind(linkTitle, 'attr:aria-label', () => `${current().title}: ${pickPrimary(current().actions).text}`);
-  h3.appendChild(linkTitle);
+  text(h3, () => current().title);
 
   // Badges (debajo del título)
   let meta = null;
@@ -118,23 +115,26 @@ function card({ id, title, desc, tags = [], actions = [], badges = [], bullets =
   acts.className = 'card-actions';
   (actions || []).forEach((act, i) => { const node = createActionElement(act); text(node, () => current().actions[i].text); acts.appendChild(node); });
 
-  // Orden final
   if (image?.src) art.append(media);
-  art.append(h3);
-  if (meta) art.appendChild(meta);
-  art.append(p);
-  if (ul) art.appendChild(ul);
-  art.append(tagsBox, acts);
-
+  body.append(h3);
+  if (meta) body.append(meta);
+  body.append(p);
+  if (featured) {
+    if (ul) body.append(ul);
+    body.append(tagsBox);
+  } else {
+    const details = document.createElement('details');
+    details.className = 'project-details';
+    const summary = document.createElement('summary');
+    text(summary, () => ui.work.details);
+    details.append(summary);
+    if (ul) details.append(ul);
+    details.append(tagsBox);
+    body.append(details);
+  }
+  body.append(acts);
+  art.append(body);
   return art;
-}
-
-// --------------------------- helpers --------------------------------
-
-function pickPrimary(actions){
-  if (!Array.isArray(actions) || actions.length === 0) return null;
-  const byClass = actions.find(a => (a.className || '').includes('btn-primary'));
-  return byClass || actions[0];
 }
 
 function createActionElement(act = {}){

@@ -45,7 +45,8 @@
     "work": {
       "book": "Agendar una llamada",
       "open": "Abrir",
-      "image": "{title} — imagen del proyecto"
+      "image": "{title} — imagen del proyecto",
+      "details": "Detalles técnicos"
     },
     "booking": {
       "close": "Cerrar",

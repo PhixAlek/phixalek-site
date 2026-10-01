@@ -20,6 +20,6 @@ export function Main(){
   // --- Contact ---
   const contact = Contact();
 
-  main.append(hero, about, work, contact);
+  main.append(hero, work, about, contact);
   return main;
 }
