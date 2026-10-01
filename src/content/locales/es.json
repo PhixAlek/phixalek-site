@@ -102,6 +102,16 @@
     },
     "language": {
       "switch": "Switch to English"
+    },
+    "evidence": {
+      "title": "Experiencia e impacto",
+      "years": "años",
+      "contexts": {
+        "web": "Desarrollando y mejorando aplicaciones web.",
+        "clinical": "Reducción del tiempo de carga en un módulo de notas clínicas.",
+        "teaching": "Estudiantes y desarrolladores formados o mentorizados en educación y capacitación empresarial."
+      },
+      "loadTime": "De aproximadamente seis segundos a aproximadamente dos segundos"
     }
   }
 }

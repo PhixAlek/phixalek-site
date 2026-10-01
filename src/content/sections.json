@@ -36,5 +36,25 @@
       "url": "https://substack.com/@phixalek"
     },
     "items": []
+  },
+  "evidence": {
+    "publication": "published",
+    "items": [
+      {
+        "id": "web",
+        "publication": "published",
+        "value": "5+"
+      },
+      {
+        "id": "clinical",
+        "publication": "published",
+        "value": "~6s → ~2s"
+      },
+      {
+        "id": "teaching",
+        "publication": "published",
+        "value": "45+"
+      }
+    ]
   }
 }

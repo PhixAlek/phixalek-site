@@ -1,10 +1,10 @@
 // Enhance only after observation is available; content stays visible otherwise.
-export function mountProjectReveal(root, view = window) {
-  const projects = [...root.querySelectorAll('.project')];
+export function mountReveal(root, view = window, { selector = '.project', pendingClass = 'project-pending' } = {}) {
+  const projects = [...root.querySelectorAll(selector)];
   const preference = view.matchMedia('(prefers-reduced-motion: reduce)');
   if (preference.matches || !view.IntersectionObserver) return () => {};
 
-  const show = node => node.classList.remove('project-pending');
+  const show = node => node.classList.remove(pendingClass);
   const observer = new view.IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -21,11 +21,11 @@ export function mountProjectReveal(root, view = window) {
   };
   const onPreference = event => { if (event.matches) stop(); };
   const onFocus = event => {
-    const project = event.target.closest('.project');
+    const project = event.target.closest(selector);
     if (project) { show(project); observer.unobserve(project); }
   };
   projects.forEach(project => {
-    project.classList.add('project-pending');
+    project.classList.add(pendingClass);
     observer.observe(project);
   });
   preference.addEventListener('change', onPreference);

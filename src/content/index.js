@@ -1,3 +1,4 @@
+import sections from './sections.json' assert { type: 'json' };
 import englishContent from '../data/content.json' assert { type: 'json' };
 import spanishContent from '../data/content.es.json' assert { type: 'json' };
 import english from './locales/en.json' assert { type: 'json' };
@@ -24,6 +25,7 @@ function live(getter) {
     return value;
   }});
 }
+export const evidenceMetrics = publishedItems(sections.evidence);
 export const ui = live(() => catalogs[locale].messages);
 export const content = live(() => ({
   ...editorial[locale],
