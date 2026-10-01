@@ -132,6 +132,10 @@
       "aboutLabel": "About",
       "aboutTitle": "More than just code.",
       "contactTitle": "Have a project in mind?"
+    },
+    "footer": {
+      "backToTop": "Back to top",
+      "social": "Social profiles"
     }
   }
 }

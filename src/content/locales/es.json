@@ -132,6 +132,10 @@
       "aboutLabel": "Sobre mí",
       "aboutTitle": "Más que código.",
       "contactTitle": "¿Tienes un proyecto en mente?"
+    },
+    "footer": {
+      "backToTop": "Volver al inicio",
+      "social": "Redes sociales"
     }
   }
 }
