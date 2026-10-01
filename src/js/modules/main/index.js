@@ -8,14 +8,6 @@ export function Main(){
   const main = document.createElement('main');
   main.id = 'main-content';
   main.className = 'site';
-  main.style.position = 'relative';
-
-  // capa orbes
-  const orbs = document.createElement('div');
-  orbs.id = 'orbs';
-  orbs.setAttribute('aria-hidden','true');
-  main.prepend(orbs);
-
   // --- Hero ---
   const hero    = Hero();
 
