@@ -62,39 +62,6 @@ input,textarea,button{ font:inherit }
 .wrap{ flex-wrap:wrap }
 
 /* =========================================================
-   SITE: fondo gradiente + orbes (dentro de <main class="site">)
-   ========================================================= */
-.site{
-  position: relative;
-  min-height: 100vh;
-  overflow: hidden; /* no invade footer */
-}
-.site::before{
-  content:"";
-  position:absolute; inset:0; z-index:0;
-  background:
-    radial-gradient(1200px 800px at 18% 12%, #3b82f628 0%, transparent 60%),
-    radial-gradient(1000px 600px at 82% 28%, #8b5cf628 0%, transparent 60%),
-    radial-gradient(900px 700px at 52% 82%, #22d3ee28 0%, transparent 60%),
-    var(--bg);
-  animation: bg-move 25s ease-in-out infinite alternate;
-}
-@keyframes bg-move{
-  0%{ transform:translate3d(-2%,0,0) scale(1.03) }
-  100%{ transform:translate3d( 2%,-3%,0) scale(1.07) }
-}
-.site #orbs{ position:absolute; inset:0; z-index:1; pointer-events:none }
-.site .orb{
-  position:absolute; border-radius:50%;
-  background: var(--color, var(--accent));
-  opacity:.12; filter: blur(100px); mix-blend-mode: screen;
-}
-@media (min-width:768px){ .site .orb{ opacity:.30; filter: blur(120px) } }
-/* elevar contenido sobre el fondo */
-.site > *:not(#orbs){ position: relative; z-index: 2 }
-footer{ position: relative; z-index: 3 }
-
-/* =========================================================
    TIPOGRAFÍA GENERAL (excluye header/footer)
    ========================================================= */
 main.site, main.site *:where(:not(header *)):where(:not(footer *)){

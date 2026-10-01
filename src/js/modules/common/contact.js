@@ -1,4 +1,4 @@
-import { ui, bind, text } from '../../../content/index.js';
+import { ui, text } from '../../../content/index.js';
 // src/js/modules/common/contact.js
 import emailjs from '@emailjs/browser';
 
