@@ -45,7 +45,8 @@
     "work": {
       "book": "Book a call",
       "open": "Open",
-      "image": "{title} — project image"
+      "image": "{title} — project image",
+      "details": "Technical details"
     },
     "booking": {
       "close": "Close",
