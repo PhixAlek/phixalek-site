@@ -1,6 +1,6 @@
 import { content, ui, format, bind, text } from '../../../content/index.js';
 import { loadImageRegistry, resolveImage } from '../images/registry.js';
-import { mountProjectReveal } from '../common/project-reveal.js';
+import { mountReveal } from '../common/reveal.js';
 
 export function Projects(){
   const sec  = document.createElement('section');
@@ -34,7 +34,7 @@ export function Projects(){
 
         grid.append(card({ ...item, image, featured: index === 0 }));
       });
-      mountProjectReveal(grid);
+      mountReveal(grid);
     }catch(err){
       console.error('[images.json error]', err);
     }

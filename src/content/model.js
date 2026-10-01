@@ -81,8 +81,13 @@ export function validateContent(content, catalogs, sections) {
     if (section.publication !== 'published') continue;
     for (const item of publishedItems(section)) {
       checkPublished(item, name);
-      const fields = name === 'work' ? ['title','slug','overview','problem','role'] : name === 'experience' ? ['role','organization'] : ['title','url'];
+      const fields = name === 'work' ? ['title','slug','overview','problem','role'] : name === 'experience' ? ['role','organization'] : name === 'evidence' ? ['value'] : ['title','url'];
       fields.forEach(field => requireText(item[field], `${name}.${item.id}.${field}`));
+      if (name === 'evidence') {
+        for (const [locale, catalog] of Object.entries(catalogs)) {
+          if (catalog.publication === 'published') requireText(catalog.messages.evidence?.contexts?.[item.id], `${locale}.evidence.${item.id}.context`);
+        }
+      }
       if (name === 'work' && !['planned','in-progress','released'].includes(item.status)) errors.push(`${item.id}: invalid project status`);
       for (const field of ['repository','liveDemo','url']) if (item[field] != null && !validDestination(item[field])) errors.push(`${item.id}.${field}: invalid URL`);
       for (const action of item.links || []) if (!validAction(action)) errors.push(`${item.id}: invalid link`);

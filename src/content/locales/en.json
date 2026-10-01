@@ -102,6 +102,16 @@
     },
     "language": {
       "switch": "Cambiar a español"
+    },
+    "evidence": {
+      "title": "Experience and impact",
+      "years": "Years",
+      "contexts": {
+        "web": "Building and improving web applications.",
+        "clinical": "Reduced load time in a clinical-notes module.",
+        "teaching": "Students and developers taught or mentored in education and corporate training."
+      },
+      "loadTime": "Approximately six seconds to approximately two seconds"
     }
   }
 }

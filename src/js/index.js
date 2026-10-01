@@ -7,6 +7,7 @@ import { Footer } from './modules/footer/footer.js';
 import { mountBooking }    from './modules/common/booking.js';
 import { mountContactEmailJS } from './modules/common/contact.js';
 
+import { mountReveal } from './modules/common/reveal.js';
 import { mountNavigation } from './modules/common/navigation.js';
 
 async function bootstrap(){
@@ -21,6 +22,8 @@ async function bootstrap(){
   app.append(header, main, footer);
 
   mountNavigation(header, main);
+  const evidence = main.querySelector('.evidence-list');
+  if (evidence) mountReveal(evidence, window, { selector: '.evidence-item', pendingClass: 'evidence-pending' });
   mountBooking();
   if (typeof __EMAILJS_SERVICE__ !== 'undefined') {
     mountContactEmailJS({ serviceId: __EMAILJS_SERVICE__, templateId: __EMAILJS_TEMPLATE__, publicKey: __EMAILJS_PUBLIC__ });
