@@ -27,6 +27,12 @@ export function Main(){
   if (evidence) main.append(evidence);
   const writing = Writing();
   if (writing) main.append(writing);
-  main.append(about, contact);
+  const closing = document.createElement('div');
+  closing.className = 'closing';
+  const closingGrid = document.createElement('div');
+  closingGrid.className = 'container closing-grid';
+  closingGrid.append(about, contact);
+  closing.append(closingGrid);
+  main.append(closing);
   return main;
 }

@@ -31,7 +31,14 @@ export function mountNavigation(header, main) {
     const offset = headerHeight + 16;
     document.documentElement.style.setProperty('--anchor-offset', `${offset}px`);
     const atBottom = window.scrollY > 0 && window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
-    const current = activeSection(sections.map(section => ({ id: section.id, top: section.getBoundingClientRect().top })), offset, atBottom);
+    let current = activeSection(sections.map(section => ({ id: section.id, top: section.getBoundingClientRect().top })), offset, atBottom);
+    // About and Contact share a compact row: preserve the requested anchor
+    // while it is visible instead of letting their equal positions choose Contact.
+    const requested = sections.find(section => `#${section.id}` === window.location?.hash);
+    if (requested?.closest('.closing')) {
+      const bounds = requested.getBoundingClientRect();
+      if (bounds.bottom > headerHeight && bounds.top < window.innerHeight) current = requested.id;
+    }
     links.forEach(link => {
       if (link.hash === `#${current}`) link.setAttribute('aria-current', 'location');
       else link.removeAttribute('aria-current');

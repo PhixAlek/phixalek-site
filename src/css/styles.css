@@ -64,7 +64,7 @@ main.site{
 
 /* Animación de entrada sutil */
 @media (prefers-reduced-motion: no-preference){
-  .section:not(.hero):not(.projects):not(.evidence):not(.writing) .container{
+  .section:not(.hero):not(.projects):not(.evidence):not(.writing):not(.closing-section) .container{
     opacity:0; transform: translateY(8px);
     animation: fade-in .5s ease-out .05s forwards;
   }
@@ -353,11 +353,6 @@ body.modal-open{ overflow:hidden }
   width:6px; height:6px; border-radius:50%;
   background: radial-gradient(circle at 30% 30%, var(--accent-2), var(--accent-1));
 }
-@media (prefers-reduced-motion: no-preference){
-  .about-copy{ opacity:0; transform: translateY(8px); animation: about-in .5s ease-out .05s forwards }
-  @keyframes about-in{ to{ opacity:1; transform:none } }
-}
-
 /* =========================================================
    FOOTER
    ========================================================= */
@@ -523,5 +518,69 @@ input,textarea{ line-height:1.5; }
   .writing-entry:hover .writing-action,.writing-all:hover > span:last-child{ transform:translateX(4px); }
   .writing-header:focus-within,.writing-entry:focus-visible,.writing-entry:focus-visible .writing-cover,.writing-entry:focus-visible .writing-entry-copy{
     opacity:1; transform:none; transition:none;
+  }
+}
+
+/* A compact closing block; full biography and the existing form expand in place. */
+.closing{ padding:var(--space-8) 0 var(--space-12); }
+.closing-grid{ display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr); gap:var(--space-8); max-width:var(--work-max); }
+.closing #about,.closing #contact{ min-height:0; padding:0; border-top:0; display:block; min-width:0; }
+.closing .closing-section > .container{ max-width:none; width:100%; padding:0; }
+.closing .about-copy{ max-width:none; margin:0; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.5fr); gap:0 var(--space-6); }
+.closing .about-eyebrow{ grid-column:1; margin-bottom:var(--space-2); font-weight:700; }
+.closing .about-title,.closing #contact .h2{ font-size:clamp(1.5rem,2.5vw,2rem); margin:0; line-height:1.2; }
+ .closing .about-copy > .about-eyebrow{ grid-column:1; }
+.closing .about-title{ grid-column:1; grid-row:2; }
+.closing .about-lede{ grid-column:2; grid-row:2; align-self:center; border-left:1px solid var(--line); padding-left:var(--space-6); margin:0; font-size:.95rem; line-height:1.6; text-wrap:pretty; hyphens:none; }
+.about-details{ grid-column:1/-1; margin-top:var(--space-2); }
+.about-details summary{ width:fit-content; min-height:44px; padding:10px 0; font-weight:700; cursor:pointer; }
+.about-details summary:focus-visible{ outline:2px solid var(--focus); outline-offset:4px; border-radius:4px; }
+.about-details[open] summary{ margin-bottom:var(--space-4); }
+.closing #contact{ border-left:1px solid var(--line); padding-left:var(--space-8); }
+.closing #contact > .container{ display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:var(--space-4); }
+.closing #contact .h2{ grid-column:1; margin-bottom:0; }
+.closing #contact .contact-actions{ grid-column:2; grid-row:1/3; align-self:center; }
+.closing #contact .contact-panel{ grid-column:1/-1; }
+.contact-actions{ display:flex; flex-wrap:wrap; gap:var(--space-3); }
+ .contact-actions > button{ display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:48px; border-radius:999px; font-weight:700; white-space:nowrap; }
+.contact-actions svg{ width:22px; height:22px; flex:none; }
+.contact-message{ box-shadow:0 4px 12px rgb(53 102 79 / 12%); }
+.contact-message{ color:var(--on-accent); background:var(--accent); border-color:var(--accent); }
+.contact-message:hover{ color:var(--on-accent); background:var(--accent-hover); border-color:var(--accent-hover); }
+.contact-panel{ margin-top:var(--space-6); }
+.contact-email{ display:inline-block; margin-top:var(--space-4); padding:8px 0; }
+@media(min-width:768px) and (max-width:1100px){
+  .closing #contact .contact-actions{ grid-column:1/-1; grid-row:auto; margin-top:var(--space-4); }
+}
+@media(max-width:767px){
+  .closing-grid{ grid-template-columns:1fr; gap:var(--space-8); }
+  .closing .about-copy{ grid-template-columns:1fr; text-align:center; }
+  .closing .about-title{ grid-column:1; grid-row:auto; }
+  .closing .about-lede{ grid-column:1; grid-row:auto; border-left:0; padding:0; margin-top:var(--space-4); }
+  .about-details summary{ margin-inline:auto; }
+  .about-detail-content{ text-align:left; }
+  .closing #contact{ border-left:0; padding:var(--space-8) 0 0; border-top:1px solid var(--line); text-align:center; }
+  .closing #contact > .container{ display:block; }
+  .contact-actions{ justify-content:center; margin-top:var(--space-4); }
+  .contact-panel{ text-align:left; }
+}
+
+@media(prefers-reduced-motion:no-preference){
+  .closing-section{ transition:opacity 900ms ease,transform 1100ms cubic-bezier(.22,1,.36,1); }
+  .closing-pending{ opacity:0; transform:translateY(20px); }
+  .closing-section:focus-within{ opacity:1; transform:none; transition:none; }
+  .booking-modal.is-open:not(.is-closing) .booking-box{
+    animation:booking-enter 420ms cubic-bezier(.22,1,.36,1) both;
+  }
+  .booking-modal.is-closing .booking-box{
+    animation:booking-exit 260ms ease both;
+  }
+  @keyframes booking-enter{
+    from{ transform:translateY(16px) scale(.98); }
+    to{ transform:none; }
+  }
+  @keyframes booking-exit{
+    from{ transform:none; }
+    to{ transform:translateY(10px) scale(.98); }
   }
 }
