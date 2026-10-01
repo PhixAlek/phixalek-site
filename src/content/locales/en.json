@@ -112,6 +112,16 @@
         "teaching": "Students and developers taught or mentored in education and corporate training."
       },
       "loadTime": "Approximately six seconds to approximately two seconds"
+    },
+    "writing": {
+      "title": "Latest Writing",
+      "preview": "Preview · Not published",
+      "entries": {
+        "building-flowly": {
+          "title": "What I’m learning while building Flowly"
+        }
+      },
+      "allPosts": "View all posts"
     }
   }
 }

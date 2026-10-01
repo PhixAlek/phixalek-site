@@ -88,6 +88,13 @@ export function validateContent(content, catalogs, sections) {
           if (catalog.publication === 'published') requireText(catalog.messages.evidence?.contexts?.[item.id], `${locale}.evidence.${item.id}.context`);
         }
       }
+      if (name === 'writing') {
+        if (!['article', 'preview'].includes(item.kind)) errors.push(`${item.id}: invalid writing kind`);
+        if (item.kind === 'article' && item.url === section.source?.url) errors.push(`${item.id}: article needs its own URL`);
+        for (const [locale, catalog] of Object.entries(catalogs)) {
+          if (catalog.publication === 'published') requireText(catalog.messages.writing?.entries?.[item.id]?.title, `${locale}.writing.${item.id}.title`);
+        }
+      }
       if (name === 'work' && !['planned','in-progress','released'].includes(item.status)) errors.push(`${item.id}: invalid project status`);
       for (const field of ['repository','liveDemo','url']) if (item[field] != null && !validDestination(item[field])) errors.push(`${item.id}.${field}: invalid URL`);
       for (const action of item.links || []) if (!validAction(action)) errors.push(`${item.id}: invalid link`);

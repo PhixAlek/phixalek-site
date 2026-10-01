@@ -13,6 +13,12 @@ test('published evidence requires a value and localized context', () => {
   assert.ok(check(f).some(error => error.includes('web.value')));
   assert.ok(check(f).some(error => error.includes('es.evidence.clinical.context')));
 });
+test('writing cannot present the profile as an article or publish untranslated titles', () => {
+  const f = fixtures();
+  f.sections.writing.items = [{ id:'sample', publication:'published', kind:'article', title:'Sample', url:f.sections.writing.source.url }];
+  assert.ok(check(f).some(error => error.includes('article needs its own URL')));
+  assert.ok(check(f).some(error => error.includes('es.writing.sample.title')));
+});
 test('reject empty, unsafe, unimplemented and credential-bearing destinations', () => {
   for (const url of ['', '#', '#experience', 'javascript:void(0)', '//example.com', 'https://user:pass@example.com', '/work/flowly', ' https://example.com']) assert.equal(validDestination(url), false, url);
   assert.equal(validDestination('#work'), true); assert.equal(validDestination('https://github.com/phixalek'), true);

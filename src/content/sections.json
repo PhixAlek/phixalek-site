@@ -30,12 +30,21 @@
     ]
   },
   "writing": {
-    "publication": "draft",
+    "publication": "published",
     "source": {
       "provider": "substack",
       "url": "https://substack.com/@phixalek"
     },
-    "items": []
+    "items": [
+      {
+        "id": "building-flowly",
+        "publication": "published",
+        "kind": "preview",
+        "title": "What I’m learning while building Flowly",
+        "url": "https://substack.com/@phixalek",
+        "imageId": "writing-landscape"
+      }
+    ]
   },
   "evidence": {
     "publication": "published",

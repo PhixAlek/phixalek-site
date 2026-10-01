@@ -23,6 +23,13 @@
       "width": 480,
       "height": 480,
       "alt": ""
+    },
+    {
+      "id": "writing-landscape",
+      "src": "writing-landscape.svg",
+      "alt": "",
+      "width": 1200,
+      "height": 400
     }
   ]
 }

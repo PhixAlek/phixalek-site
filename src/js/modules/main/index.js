@@ -2,6 +2,7 @@
 import { Hero } from './hero.js';
 import { About } from './about.js';
 import { Projects } from './projects.js';
+import { Writing } from './writing.js';
 import { Evidence } from './evidence.js';
 import { Contact } from './contact.js';
 
@@ -24,6 +25,8 @@ export function Main(){
   const evidence = Evidence();
   main.append(hero, work);
   if (evidence) main.append(evidence);
+  const writing = Writing();
+  if (writing) main.append(writing);
   main.append(about, contact);
   return main;
 }

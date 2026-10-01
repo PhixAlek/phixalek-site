@@ -22,6 +22,8 @@ async function bootstrap(){
   app.append(header, main, footer);
 
   mountNavigation(header, main);
+  const writing = main.querySelector('.writing');
+  if (writing) mountReveal(writing, window, { selector: '.writing-header, .writing-entry', pendingClass: 'writing-pending' });
   const evidence = main.querySelector('.evidence-list');
   if (evidence) mountReveal(evidence, window, { selector: '.evidence-item', pendingClass: 'evidence-pending' });
   mountBooking();
