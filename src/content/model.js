@@ -102,7 +102,7 @@ export function validateTranslation(base, translated) {
     } else if (a && typeof a === 'object') {
       if (!b || typeof b !== 'object') { errors.push(`${path}: missing object`); return; }
       Object.keys(a).forEach(key => {
-        if (['href','id','imageId','kind','publication','className','mailTo','email','icon','name'].includes(key) && a[key] !== b[key]) errors.push(`${path}.${key}: translated invariant`);
+        if (['href','id','imageId','avatarId','kind','publication','className','mailTo','email','icon','name'].includes(key) && a[key] !== b[key]) errors.push(`${path}.${key}: translated invariant`);
         walk(a[key], b[key], `${path}.${key}`);
       });
     } else if (typeof a !== typeof b || (typeof b === 'string' && (!b.trim() || /\bTODO\b/.test(b)))) errors.push(`${path}: missing translation`);

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { activeSection } from '../src/js/modules/common/navigation.js';
+import { activeSection, mountNavigation } from '../src/js/modules/common/navigation.js';
 test('home is active before any following section crosses the header', () => {
   assert.equal(activeSection([{id:'home',top:0},{id:'about',top:500}],80),'home');
 });
@@ -12,3 +12,24 @@ test('a short final section is active at the bottom of the page', () => {
   assert.equal(activeSection([{id:'work',top:-300},{id:'contact',top:350}],80,true),'contact');
 });
 test('empty navigation is supported',()=>assert.equal(activeSection([],80),null));
+
+test('active navigation follows page order when Projects precedes About in the header', t => {
+  const attributes = () => ({ values:new Map(), setAttribute(key,value){this.values.set(key,value);}, removeAttribute(key){this.values.delete(key);} });
+  const links = ['work','about','contact'].map(id => ({ ...attributes(), hash:`#${id}` }));
+  const sections = [{id:'home',top:-800},{id:'about',top:-100},{id:'work',top:700},{id:'contact',top:1400}]
+    .map(section => ({...section,getBoundingClientRect:()=>({top:section.top})}));
+  const events = {addEventListener(){},removeEventListener(){}};
+  const stub = (key, value) => {
+    const previous = Object.getOwnPropertyDescriptor(globalThis,key);
+    Object.defineProperty(globalThis,key,{value,configurable:true});
+    t.after(() => { if(previous) Object.defineProperty(globalThis,key,previous); else delete globalThis[key]; });
+  };
+  stub('window',{...events,scrollY:800,innerHeight:700});
+  stub('document',{...events,documentElement:{scrollHeight:4000,style:{setProperty(){}}}});
+  stub('ResizeObserver',class{observe(){}disconnect(){}});
+  stub('cancelAnimationFrame',()=>{});
+  const cleanup = mountNavigation({querySelectorAll:()=>links,getBoundingClientRect:()=>({height:80})},{querySelectorAll:()=>sections});
+  assert.equal(links[1].values.get('aria-current'),'location');
+  assert.equal(links[0].values.has('aria-current'),false);
+  cleanup();
+});

@@ -21,17 +21,20 @@ export function Header(){
   // Nav desktop
   const nav = document.createElement('nav');
   nav.className = 'nav';
-  const fillNavigation = (target, emphasize = false) => {
-    ui.navigation.items.forEach((item, i) => {
-      const link = document.createElement('a'); link.href = item.href;
-      const label = emphasize && i > 0 ? document.createElement('strong') : link;
-      text(label, () => ui.navigation.items[i].label);
-      if (label !== link) link.append(label);
+  const fillNavigation = (target, destinations = ui.navigation.items.map(item => item.href)) => {
+    destinations.forEach(href => {
+      const link = document.createElement('a'); link.href = href;
+      text(link, () => ui.navigation.items.find(item => item.href === href).label);
       target.append(link);
     });
   };
-  fillNavigation(nav, true);
-  nav.append(languageButton('language-desktop'));
+  // Brand returns home; only implemented destinations enter desktop navigation.
+  fillNavigation(nav, ['#work', '#about']);
+  const contact = document.createElement('a');
+  contact.className = 'btn header-contact';
+  bind(contact, 'attr:href', () => content.hero.ctaPrimary.href);
+  text(contact, () => content.hero.ctaPrimary.text);
+  nav.append(contact, languageButton('language-desktop'));
 
   // Burger
   const btn = document.createElement('button');
