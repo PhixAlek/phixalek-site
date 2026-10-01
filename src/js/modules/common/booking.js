@@ -1,3 +1,4 @@
+import { createDisclosure } from './disclosure.js';
 import { ui, format, bind, text, locale, unbind } from '../../../content/index.js';
 import { attachCalendar } from './date-calendar.js';
 import { createTimeWheel } from './time-wheel.js';
@@ -113,8 +114,31 @@ export function mountBooking(){
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   };
+  let bookingOpen = false;
+  modal.hidden = true;
+  const showBooking = createDisclosure(modal, {
+    frames: open => [{ opacity: open ? 0 : 1 }, { opacity: open ? 1 : 0 }],
+    onStart: open => {
+      modal.classList.add('is-open');
+      modal.classList.toggle('is-closing', !open);
+      if (open) {
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('modal-open');
+        document.addEventListener('keydown', onKey);
+      }
+    },
+    onFinish: open => {
+      if (open) return;
+      modal.classList.remove('is-open', 'is-closing');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+      document.removeEventListener('keydown', onKey);
+      returnFocus?.focus({ preventScroll: true });
+    },
+  });
   const open = () => {
-    if (modal.classList.contains('is-open')) return;
+    if (bookingOpen) return;
+    bookingOpen = true;
     returnFocus = document.activeElement;
     form.reset(); calendar.hide(); details.open = false; booked = false; text(statusEl, () => '');
     [inputDate, inputDuration, inputTime].forEach(n => n.disabled = false);
@@ -122,21 +146,15 @@ export function mountBooking(){
     inputDate.value = '';
     slots = []; loading = false; retry.hidden = true;
     inputTime.setEmpty(() => copy.choose);
-    modal.classList.add('is-open');
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('modal-open');
-    document.addEventListener('keydown', onKey);
-    inputName.focus();
+    showBooking(true);
+    inputName.focus({ preventScroll: true });
     updateSummary();
   };
   const close = () => {
-    if (submitting) return;
+    if (submitting || !bookingOpen) return;
+    bookingOpen = false;
     requestVersion++; abortAvailability?.abort();
-    modal.classList.remove('is-open');
-    modal.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('modal-open');
-    document.removeEventListener('keydown', onKey);
-    returnFocus?.focus();
+    showBooking(false);
   };
   modal.addEventListener('mousedown', e => { if (e.target === modal) close(); });
   btnCloseX.addEventListener('click', close);

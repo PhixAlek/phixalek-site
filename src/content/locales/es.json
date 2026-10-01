@@ -122,6 +122,16 @@
         }
       },
       "allPosts": "Ver todas las publicaciones"
+    },
+    "closing": {
+      "more": "Más sobre mí",
+      "sendMessage": "Enviar un mensaje",
+      "closeMessage": "Cerrar formulario",
+      "talk": "Hablemos",
+      "intro": "Creo productos útiles, sigo aprendiendo y comparto lo que aprendo.",
+      "aboutLabel": "Sobre mí",
+      "aboutTitle": "Más que código.",
+      "contactTitle": "¿Tienes un proyecto en mente?"
     }
   }
 }

@@ -1,3 +1,4 @@
+import { createDisclosure } from '../common/disclosure.js';
 import { content, ui, bind, text } from '../../../content/index.js';
 
 export function Contact(){
@@ -5,14 +6,16 @@ export function Contact(){
 
   const sec  = document.createElement('section');
   sec.id = 'contact';
-  sec.className = 'section';
+  sec.className = 'section closing-section';
+  sec.setAttribute('aria-labelledby', 'contact-title');
 
   const wrap = document.createElement('div');
   wrap.className = 'container';
 
   const h2 = document.createElement('h2');
   h2.className = 'h2';
-  text(h2, () => C.title);
+  h2.id = 'contact-title';
+  text(h2, () => ui.closing.contactTitle);
 
   const form = document.createElement('form');
   form.id = 'contact-form';
@@ -58,7 +61,70 @@ export function Contact(){
   text(send, () => ui.contact.submit);
   status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite');
   form.append(name, email, msg, hp, send, status);
-  wrap.append(h2, form);
+  const eyebrow = document.createElement('span');
+  eyebrow.className = 'about-eyebrow';
+  text(eyebrow, () => ui.closing.talk);
+  const actions = document.createElement('div');
+  actions.className = 'contact-actions';
+  const panel = document.createElement('div');
+  panel.id = 'contact-panel';
+  panel.className = 'contact-panel';
+  panel.hidden = true;
+  const toggle = document.createElement('button');
+  toggle.type = 'button';
+  toggle.className = 'btn contact-message';
+  toggle.setAttribute('aria-controls', panel.id);
+  toggle.setAttribute('aria-expanded', 'false');
+  const messageLabel = document.createElement('span');
+  toggle.append(actionIcon('message'), messageLabel);
+  let expanded = false;
+  text(messageLabel, () => expanded ? ui.closing.closeMessage : ui.closing.sendMessage);
+  const showForm = createDisclosure(panel, {
+    onStart: open => {
+      toggle.setAttribute('aria-expanded', String(open));
+      text(messageLabel, () => expanded ? ui.closing.closeMessage : ui.closing.sendMessage);
+      if (open) name.focus({ preventScroll: true });
+      else if (panel.contains(document.activeElement)) toggle.focus({ preventScroll: true });
+    },
+  });
+  toggle.addEventListener('click', () => {
+    expanded = !expanded;
+    showForm(expanded);
+  });
+  name.autoComplete = 'name';
+  email.autoComplete = 'email';
+  const book = document.createElement('button');
+  book.type = 'button';
+  book.className = 'btn-outline';
+  book.setAttribute('data-book', 'true');
+  const bookLabel = document.createElement('span');
+  text(bookLabel, () => ui.work.book);
+  book.append(actionIcon('calendar'), bookLabel);
+  actions.append(toggle, book);
+  const emailLink = document.createElement('a');
+  emailLink.className = 'contact-email';
+  emailLink.href = `mailto:${C.mailTo}`;
+  text(emailLink, () => C.mailTo);
+  panel.append(form, emailLink);
+  wrap.append(eyebrow, h2, actions, panel);
   sec.appendChild(wrap);
   return sec;
+}
+
+function actionIcon(type) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('focusable', 'false');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', 'currentColor');
+  svg.setAttribute('stroke-width', '1.7');
+  svg.setAttribute('stroke-linecap', 'round');
+  svg.setAttribute('stroke-linejoin', 'round');
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', type === 'message'
+    ? 'M21 3 3 10l7 3 3 7 8-17ZM10 13 21 3M13 20l-3-7v6'
+    : 'M5 5h14a2 2 0 0 1 2 2v13H3V7a2 2 0 0 1 2-2ZM7 3v4M17 3v4M3 10h18');
+  svg.append(path);
+  return svg;
 }

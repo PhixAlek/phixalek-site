@@ -122,6 +122,16 @@
         }
       },
       "allPosts": "View all posts"
+    },
+    "closing": {
+      "more": "More about me",
+      "sendMessage": "Send a message",
+      "closeMessage": "Close form",
+      "talk": "Let’s talk",
+      "intro": "I build useful products, learn continuously, and enjoy sharing what I learn.",
+      "aboutLabel": "About",
+      "aboutTitle": "More than just code.",
+      "contactTitle": "Have a project in mind?"
     }
   }
 }
