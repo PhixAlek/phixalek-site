@@ -1,7 +1,7 @@
 {
   "hero": {
     "name": "Phixalek",
-    "subtitle": "Software developer focused on [[.NET]], [[Angular]] and [[web applications]].",
+    "subtitle": "Software developer focused on [[.NET]], [[Angular]] and [[complement:web applications]].",
     "ctaPrimary": {
       "text": "Get in touch",
       "href": "#contact"
@@ -15,13 +15,13 @@
   "about": {
     "eyebrow": "Software • Consulting • Game Dev",
     "title": "Who is Phixalek?",
-    "lead": "Alejandro Segura was born in Colombia and is currently pursuing a Multimedia Engineering degree. He moves between [[software development]] and personal projects mixing technology with storytelling.",
-    "body": "He is developing **Flowly**, a personal finance project starting with ((.NET 10)); and **Bloomink**, his indie studio where he is building *No Witness*, a survival narrative inspired by Resident Evil and Silent Hill using ((UE5 + C++)).\n\nNow based in Hermosillo, Mexico, he is studying Multimedia Engineering and teaching programming.",
+    "lead": "Alejandro Segura was born in Colombia and is currently pursuing a [[Multimedia Engineering degree]]. He moves between [[software development]] and personal projects mixing technology with storytelling.",
+    "body": "He is developing **Flowly**, a personal finance project starting with [[.NET 10]]; and **Bloomink**, his indie studio where he is building *No Witness*, a survival narrative inspired by Resident Evil and Silent Hill using [[UE5 + C++]].\n\nNow based in Sonora, Mexico, he is studying Multimedia Engineering and teaching programming.",
     "bullets": [
-      "Backend: ((.NET, C#, DDD, Clean Architecture)) → scalable & maintainable systems",
-      "Frontend: ((Angular, TypeScript)) → real-world apps with clean UX",
-      "Game Dev: ((UE5, C++)) + [[Pixel Art]] → optimized pipelines & storytelling",
-      "Practices: ((CI/CD, Clean Code))"
+      "Backend: [[.NET, C#, DDD, Clean Architecture]] → scalable & maintainable systems",
+      "Frontend: [[Angular, TypeScript]] → real-world apps with clean UX",
+      "Game Dev: [[UE5, C++]] + [[Pixel Art]] → optimized pipelines & storytelling",
+      "Practices: [[CI/CD, Clean Code]]"
     ]
   },
   "projects": {
@@ -33,8 +33,8 @@
         "tags": [
           ".NET 10",
           "Angular SPA",
+          "DDD",
           "PostgreSQL",
-          "GitHub",
           "GitHub Actions",
           "CI/CD"
         ],
@@ -51,7 +51,11 @@
         ],
         "id": "flowly",
         "publication": "published",
-        "imageId": "finbit-01"
+        "imageId": "finbit-01",
+        "tagStyles": {
+          ".NET 10": "primary",
+          "Angular SPA": "complement"
+        }
       },
       {
         "title": "Consulting",
@@ -79,7 +83,11 @@
           "Express audit (48h)",
           "Improvement plan + roadmap",
           "Guided implementation"
-        ]
+        ],
+        "tagStyles": {
+          "Integrations": "primary",
+          "Refactoring": "primary"
+        }
       },
       {
         "id": "phixalek-site",
@@ -88,6 +96,7 @@
         "desc": "This site uses JavaScript for the interface, EmailJS for contact messages, and the Google Calendar API to check availability and book calls.",
         "tags": [
           "JavaScript",
+          "Webpack",
           "EmailJS",
           "Calendar API",
           "Netlify"
@@ -103,7 +112,12 @@
             "href": "https://github.com/PhixAlek/phixalek-site/blob/AS-arquitectura-contenido-2026-09-28/docs/ARCHITECTURE.md"
           }
         ],
-        "imageId": "demome-01"
+        "imageId": "demome-01",
+        "tagStyles": {
+          "JavaScript": "primary",
+          "Webpack": "primary",
+          "Netlify": "primary"
+        }
       }
     ]
   },
@@ -112,7 +126,7 @@
     "mailTo": "hi@phixalek.com"
   },
   "footer": {
-    "location": "Hermosillo, México",
+    "location": "Sonora, México",
     "language": "English / Spanish",
     "role": "Software Developer",
     "email": "hi@phixalek.com",

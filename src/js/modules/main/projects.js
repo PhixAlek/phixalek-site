@@ -1,3 +1,4 @@
+import { mountNavigationWave } from '../common/navigation-wave.js';
 import { content, ui, format, bind, text } from '../../../content/index.js';
 import { loadImageRegistry, resolveImage } from '../images/registry.js';
 import { mountReveal } from '../common/reveal.js';
@@ -12,7 +13,7 @@ export function Projects(){
 
   const h2 = document.createElement('h2');
   h2.className = 'h2';
-  text(h2, () => content.projects.title);
+  mountNavigationWave(h2, sec, () => content.projects.title);
 
   const grid = document.createElement('div');
   grid.className = 'projects-layout';
@@ -45,7 +46,7 @@ export function Projects(){
 
 // ------------------------------ card --------------------------------
 
-function card({ id, title, desc, tags = [], actions = [], badges = [], bullets = [], image, featured }){
+function card({ id, title, desc, tags = [], tagStyles = {}, actions = [], badges = [], bullets = [], image, featured }){
   const current = () => content.projects.items.find(item => item.id === id);
   const art   = document.createElement('article');
   art.className = featured ? 'project project-featured' : 'project project-secondary';
@@ -106,6 +107,7 @@ function card({ id, title, desc, tags = [], actions = [], badges = [], bullets =
   tagsBox.className = 'tags';
   tags.forEach((t, i) => {
     const s = document.createElement('span');
+    s.className = `tag-${tagStyles[t] || 'neutral'}`;
     text(s, () => current().tags[i]);
     tagsBox.appendChild(s);
   });
@@ -113,10 +115,32 @@ function card({ id, title, desc, tags = [], actions = [], badges = [], bullets =
   // Acciones (soporta <a> normales y botón con data-book)
   const acts = document.createElement('div');
   acts.className = 'card-actions';
-  (actions || []).forEach((act, i) => { const node = createActionElement(act); text(node, () => current().actions[i].text); acts.appendChild(node); });
+  (actions || []).forEach((act, i) => {
+    const node = createActionElement(act);
+    const label = document.createElement('span');
+    text(label, () => current().actions[i].text);
+    node.append(label);
+    if (act.kind === 'link') {
+      const arrow = document.createElement('span');
+      arrow.className = 'project-link-arrow';
+      arrow.textContent = '→';
+      arrow.setAttribute('aria-hidden', 'true');
+      node.append(arrow);
+    }
+    acts.appendChild(node);
+  });
 
   if (image?.src) art.append(media);
-  body.append(h3);
+  if (featured) {
+    const titleRow = document.createElement('div');
+    titleRow.className = 'project-title-row';
+    const number = document.createElement('span');
+    number.className = 'project-number';
+    number.textContent = '01 —';
+    number.setAttribute('aria-hidden', 'true');
+    titleRow.append(number, h3);
+    body.append(titleRow);
+  } else body.append(h3);
   if (meta) body.append(meta);
   body.append(p);
   if (featured) {
@@ -139,21 +163,20 @@ function card({ id, title, desc, tags = [], actions = [], badges = [], bullets =
 
 function createActionElement(act = {}){
   const isBook = act.kind === 'booking';
-  const text = act.text || (isBook ? ui.work.book : ui.work.open);
   const className = act.className || '';
 
   if (isBook){
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = className;
-    btn.textContent = text;
+
     btn.setAttribute('data-book', 'true'); // el listener global de booking abrirá el modal
     return btn;
   }
 
   const a = document.createElement('a');
-  a.className = className;
-  a.textContent = text;
+  a.className = 'project-link';
+
   const href = act.href;
   a.href = href;
 

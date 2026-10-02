@@ -4,6 +4,7 @@ export function createDisclosure(panel, {
   onStart = () => {},
   onFinish = () => {},
   frames,
+  openDuration = 420,
 } = {}) {
   let animation, revision = 0;
   return async function setOpen(open) {
@@ -14,11 +15,11 @@ export function createDisclosure(panel, {
     panel.hidden = false;
     panel.inert = !open;
     onStart(open);
-    if (panel.animate && !view.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if ((!open || openDuration > 0) && panel.animate && !view.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       animation = panel.animate(frames ? frames(open) : [
         { height: `${currentHeight}px`, opacity: currentOpacity, overflow: 'clip' },
         { height: `${open ? panel.scrollHeight : 0}px`, opacity: open ? 1 : 0, overflow: 'clip' },
-      ], { duration: open ? 420 : 260, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' });
+      ], { duration: open ? openDuration : 260, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' });
       try { await animation.finished; } catch { return; }
     }
     if (version !== revision) return;

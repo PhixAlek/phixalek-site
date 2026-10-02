@@ -12,12 +12,16 @@
           "href": "#home"
         },
         {
-          "label": "About",
-          "href": "#about"
-        },
-        {
           "label": "Projects",
           "href": "#work"
+        },
+        {
+          "label": "Blog",
+          "href": "#writing"
+        },
+        {
+          "label": "About",
+          "href": "#about"
         },
         {
           "label": "Contact",

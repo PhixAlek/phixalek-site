@@ -1,3 +1,4 @@
+import { mountNavigationWave } from '../common/navigation-wave.js';
 import { writingContent, content, ui, text } from '../../../content/index.js';
 import { publishedItems, validDestination } from '../../../content/model.js';
 import { loadImageRegistry, resolveImage } from '../images/registry.js';
@@ -8,13 +9,14 @@ export function Writing() {
   const entry = publishedItems(writingContent)[0];
   const section = document.createElement('section');
   section.className = 'section writing';
+  section.id = 'writing';
   section.setAttribute('aria-labelledby', 'writing-title');
   const container = document.createElement('div');
   container.className = 'container';
   const heading = document.createElement('h2');
   heading.id = 'writing-title';
   heading.className = 'h2';
-  text(heading, () => ui.writing.title);
+  mountNavigationWave(heading, section, () => ui.writing.title);
   const header = document.createElement('div');
   header.className = 'writing-header';
   const allPosts = document.createElement('a');
@@ -43,7 +45,9 @@ export function Writing() {
   label.className = 'writing-label';
   text(label, () => entry?.kind === 'preview' ? ui.writing.preview : 'Substack');
   const title = document.createElement('h3');
-  text(title, () => entry ? ui.writing.entries[entry.id].title : content.hero.name);
+  mountNavigationWave(title, section,
+    () => entry ? ui.writing.entries[entry.id].title : content.hero.name,
+    { after: heading });
   copy.append(label, title);
   const action = document.createElement('span');
   action.className = 'writing-action';
@@ -71,6 +75,14 @@ export function Writing() {
     }).catch(error => console.error('[writing image]', error));
   }
   container.append(header, link);
+  // Keep the primary preview before the external archive in mobile reading order.
+  const mobile = window.matchMedia('(max-width: 767px)');
+  const arrange = () => {
+    if (mobile.matches) container.append(allPosts);
+    else header.append(allPosts);
+  };
+  arrange();
+  mobile.addEventListener('change', arrange);
   section.append(container);
   return section;
 }

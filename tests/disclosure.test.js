@@ -56,3 +56,18 @@ test('reduced motion updates visibility without animation', async () => {
   assert.equal(panel.hidden, true);
   assert.equal(animations.length, 0);
 });
+
+test('About can prepare its lines immediately, including after an interrupted close', async () => {
+  const { panel, view, animations } = fixture();
+  const completed = [];
+  const setOpen = createDisclosure(panel, { view, openDuration: 0, onFinish: open => completed.push(open) });
+  await setOpen(true);
+  assert.deepEqual(completed, [true]);
+  assert.equal(animations.length, 0);
+  const closing = setOpen(false);
+  await setOpen(true);
+  await closing;
+  assert.equal(panel.hidden, false);
+  assert.equal(panel.inert, false);
+  assert.deepEqual(completed, [true, true]);
+});
