@@ -125,7 +125,21 @@
           "title": "What I’m learning while building Flowly"
         }
       },
-      "allPosts": "View all posts"
+      "allPosts": "View all posts",
+      "states": {
+        "loading": {
+          "title": "Loading the latest post…",
+          "message": "Checking Substack."
+        },
+        "empty": {
+          "title": "New posts are on the way",
+          "message": "No published posts on Substack yet. You can visit my profile."
+        },
+        "unavailable": {
+          "title": "Posts are temporarily unavailable",
+          "message": "Substack couldn’t load. You can still visit my profile."
+        }
+      }
     },
     "closing": {
       "more": "More about me",

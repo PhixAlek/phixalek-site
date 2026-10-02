@@ -125,7 +125,21 @@
           "title": "Lo que estoy aprendiendo al construir Flowly"
         }
       },
-      "allPosts": "Ver todas las publicaciones"
+      "allPosts": "Ver todas las publicaciones",
+      "states": {
+        "loading": {
+          "title": "Cargando la última publicación…",
+          "message": "Consultando Substack."
+        },
+        "empty": {
+          "title": "Próximamente, nuevas publicaciones",
+          "message": "Todavía no hay publicaciones en Substack. Puedes visitar mi perfil."
+        },
+        "unavailable": {
+          "title": "Publicaciones no disponibles por ahora",
+          "message": "No se pudo cargar Substack. Puedes visitar mi perfil."
+        }
+      }
     },
     "closing": {
       "more": "Más sobre mí",

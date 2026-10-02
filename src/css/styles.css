@@ -780,3 +780,5 @@ html,body{ background:#fff; }
 @media(max-width:767px){
   :root{ --pad:var(--space-6); }
 }
+
+.writing-entry .writing-status{ margin:var(--space-2) 0 0; font-size:.875rem; line-height:1.5; color:var(--muted); }
