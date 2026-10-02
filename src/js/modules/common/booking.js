@@ -230,6 +230,10 @@ export function mountBooking(){
     try { validateSlot(slot.start, duration); }
     catch { await refreshSlots(); return; }
     submitting = true; inputTime.disabled = true;
+    btnSubmit.classList.add('loading');
+    btnSubmit.setAttribute('aria-busy', 'true');
+    form.setAttribute('aria-busy', 'true');
+    text(btnSubmit, () => copy.sending);
     const controls = [...form.querySelectorAll('input, select, button'), btnCloseX];
     controls.forEach(n => n.disabled = true);
     text(statusEl, () => copy.sending);
@@ -262,6 +266,10 @@ export function mountBooking(){
       text(statusEl, () => copy.unconfirmedHelp);
     } finally {
       submitting = false;
+      btnSubmit.classList.remove('loading');
+      btnSubmit.setAttribute('aria-busy', 'false');
+      form.setAttribute('aria-busy', 'false');
+      text(btnSubmit, () => copy.submit);
       controls.forEach(n => n.disabled = false);
       inputTime.disabled = !slots.length;
       if (booked) [inputDate, inputDuration, inputTime].forEach(n => n.disabled = true);

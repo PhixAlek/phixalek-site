@@ -56,3 +56,61 @@ test('compact About and Contact keep the requested visible anchor active at the 
     cleanup();
   }
 });
+
+test('both menus follow anchors, disclosure actions and section hover without scroll overriding desktop selection', t => {
+  const callbacks = new Map();
+  const events = {addEventListener(name, fn){callbacks.set(name,fn);},removeEventListener(){}};
+  const links = ['work','writing','about','contact'].map(id => ({
+    hash:`#${id}`, values:new Map(),
+    setAttribute(key,value){this.values.set(key,value);},
+    removeAttribute(key){this.values.delete(key);},
+  }));
+  const drawerLinks = links.map(link => ({...link, values:new Map()}));
+  const sections = links.map(link => ({
+    id:link.hash.slice(1), closest:()=>({}), contains:()=>false,
+    getBoundingClientRect:()=>({top:200,bottom:500}),
+    getAttribute:()=>null, setAttribute(){}, focus(){}, addEventListener(){},
+  }));
+  const stub = (key, value) => {
+    const previous = Object.getOwnPropertyDescriptor(globalThis,key);
+    Object.defineProperty(globalThis,key,{value,configurable:true});
+    t.after(() => { if(previous) Object.defineProperty(globalThis,key,previous); else delete globalThis[key]; });
+  };
+  let desktop = true;
+  let pending;
+  stub('window',{...events,scrollY:1000,innerHeight:700,location:{hash:''},matchMedia:()=>({matches:desktop})});
+  stub('document',{...events,getElementById:id=>id==='mobile-menu' ? {querySelectorAll:()=>drawerLinks} : sections.find(section=>section.id===id),documentElement:{scrollHeight:1700,style:{setProperty(){}}}});
+  stub('ResizeObserver',class{observe(){}disconnect(){}});
+  stub('requestAnimationFrame',fn=>{pending=fn;return 1;});
+  stub('cancelAnimationFrame',()=>{});
+  const cleanup = mountNavigation({querySelectorAll:()=>links,getBoundingClientRect:()=>({height:80})},{...events,querySelectorAll:()=>sections});
+  const active = () => links.filter(link=>link.values.has('aria-current')).map(link=>link.hash);
+  assert.deepEqual(active(),[]);
+  for (const id of ['writing','about','contact']) {
+    const link = links.find(link=>link.hash===`#${id}`);
+    callbacks.get('click')({target:{closest:selector=>selector.startsWith('a[') ? link : null},button:0});
+    pending();
+    assert.deepEqual(active(),[`#${id}`]);
+    callbacks.get('scroll')(); pending();
+    assert.deepEqual(active(),[`#${id}`]);
+  }
+  for (const hash of ['#about','#contact']) {
+    const control = {matches:()=>hash==='#contact'};
+    callbacks.get('click')({target:{closest:()=>control},button:0,defaultPrevented:true});
+    pending();
+    assert.deepEqual(active(),[hash]);
+    assert.deepEqual(drawerLinks.filter(link=>link.values.has('aria-current')).map(link=>link.hash),[hash]);
+  }
+  const hovered = sections.find(section=>section.id==='writing');
+  callbacks.get('pointerover')({pointerType:'mouse',target:{closest:()=>hovered},relatedTarget:null});
+  pending();
+  assert.deepEqual(active(),['#writing']);
+  assert.deepEqual(drawerLinks.filter(link=>link.values.has('aria-current')).map(link=>link.hash),['#writing']);
+  desktop = false;
+  callbacks.get('resize')(); pending();
+  assert.deepEqual(active(),['#writing']);
+  // Touch does not select a section merely by scrolling over it.
+  callbacks.get('pointerover')({pointerType:'touch',target:{closest:()=>sections[0]},relatedTarget:null});
+  assert.deepEqual(active(),['#writing']);
+  cleanup();
+});

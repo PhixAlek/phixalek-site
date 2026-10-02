@@ -3,7 +3,7 @@
 /** @typedef {{id:string, publication:Publication, role:string, organization:string, dates:{start:string,end:string|null}, industry:string, context:string, technologies:string[], responsibilities:string[], outcomes:Array<{description:string,evidence?:string}>, links:Action[]}} Experience */
 /** @typedef {{id:string, slug:string, publication:Publication, title:string, status:'planned'|'in-progress'|'released', overview:string, problem:string, role:string, implementedStack:string[], inProgress:string[], planned:string[], screenshots:Array<{src:string,alt:string,width:number,height:number}>, decisions:string[], architecture:string[], repository:string|null, liveDemo:string|null, lessons:string[]}} Project */
 
-export const ANCHORS = ['home', 'about', 'work', 'contact'];
+export const ANCHORS = ['home', 'about', 'work', 'writing', 'contact'];
 export function validDestination(value) {
   if (typeof value !== 'string' || value !== value.trim() || !value) return false;
   if (value.startsWith('#')) return ANCHORS.includes(value.slice(1));

@@ -29,7 +29,7 @@ export function Header(){
     });
   };
   // Brand returns home; only implemented destinations enter desktop navigation.
-  fillNavigation(nav, ['#work', '#about']);
+  fillNavigation(nav, ['#work', '#writing', '#about']);
   const contact = document.createElement('a');
   contact.className = 'btn header-contact';
   bind(contact, 'attr:href', () => content.hero.ctaPrimary.href);
@@ -118,6 +118,8 @@ export function Header(){
   desktop.addEventListener('change', () => { if (desktop.matches) close(); });
 
   wrap.append(brand, nav, btn);
-  header.append(skip, wrap, drawer);
+  header.append(skip, wrap);
+  // Keep the fixed dialog outside the glass header’s backdrop containing block.
+  document.body.append(drawer);
   return header;
 }

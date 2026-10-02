@@ -1,3 +1,5 @@
+import { revealAboutLines } from '../common/text-motion.js';
+import { mountNavigationWave } from '../common/navigation-wave.js';
 import { createDisclosure } from '../common/disclosure.js';
 // src/js/modules/main/about.js
 import { content, ui, bind, text } from '../../../content/index.js';
@@ -39,7 +41,7 @@ export function About(){
   const details = document.createElement('details');
   details.className = 'about-details';
   const summary = document.createElement('summary');
-  text(summary, () => ui.closing.more);
+  mountNavigationWave(summary, sec, () => ui.closing.more);
   details.append(summary);
   const detailContent = document.createElement('div');
   detailContent.className = 'about-detail-content';
@@ -59,8 +61,12 @@ export function About(){
   }
   let expanded = false;
   const showDetail = createDisclosure(detailContent, {
+    openDuration: 0,
     onStart: open => { if (open) details.open = true; },
-    onFinish: open => { details.open = open; },
+    onFinish: open => {
+      details.open = open;
+      if (open) revealAboutLines(detailContent);
+    },
   });
   summary.addEventListener('click', event => {
     event.preventDefault();
@@ -87,7 +93,12 @@ export function About(){
     list.className = 'about-list';
     A.bullets.forEach((t, i) => {
       const li = document.createElement('li');
-      bind(li, 'innerHTML', () => transformInline(A.bullets[i]));
+      const marker = document.createElement('span');
+      marker.className = 'about-list-marker';
+      marker.setAttribute('aria-hidden', 'true');
+      const copy = document.createElement('span');
+      bind(copy, 'innerHTML', () => transformInline(A.bullets[i]));
+      li.append(marker, copy);
       list.appendChild(li);
     });
     detailContent.appendChild(list);
@@ -105,9 +116,10 @@ function splitParagraphs(text){
   return text.trim().split(/\n\s*\n|^\s*---\s*$/m).map(s => s.trim()).filter(Boolean);
 }
 function transformInline(s=''){
-  // [[em]] degradado, ((dim)) tenue, **bold**, *italic*
+  // [[keyword]] green, [[complement:phrase]] red, ((dim)) muted.
   return s
-    .replace(/\[\[(.+?)\]\]/g, '<span class="em">$1</span>')
+    .replace(/\[\[complement:(.+?)\]\]/g, '<strong class="em em-complement">$1</strong>')
+    .replace(/\[\[(.+?)\]\]/g, '<strong class="em">$1</strong>')
     .replace(/\(\((.+?)\)\)/g, '<span class="dim">$1</span>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')

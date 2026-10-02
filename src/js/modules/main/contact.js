@@ -1,3 +1,5 @@
+import { createFormReveal } from '../common/staggered-form.js';
+import { mountNavigationWave } from '../common/navigation-wave.js';
 import { createDisclosure } from '../common/disclosure.js';
 import { content, ui, bind, text } from '../../../content/index.js';
 
@@ -76,15 +78,44 @@ export function Contact(){
   toggle.setAttribute('aria-controls', panel.id);
   toggle.setAttribute('aria-expanded', 'false');
   const messageLabel = document.createElement('span');
-  toggle.append(actionIcon('message'), messageLabel);
+  let messageIcon = actionIcon('message');
+  toggle.append(messageIcon, messageLabel);
   let expanded = false;
-  text(messageLabel, () => expanded ? ui.closing.closeMessage : ui.closing.sendMessage);
+  const updateMessage = mountNavigationWave(messageLabel, sec, () => expanded ? ui.closing.closeMessage : ui.closing.sendMessage);
+  bind(toggle, 'attr:aria-label', () => expanded ? ui.closing.closeMessage : ui.closing.sendMessage);
   const showForm = createDisclosure(panel, {
+    openDuration: 0,
+    onFinish: open => {
+      if (!open) return;
+      const header = document.querySelector('.header')?.getBoundingClientRect().height || 0;
+      const available = window.innerHeight - header;
+      const sectionBounds = sec.getBoundingClientRect();
+      const target = sectionBounds.height <= available - 32 ? sec : panel;
+      const bounds = target.getBoundingClientRect();
+      const spacing = Math.max(16, (available - bounds.height) / 2);
+      const maximum = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      const destination = Math.max(0, Math.min(maximum, bounds.top + window.scrollY - header - spacing));
+      window.scrollTo({ top: destination, behavior: 'instant' });
+    },
+    frames: open => {
+      const box = panel.getBoundingClientRect();
+      const origin = toggle.getBoundingClientRect();
+      panel.style.transformOrigin = `${origin.left + origin.width / 2 - box.left}px ${origin.top + origin.height / 2 - box.top}px`;
+      return [
+        { height: `${open ? 0 : box.height}px`, opacity: open ? 0 : 1, transform: 'none', overflow: 'clip' },
+        { height: `${open ? panel.scrollHeight : 0}px`, opacity: open ? 1 : 0, transform: open ? 'none' : 'scale(.85)', overflow: 'clip' },
+      ];
+    },
     onStart: open => {
       toggle.setAttribute('aria-expanded', String(open));
-      text(messageLabel, () => expanded ? ui.closing.closeMessage : ui.closing.sendMessage);
+      const nextIcon = actionIcon(open ? 'close' : 'message');
+      messageIcon.replaceWith(nextIcon);
+      messageIcon = nextIcon;
+      updateMessage();
+      bind(toggle, 'attr:aria-label', () => expanded ? ui.closing.closeMessage : ui.closing.sendMessage);
       if (open) name.focus({ preventScroll: true });
       else if (panel.contains(document.activeElement)) toggle.focus({ preventScroll: true });
+      revealForm(open);
     },
   });
   toggle.addEventListener('click', () => {
@@ -98,13 +129,15 @@ export function Contact(){
   book.className = 'btn-outline';
   book.setAttribute('data-book', 'true');
   const bookLabel = document.createElement('span');
-  text(bookLabel, () => ui.work.book);
+  mountNavigationWave(bookLabel, sec, () => ui.work.book, { after: messageLabel });
+  bind(book, 'attr:aria-label', () => ui.work.book);
   book.append(actionIcon('calendar'), bookLabel);
   actions.append(toggle, book);
   const emailLink = document.createElement('a');
   emailLink.className = 'contact-email';
   emailLink.href = `mailto:${C.mailTo}`;
   text(emailLink, () => C.mailTo);
+  const revealForm = createFormReveal([name, email, msg, send], emailLink);
   panel.append(form, emailLink);
   wrap.append(eyebrow, h2, actions, panel);
   sec.appendChild(wrap);
@@ -124,6 +157,7 @@ function actionIcon(type) {
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   path.setAttribute('d', type === 'message'
     ? 'M21 3 3 10l7 3 3 7 8-17ZM10 13 21 3M13 20l-3-7v6'
+    : type === 'close' ? 'M6 6l12 12M18 6 6 18'
     : 'M5 5h14a2 2 0 0 1 2 2v13H3V7a2 2 0 0 1 2-2ZM7 3v4M17 3v4M3 10h18');
   svg.append(path);
   return svg;

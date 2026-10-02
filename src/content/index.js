@@ -5,6 +5,7 @@ import english from './locales/en.json' assert { type: 'json' };
 import spanish from './locales/es.json' assert { type: 'json' };
 import { validAction, publishedItems } from './model.js';
 import { detectLanguage, readPreference, savePreference } from './language.js';
+import { animateLanguageChange } from './transition.js';
 export { format } from './model.js';
 let storage;
 try { storage = window.sessionStorage; } catch { /* Private browsing may deny access. */ }
@@ -55,10 +56,13 @@ export function setLanguage(next, persist = true) {
   if (next === locale) return;
   locale = next;
   document.documentElement.lang = locale;
+  const translatedNodes = [];
   for (const [node, properties] of bindings) {
     if (!node.isConnected) { bindings.delete(node); continue; }
     for (const [property, getter] of properties) apply(node, property, getter());
+    if (properties.has('textContent') || properties.has('innerHTML')) translatedNodes.push(node);
   }
+  animateLanguageChange(translatedNodes);
 }
 document.documentElement.lang = locale;
 window.addEventListener('languagechange', () => setLanguage(detectLanguage(manualPreference, navigator.languages || [navigator.language]), false));

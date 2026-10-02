@@ -17,8 +17,6 @@ export function Footer(){
   const wrap = document.createElement('div');
   wrap.className = 'container';
 
-  const meta = document.createElement('div');
-  meta.className = 'ft-meta';
   const back = document.createElement('a');
   back.className = 'ft-back';
   back.href = '#home';
@@ -32,7 +30,7 @@ export function Footer(){
   const copyright = document.createElement('span');
   copyright.className = 'ft-copy';
   text(copyright, () => `© ${new Date().getFullYear()} ${content.hero.name}`);
-  meta.append(back, languageButton('language-footer'), copyright);
+  const language = languageButton('language-footer');
 
   // fila 2: redes sociales
   const social = document.createElement('nav');
@@ -41,6 +39,7 @@ export function Footer(){
   (data.social || []).forEach(s => {
     const a = document.createElement('a');
     a.className = 'ft-ico';
+    a.dataset.profile = s.icon;
     a.href = s.href;
     a.target = '_blank';
     a.rel = 'noopener noreferrer';
@@ -52,7 +51,21 @@ export function Footer(){
     social.appendChild(a);
   });
 
-  wrap.append(meta, social);
+  // Keep visual, reading and keyboard order aligned at each breakpoint.
+  const profiles = [...social.children];
+  const mobile = window.matchMedia('(max-width: 767px)');
+  const priority = ['github', 'linkedin', 'substack', 'youtube', 'hackerrank'];
+  const arrange = () => {
+    const ordered = mobile.matches
+      ? [...profiles].sort((a, b) => priority.indexOf(a.dataset.profile) - priority.indexOf(b.dataset.profile))
+      : profiles;
+    social.append(...ordered);
+    wrap.append(...(mobile.matches
+      ? [language, back, social, copyright]
+      : [language, social, back, copyright]));
+  };
+  arrange();
+  mobile.addEventListener('change', arrange);
   el.appendChild(wrap);
   return el;
 }

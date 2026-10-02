@@ -51,8 +51,8 @@
   --radius: 16px;
   --radius-sm: 10px;
   --pad: clamp(16px, 3vw, 32px);
-  --container: 1100px;
+  --container: 1240px;
   --container-narrow: 960px;
-  --work-max: 1280px;
+  --work-max: 1440px;
   --transition: 160ms ease;
 }
