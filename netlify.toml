@@ -2,26 +2,10 @@
   command = "npm run build"
   publish = "dist"
 
-# Cache largo para imágenes (1 año)
-[[headers]]
-  for = "/img/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-# Cache corto para el JSON (para que tomes cambios rápido)
-[[headers]]
-  for = "/data/images.json"
-  [headers.values]
-    Cache-Control = "public, max-age=60, must-revalidate"
-
-# (Opcional) SPA fallback si usas rutas de cliente
-#[[redirects]]
-#  from = "/*"
-#  to = "/index.html"
-#  status = 200
-
 [build.environment]
-  SECRETS_SCAN_ENABLED = "false"
+  SECRETS_SCAN_ENABLED = "true"
+  # Timezone names are public configuration, not credentials.
+  SECRETS_SCAN_OMIT_KEYS = "DEFAULT_TZ"
 
 [context.deploy-preview.environment]
   NPM_FLAGS = "--include=dev"

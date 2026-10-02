@@ -1,15 +1,17 @@
+import { ui, bind, text } from '../../../content/index.js';
 import '../../../css/booking-time-wheel.css';
 const ROW = 44;
 export function createTimeWheel(onChange) {
   const root = document.createElement('div'); root.className = 'booking-time-picker';
-  const label = document.createElement('div'); label.textContent = 'Available time · Hermosillo';
+  const label = document.createElement('div'); text(label, () => ui.wheel.label);
   const frame = document.createElement('div'); frame.className = 'booking-time-frame';
   const wheel = document.createElement('div'); wheel.className = 'booking-time-wheel';
-  wheel.setAttribute('role','listbox'); wheel.setAttribute('aria-label',label.textContent);
+  wheel.setAttribute('role','listbox'); bind(wheel, 'attr:aria-label', () => ui.wheel.label);
   const empty = document.createElement('div'); empty.className = 'booking-time-empty';
-  const hint = document.createElement('small'); hint.textContent = 'Scroll, tap a time, or use ↑ and ↓.';
+  const hint = document.createElement('small'); hint.className = 'booking-sr-only'; hint.id = 'booking-time-hint'; text(hint, () => ui.wheel.hint);
+  wheel.setAttribute('aria-describedby', hint.id);
   frame.append(wheel,empty); root.append(label,frame,hint);
-  let slots = [], index = -1, disabled = true;
+  let slots = [], index = -1, disabled = true, manualScroll = false;
   function paint() {
     [...wheel.children].forEach((item,i)=>item.setAttribute('aria-selected',String(i===index)));
     if(index>=0) wheel.setAttribute('aria-activedescendant',`booking-time-${index}`);
@@ -22,7 +24,9 @@ export function createTimeWheel(onChange) {
     if(align) wheel.scrollTop=i*ROW;
     if(changed) onChange();
   }
-  wheel.addEventListener('scroll',()=>select(Math.round(wheel.scrollTop/ROW),false));
+  wheel.addEventListener('wheel', () => { manualScroll = true; }, { passive:true });
+  wheel.addEventListener('pointerdown', () => { manualScroll = true; });
+  wheel.addEventListener('scroll',()=>{ if (manualScroll) select(Math.round(wheel.scrollTop/ROW),false); });
   wheel.addEventListener('click',e=>{
     const option=e.target.closest('[role="option"]');
     if(option && !disabled) {wheel.focus();select(Number(option.dataset.index));}
@@ -40,18 +44,19 @@ export function createTimeWheel(onChange) {
       root.classList.toggle('is-disabled',disabled);
     },
     ready(items,preferred=''){
-      slots=items;index=items.length?Math.max(0,items.findIndex(s=>s.start===preferred)):-1;
+      manualScroll=false;
+      slots=items;index=preferred?items.findIndex(s=>s.start===preferred):-1;
       wheel.replaceChildren();
       items.forEach((slot,i)=>{
         const option=document.createElement('div');option.className='booking-time-option';
         option.id=`booking-time-${i}`;option.setAttribute('role','option');option.dataset.index=String(i);
         option.textContent=slot.time;wheel.appendChild(option);
       });
-      empty.hidden=Boolean(items.length);empty.textContent='No available times';
+      empty.hidden=Boolean(items.length);text(empty, () => ui.wheel.empty);
       root.classList.toggle('is-empty',!items.length);
       picker.disabled=!items.length;paint();wheel.scrollTop=Math.max(0,index)*ROW;
     },
-    setEmpty(message){picker.ready([]);empty.textContent=message;},
+    setEmpty(message){picker.ready([]);text(empty, typeof message === 'function' ? message : () => message);},
   };
-  picker.setEmpty('Choose a date');return picker;
+  picker.setEmpty(() => ui.wheel.choose);return picker;
 }

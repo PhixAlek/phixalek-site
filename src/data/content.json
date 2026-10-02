@@ -1,7 +1,7 @@
 {
   "hero": {
     "name": "Phixalek",
-    "subtitle": "Building software (.NET/Angular) and crafting game worlds. Building clean, maintainable systems and immersive experiences.",
+    "subtitle": "Software developer focused on [[.NET]], [[Angular]] and [[complement:web applications]].",
     "ctaPrimary": {
       "text": "Get in touch",
       "href": "#contact"
@@ -9,53 +9,115 @@
     "ctaSecondary": {
       "text": "See projects",
       "href": "#work"
-    }
+    },
+    "avatarId": "phixalek-profile"
   },
-"about": {
-  "eyebrow": "Software • Research • Game Dev",
-  "title": "Who is Phixalek?",
-  "lead": "Miguel Segura was born in Colombia and is currently pursuing a Multimedia Engineering degree. He moves between [[software development]], [[research in computing and physics]], and personal projects mixing technology with storytelling.",
-  "body": "He is the creator of **FinBit**, an experimental fintech project built with ((.NET + DDD + Clean Architecture)); and **Bloomink**, his indie studio where he is building *No Witness*, a survival narrative inspired by Resident Evil and Silent Hill using ((UE5 + C++)).\n\nHis focus isn’t only shipping — it’s understanding the [[science behind technology]] and turning it into clean, maintainable systems.\n\nNow based in Colombia, he is studying Multimedia Engineering and teaching programming.",
-  "bullets": [
-    "Backend: ((.NET, DDD, Clean Architecture)) → scalable & maintainable systems",
-    "Frontend: ((Angular, TypeScript)) → real-world apps with clean UX",
-    "Game Dev: ((UE5, C++)) + [[Pixel Art]] → optimized pipelines & storytelling"
-  ]
-},
+  "about": {
+    "eyebrow": "Software • Consulting • Game Dev",
+    "title": "Who is Phixalek?",
+    "lead": "Alejandro Segura was born in Colombia and is currently pursuing a [[Multimedia Engineering degree]]. He moves between [[software development]] and personal projects mixing technology with storytelling.",
+    "body": "He is developing **Flowly**, a personal finance project starting with [[.NET 10]]; and **Bloomink**, his indie studio where he is building *No Witness*, a survival narrative inspired by Resident Evil and Silent Hill using [[UE5 + C++]].\n\nNow based in Sonora, Mexico, he is studying Multimedia Engineering and teaching programming.",
+    "bullets": [
+      "Backend: [[.NET, C#, DDD, Clean Architecture]] → scalable & maintainable systems",
+      "Frontend: [[Angular, TypeScript]] → real-world apps with clean UX",
+      "Game Dev: [[UE5, C++]] + [[Pixel Art]] → optimized pipelines & storytelling",
+      "Practices: [[CI/CD, Clean Code]]"
+    ]
+  },
   "projects": {
     "title": "Selected Work",
     "items": [
       {
-        "title": "FinBit",
+        "title": "Flowly",
         "desc": "Personal fintech app to manage money with pockets and budgets. Built with .NET + Angular, focused on security and a clean user experience.",
-        "tags": [".NET", "Angular", "PostgreSQL"],
-        "badges": ["Open Source"],
-        "actions": [
-          { "className": "btn-primary", "text": "Live demo", "href": "#" },
-          { "className": "btn-ghost",   "text": "Repo",     "href": "https://github.com/PhixAlek/Finbit" }
+        "tags": [
+          ".NET 10",
+          "Angular SPA",
+          "DDD",
+          "PostgreSQL",
+          "GitHub Actions",
+          "CI/CD"
         ],
-        "imageId": "finbit-01"
+        "badges": [
+          "In development"
+        ],
+        "actions": [
+          {
+            "className": "btn-ghost",
+            "text": "Repo",
+            "href": "https://github.com/PhixAlek/Flowly",
+            "kind": "link"
+          }
+        ],
+        "id": "flowly",
+        "publication": "published",
+        "imageId": "finbit-01",
+        "tagStyles": {
+          ".NET 10": "primary",
+          "Angular SPA": "complement"
+        }
       },
       {
         "title": "Consulting",
         "desc": "Helping startups and teams scale APIs with secure, high-performance backends. Book a call and get a clear roadmap in days, not months.",
-        "tags": ["APIs", "Security", "Scale"],
-        "badges": ["Freelance", "Contractor"],
-        "actions": [
-         { "className": "btn-primary", "text": "Book a call", "href": "javascript:void(0)", "data-book": true }
+        "tags": [
+          "Integrations",
+          "Scale",
+          "Refactoring"
         ],
-        "imageId": "consultoria-01"
+        "badges": [
+          "Freelance",
+          "Contractor"
+        ],
+        "actions": [
+          {
+            "className": "btn-primary",
+            "text": "Book a call",
+            "kind": "booking"
+          }
+        ],
+        "imageId": "consultoria-01",
+        "id": "consulting",
+        "publication": "published",
+        "bullets": [
+          "Express audit (48h)",
+          "Improvement plan + roadmap",
+          "Guided implementation"
+        ],
+        "tagStyles": {
+          "Integrations": "primary",
+          "Refactoring": "primary"
+        }
       },
       {
-        "title": "Demo Me - Interactive CV",
-        "desc": "A small JS/Canvas platformer that tells my story as a developer. Vanilla JavaScript, HTML5 Canvas, and a lightweight game loop. Playable on mobile and desktop.",
-        "tags": ["JavaScript", "HTML5 Canvas", "Game Loop"],
-        "badges": ["Interactive CV", "Playable"],
-        "actions": [
-          { "className": "btn-primary", "text": "In dev"},
-          { "className": "btn-ghost",   "text": "Repo",     "href": "https://github.com/PhixAlek/MEG.js" }
+        "id": "phixalek-site",
+        "publication": "published",
+        "title": "PhixAlek — Portfolio",
+        "desc": "This site uses JavaScript for the interface, EmailJS for contact messages, and the Google Calendar API to check availability and book calls.",
+        "tags": [
+          "JavaScript",
+          "Webpack",
+          "EmailJS",
+          "Calendar API",
+          "Netlify"
         ],
-        "imageId": "demome-01"
+        "badges": [
+          "Portfolio"
+        ],
+        "actions": [
+          {
+            "kind": "link",
+            "className": "btn-ghost",
+            "text": "Documentation",
+            "href": "https://github.com/PhixAlek/phixalek-site/blob/AS-arquitectura-contenido-2026-09-28/docs/ARCHITECTURE.md"
+          }
+        ],
+        "imageId": "demome-01",
+        "tagStyles": {
+          "JavaScript": "primary",
+          "Webpack": "primary",
+          "Netlify": "primary"
+        }
       }
     ]
   },
@@ -64,9 +126,9 @@
     "mailTo": "hi@phixalek.com"
   },
   "footer": {
-    "location": "Bogotá",
+    "location": "Sonora, México",
     "language": "English / Spanish",
-    "role": "Software Developer & Game Dev",
+    "role": "Software Developer",
     "email": "hi@phixalek.com",
     "social": [
       {
@@ -85,9 +147,14 @@
         "icon": "youtube"
       },
       {
-        "name": "X",
-        "href": "https://x.com/phixalek",
-        "icon": "x"
+        "name": "Substack",
+        "href": "https://substack.com/@phixalek",
+        "icon": "substack"
+      },
+      {
+        "name": "HackerRank",
+        "href": "https://www.hackerrank.com/profile/PhixAlek",
+        "icon": "hackerrank"
       }
     ]
   }

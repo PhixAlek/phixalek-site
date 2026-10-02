@@ -1,0 +1,159 @@
+{
+  "locale": "en",
+  "publication": "published",
+  "messages": {
+    "navigation": {
+      "open": "Open menu",
+      "close": "Close menu",
+      "label": "Navigation",
+      "items": [
+        {
+          "label": "Home",
+          "href": "#home"
+        },
+        {
+          "label": "Projects",
+          "href": "#work"
+        },
+        {
+          "label": "Blog",
+          "href": "#writing"
+        },
+        {
+          "label": "About",
+          "href": "#about"
+        },
+        {
+          "label": "Contact",
+          "href": "#contact"
+        }
+      ],
+      "skip": "Skip to content"
+    },
+    "hero": {
+      "greeting": "Hello, I'm ",
+      "ending": "."
+    },
+    "contact": {
+      "name": "Your name",
+      "email": "Your email",
+      "message": "How can I help?",
+      "submit": "Send",
+      "thanks": "Thanks.",
+      "required": "Please complete all fields.",
+      "sending": "Sending...",
+      "success": "Message sent. I will get back to you soon.",
+      "error": "Error sending the message. Please try again later.",
+      "unavailable": "The form is currently unavailable. Please contact me by email."
+    },
+    "work": {
+      "book": "Book a call",
+      "open": "Open",
+      "image": "{title} — project image",
+      "details": "Technical details"
+    },
+    "booking": {
+      "close": "Close",
+      "title": "Book a call",
+      "name": "Your name",
+      "email": "Your email",
+      "date": "Date",
+      "duration": "Duration",
+      "subject": "Subject (optional)",
+      "location": "Location (optional, e.g. Google Meet)",
+      "initial": "Pick a date and time.",
+      "submit": "Book call",
+      "cancel": "Cancel",
+      "loading": "Loading available times…",
+      "checking": "Checking available times...",
+      "empty": "No available times on this date",
+      "emptyHelp": "No available times on this date. Choose another weekday.",
+      "unavailable": "Availability is unavailable",
+      "localHelp": "Start npm run dev and open http://localhost:8888 to use the calendar.",
+      "availabilityError": "Could not verify calendar availability. Please retry or contact me.",
+      "retry": "Retry availability",
+      "choose": "Choose an available date and time.",
+      "sending": "Booking...",
+      "failed": "Could not book this time. Please try again.",
+      "success": "Booked. Save your meeting details here. ",
+      "openMeeting": "Open meeting",
+      "openCalendar": "Open Calendar",
+      "unconfirmed": "Booking could not be confirmed",
+      "unconfirmedHelp": "The booking could not be confirmed. Check your calendar or contact me before retrying.",
+      "errors": {
+        "slot_not_available": "That time was just booked. Please choose another time.",
+        "next_business_day_required": "Choose the next business day or later.",
+        "past_slot": "That time has passed. Please choose another time.",
+        "calendar_unavailable": "Availability could not be verified. Please try again.",
+        "outside_hours": "Choose a time within business hours, excluding lunch.",
+        "weekday_required": "Appointments are available Monday–Friday.",
+        "invalid_email": "Please enter a valid email address."
+      },
+      "hours": "Choose a time that works for you.",
+      "minutes": "{duration} min",
+      "selected": "{date} · {duration} min",
+      "dateButton": "Open date picker",
+      "details": "Add details (optional)",
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "weekdays": "Monday–Friday."
+    },
+    "wheel": {
+      "label": "Available time · Arizona / Sonora (UTC−7)",
+      "hint": "Scroll, tap a time, or use ↑ and ↓.",
+      "empty": "No available times",
+      "choose": "Choose a date"
+    },
+    "language": {
+      "switch": "Cambiar a español"
+    },
+    "evidence": {
+      "title": "Experience and impact",
+      "years": "Years",
+      "contexts": {
+        "web": "Building and improving web applications.",
+        "clinical": "Reduced load time in a clinical-notes module.",
+        "teaching": "Students and developers taught or mentored in education and corporate training."
+      },
+      "loadTime": "Approximately six seconds to approximately two seconds"
+    },
+    "writing": {
+      "title": "Latest Writing",
+      "preview": "Preview · Not published",
+      "entries": {
+        "building-flowly": {
+          "title": "What I’m learning while building Flowly"
+        }
+      },
+      "allPosts": "View all posts",
+      "states": {
+        "loading": {
+          "title": "Loading the latest post…",
+          "message": "Checking Substack."
+        },
+        "empty": {
+          "title": "New posts are on the way",
+          "message": "No published posts on Substack yet. You can visit my profile."
+        },
+        "unavailable": {
+          "title": "Posts are temporarily unavailable",
+          "message": "Substack couldn’t load. You can still visit my profile."
+        }
+      }
+    },
+    "closing": {
+      "more": "More about me",
+      "sendMessage": "Send a message",
+      "closeMessage": "Close form",
+      "talk": "Let’s talk",
+      "intro": "I build useful products, learn continuously, and enjoy sharing what I learn.",
+      "aboutLabel": "About",
+      "aboutTitle": "More than just code.",
+      "contactTitle": "Have a project in mind?"
+    },
+    "footer": {
+      "backToTop": "Back to top",
+      "social": "Social profiles"
+    }
+  }
+}

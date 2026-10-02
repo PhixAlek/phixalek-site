@@ -1,8 +1,35 @@
 {
   "base": "media/",
   "images": [
-    { "id": "consultoria-01", "src": "consultoria-01.webp", "alt": "Consulting — cover" },
-    { "id": "finbit-01",      "src": "finbit-01.webp",      "alt": "FinBit — screenshot" },
-    { "id": "demome-01",      "src": "demome-01.webp",      "alt": "Demo Me — Interactive CV" }
+    {
+      "id": "consultoria-01",
+      "src": "consultoria-01.webp",
+      "alt": "Consulting — cover"
+    },
+    {
+      "id": "finbit-01",
+      "src": "finbit-01.webp",
+      "alt": "Flowly — project image"
+    },
+    {
+      "id": "demome-01",
+      "src": "demome-01.webp",
+      "alt": "PhixAlek — Portfolio project image"
+    },
+    {
+      "id": "phixalek-profile",
+      "src": "phixalek-profile.gif",
+      "staticSrc": "phixalek-profile-static.png",
+      "width": 480,
+      "height": 480,
+      "alt": ""
+    },
+    {
+      "id": "mountains",
+      "src": "mountains.svg",
+      "alt": "",
+      "width": 1200,
+      "height": 400
+    }
   ]
 }

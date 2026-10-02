@@ -2,29 +2,14 @@
 import { Hero } from './hero.js';
 import { About } from './about.js';
 import { Projects } from './projects.js';
+import { Writing } from './writing.js';
+import { Evidence } from './evidence.js';
 import { Contact } from './contact.js';
 
 export function Main(){
   const main = document.createElement('main');
-  main.id = 'home';
+  main.id = 'main-content';
   main.className = 'site';
-  main.style.position = 'relative';
-
-  // helper: centra y limita ancho SIN tocar tu contenido
-  const wrapInContainer = (section) => {
-    const wrap = document.createElement('div');
-    wrap.className = 'container';
-    while (section.firstChild) wrap.appendChild(section.firstChild);
-    section.appendChild(wrap);
-    return section;
-  };
-
-  // capa orbes
-  const orbs = document.createElement('div');
-  orbs.id = 'orbs';
-  orbs.setAttribute('aria-hidden','true');
-  main.prepend(orbs);
-
   // --- Hero ---
   const hero    = Hero();
 
@@ -37,12 +22,17 @@ export function Main(){
   // --- Contact ---
   const contact = Contact();
 
-  // envuelve cada sección en .container
-  wrapInContainer(hero);
-  wrapInContainer(about);
-  wrapInContainer(work);     // ← también al Projects dinámico
-  wrapInContainer(contact);
-
-  main.append(hero, about, work, contact);
+  const evidence = Evidence();
+  main.append(hero, work);
+  if (evidence) main.append(evidence);
+  const writing = Writing();
+  if (writing) main.append(writing);
+  const closing = document.createElement('div');
+  closing.className = 'closing';
+  const closingGrid = document.createElement('div');
+  closingGrid.className = 'container closing-grid';
+  closingGrid.append(about, contact);
+  closing.append(closingGrid);
+  main.append(closing);
   return main;
 }

@@ -1,3 +1,4 @@
+import { ui, text } from '../../../content/index.js';
 // src/js/modules/common/contact.js
 import emailjs from '@emailjs/browser';
 
@@ -8,12 +9,6 @@ import emailjs from '@emailjs/browser';
  * Status: <div id="form-status">
  */
 export function mountContactEmailJS({ serviceId, templateId, publicKey }){
-  // Validaciones mínimas de config
-  if (!serviceId || !templateId || !publicKey) {
-    console.warn('[contact] Missing EmailJS config');
-    return;
-  }
-
   const form   = document.getElementById('contact-form');
   const status = document.getElementById('form-status');
   if (!form || !status) {
@@ -23,8 +18,16 @@ export function mountContactEmailJS({ serviceId, templateId, publicKey }){
 
   const submitBtn = form.querySelector('button[type="submit"]');
 
+  if (!serviceId || !templateId || !publicKey) {
+    form.addEventListener('submit', e => e.preventDefault());
+    submitBtn.disabled = true;
+    text(status, () => ui.contact.unavailable);
+    return;
+  }
+
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
+    if (form.getAttribute('aria-busy') === 'true') return;
 
     const fd = new FormData(form);
     const payload = {
@@ -37,32 +40,38 @@ export function mountContactEmailJS({ serviceId, templateId, publicKey }){
 
     // Honeypot: si viene con algo, no enviar
     const hp = fd.get('company')?.toString().trim();
-    if (hp) { status.textContent = 'Thanks.'; form.reset(); return; }
+    if (hp) { text(status, () => ui.contact.thanks); form.reset(); return; }
 
     if (!payload.from_name || !payload.reply_to || !payload.message) {
-      status.textContent = 'Please complete all fields.'; 
+      text(status, () => ui.contact.required);
       return;
     }
 
+    form.setAttribute('aria-busy', 'true');
+    submitBtn?.classList.add('loading');
+    submitBtn?.setAttribute('aria-busy', 'true');
     // UI feedback
-    status.textContent = 'Sending...';
-    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending...'; }
+    text(status, () => ui.contact.sending);
+    if (submitBtn) { submitBtn.disabled = true; text(submitBtn, () => ui.contact.sending); }
 
     try{
       // Init + send
       emailjs.init(publicKey);
       const res = await emailjs.send(serviceId, templateId, payload);
       if (res.status >= 200 && res.status < 300) {
-        status.textContent = 'Message sent. I will get back to you soon.';
+        text(status, () => ui.contact.success);
         form.reset();
       } else {
         throw new Error('EmailJS error: ' + res.text);
       }
     }catch(err){
       console.error(err);
-      status.textContent = 'Error sending the message. Please try again later.';
+      text(status, () => ui.contact.error);
     }finally{
-      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Send'; }
+      form.setAttribute('aria-busy', 'false');
+      submitBtn?.classList.remove('loading');
+      submitBtn?.setAttribute('aria-busy', 'false');
+      if (submitBtn) { submitBtn.disabled = false; text(submitBtn, () => ui.contact.submit); }
     }
   });
 }

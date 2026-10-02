@@ -1,0 +1,159 @@
+{
+  "locale": "es",
+  "publication": "published",
+  "messages": {
+    "navigation": {
+      "open": "Abrir menú",
+      "close": "Cerrar menú",
+      "label": "Navegación",
+      "items": [
+        {
+          "label": "Inicio",
+          "href": "#home"
+        },
+        {
+          "label": "Proyectos",
+          "href": "#work"
+        },
+        {
+          "label": "Blog",
+          "href": "#writing"
+        },
+        {
+          "label": "Sobre mí",
+          "href": "#about"
+        },
+        {
+          "label": "Contacto",
+          "href": "#contact"
+        }
+      ],
+      "skip": "Saltar al contenido"
+    },
+    "hero": {
+      "greeting": "Hola, soy ",
+      "ending": "."
+    },
+    "contact": {
+      "name": "Tu nombre",
+      "email": "Tu correo electrónico",
+      "message": "¿En qué puedo ayudarte?",
+      "submit": "Enviar",
+      "thanks": "Gracias.",
+      "required": "Completa todos los campos.",
+      "sending": "Enviando…",
+      "success": "Mensaje enviado. Te responderé pronto.",
+      "error": "No se pudo enviar el mensaje. Inténtalo más tarde.",
+      "unavailable": "El formulario no está disponible. Puedes contactarme por correo electrónico."
+    },
+    "work": {
+      "book": "Agendar una llamada",
+      "open": "Abrir",
+      "image": "{title} — imagen del proyecto",
+      "details": "Detalles técnicos"
+    },
+    "booking": {
+      "close": "Cerrar",
+      "title": "Agendar una llamada",
+      "name": "Tu nombre",
+      "email": "Tu correo electrónico",
+      "date": "Fecha",
+      "duration": "Duración",
+      "subject": "Asunto (opcional)",
+      "location": "Lugar (opcional, p. ej., Google Meet)",
+      "initial": "Elige una fecha y una hora.",
+      "submit": "Agendar llamada",
+      "cancel": "Cancelar",
+      "loading": "Cargando horarios disponibles…",
+      "checking": "Consultando disponibilidad…",
+      "empty": "No hay horarios disponibles para esta fecha",
+      "emptyHelp": "No hay horarios disponibles para esta fecha. Elige otro día entre semana.",
+      "unavailable": "No se pudo consultar la disponibilidad",
+      "localHelp": "Ejecuta npm run dev y abre http://localhost:8888 para usar la agenda.",
+      "availabilityError": "No se pudo consultar la agenda. Inténtalo de nuevo o contáctame.",
+      "retry": "Consultar de nuevo",
+      "choose": "Elige una fecha y una hora disponibles.",
+      "sending": "Agendando…",
+      "failed": "No se pudo agendar este horario. Inténtalo de nuevo.",
+      "success": "Cita agendada. Guarda aquí los datos de la reunión. ",
+      "openMeeting": "Abrir reunión",
+      "openCalendar": "Abrir calendario",
+      "unconfirmed": "No se pudo confirmar la reserva",
+      "unconfirmedHelp": "No se pudo confirmar la reserva. Revisa tu calendario o contáctame antes de volver a intentarlo.",
+      "errors": {
+        "slot_not_available": "Alguien acaba de reservar ese horario. Elige otro.",
+        "next_business_day_required": "Elige el siguiente día hábil o una fecha posterior.",
+        "past_slot": "Ese horario ya pasó. Elige otro.",
+        "calendar_unavailable": "No se pudo verificar la disponibilidad. Inténtalo de nuevo.",
+        "outside_hours": "Elige un horario de atención fuera de la pausa para comer.",
+        "weekday_required": "Las citas están disponibles de lunes a viernes.",
+        "invalid_email": "Introduce un correo electrónico válido."
+      },
+      "hours": "Elige el horario que te convenga.",
+      "minutes": "{duration} min",
+      "selected": "{date} · {duration} min",
+      "dateButton": "Abrir calendario",
+      "details": "Añadir detalles (opcional)",
+      "previousMonth": "Mes anterior",
+      "nextMonth": "Mes siguiente",
+      "weekdays": "Lunes a viernes."
+    },
+    "wheel": {
+      "label": "Hora disponible · Arizona / Sonora (UTC−7)",
+      "hint": "Desliza, toca una hora o usa ↑ y ↓.",
+      "empty": "No hay horarios disponibles",
+      "choose": "Elige una fecha"
+    },
+    "language": {
+      "switch": "Switch to English"
+    },
+    "evidence": {
+      "title": "Experiencia e impacto",
+      "years": "años",
+      "contexts": {
+        "web": "Desarrollando y mejorando aplicaciones web.",
+        "clinical": "Reducción del tiempo de carga en un módulo de notas clínicas.",
+        "teaching": "Estudiantes y desarrolladores formados o mentorizados en educación y capacitación empresarial."
+      },
+      "loadTime": "De aproximadamente seis segundos a aproximadamente dos segundos"
+    },
+    "writing": {
+      "title": "Últimas publicaciones",
+      "preview": "Vista previa · Sin publicar",
+      "entries": {
+        "building-flowly": {
+          "title": "Lo que estoy aprendiendo al construir Flowly"
+        }
+      },
+      "allPosts": "Ver todas las publicaciones",
+      "states": {
+        "loading": {
+          "title": "Cargando la última publicación…",
+          "message": "Consultando Substack."
+        },
+        "empty": {
+          "title": "Próximamente, nuevas publicaciones",
+          "message": "Todavía no hay publicaciones en Substack. Puedes visitar mi perfil."
+        },
+        "unavailable": {
+          "title": "Publicaciones no disponibles por ahora",
+          "message": "No se pudo cargar Substack. Puedes visitar mi perfil."
+        }
+      }
+    },
+    "closing": {
+      "more": "Más sobre mí",
+      "sendMessage": "Enviar un mensaje",
+      "closeMessage": "Cerrar formulario",
+      "talk": "Hablemos",
+      "intro": "Creo productos útiles, sigo aprendiendo y comparto lo que aprendo.",
+      "aboutLabel": "Sobre mí",
+      "aboutTitle": "Más que código.",
+      "contactTitle": "¿Tienes un proyecto en mente?"
+    },
+    "footer": {
+      "backToTop": "Volver al inicio",
+      "social": "Redes sociales"
+    }
+  }
+}
