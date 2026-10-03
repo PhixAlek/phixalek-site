@@ -49,7 +49,16 @@ export default {
   plugins: [
     new HtmlWebpackPlugin({
       template: 'public/index.html',
-      templateParameters: { seo: buildSeo(JSON.parse(readFileSync(new URL('./src/data/content.json', import.meta.url), 'utf8'))) },
+      templateParameters: (compilation, assets, assetTags, options) => {
+        const contentPath = fileURLToPath(new URL('./src/data/content.json', import.meta.url));
+        compilation.fileDependencies.add(contentPath);
+        return {
+          compilation,
+          webpackConfig: compilation.options,
+          htmlWebpackPlugin: { tags: assetTags, files: assets, options },
+          seo: buildSeo(JSON.parse(readFileSync(contentPath, 'utf8'))),
+        };
+      },
       inject: 'body',
     }),
     new CopyWebpackPlugin({
