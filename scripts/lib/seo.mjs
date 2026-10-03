@@ -27,7 +27,7 @@ export function buildSeo(content) {
       },
       {
         '@type': 'ProfilePage', '@id': `${origin}#profile`, url: origin,
-        name: 'Alejandro Segura — Portfolio · Software Developer', description,
+        name: 'PhixAlek - Software Developer | .NET & Angular', description,
         isPartOf: { '@id': `${origin}#website` }, mainEntity: { '@id': personId },
       },
     ],
