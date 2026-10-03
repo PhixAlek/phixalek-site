@@ -1,4 +1,4 @@
-import { ui, bind, text } from '../../../content/index.js';
+import { ui, text } from '../../../content/index.js';
 // src/js/modules/common/contact.js
 import emailjs from '@emailjs/browser';
 
@@ -27,6 +27,7 @@ export function mountContactEmailJS({ serviceId, templateId, publicKey }){
 
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
+    if (form.getAttribute('aria-busy') === 'true') return;
 
     const fd = new FormData(form);
     const payload = {
@@ -46,6 +47,9 @@ export function mountContactEmailJS({ serviceId, templateId, publicKey }){
       return;
     }
 
+    form.setAttribute('aria-busy', 'true');
+    submitBtn?.classList.add('loading');
+    submitBtn?.setAttribute('aria-busy', 'true');
     // UI feedback
     text(status, () => ui.contact.sending);
     if (submitBtn) { submitBtn.disabled = true; text(submitBtn, () => ui.contact.sending); }
@@ -64,6 +68,9 @@ export function mountContactEmailJS({ serviceId, templateId, publicKey }){
       console.error(err);
       text(status, () => ui.contact.error);
     }finally{
+      form.setAttribute('aria-busy', 'false');
+      submitBtn?.classList.remove('loading');
+      submitBtn?.setAttribute('aria-busy', 'false');
       if (submitBtn) { submitBtn.disabled = false; text(submitBtn, () => ui.contact.submit); }
     }
   });

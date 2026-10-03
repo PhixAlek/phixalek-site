@@ -3,7 +3,7 @@
 /** @typedef {{id:string, publication:Publication, role:string, organization:string, dates:{start:string,end:string|null}, industry:string, context:string, technologies:string[], responsibilities:string[], outcomes:Array<{description:string,evidence?:string}>, links:Action[]}} Experience */
 /** @typedef {{id:string, slug:string, publication:Publication, title:string, status:'planned'|'in-progress'|'released', overview:string, problem:string, role:string, implementedStack:string[], inProgress:string[], planned:string[], screenshots:Array<{src:string,alt:string,width:number,height:number}>, decisions:string[], architecture:string[], repository:string|null, liveDemo:string|null, lessons:string[]}} Project */
 
-export const ANCHORS = ['home', 'about', 'work', 'contact'];
+export const ANCHORS = ['home', 'about', 'work', 'writing', 'contact'];
 export function validDestination(value) {
   if (typeof value !== 'string' || value !== value.trim() || !value) return false;
   if (value.startsWith('#')) return ANCHORS.includes(value.slice(1));
@@ -81,8 +81,20 @@ export function validateContent(content, catalogs, sections) {
     if (section.publication !== 'published') continue;
     for (const item of publishedItems(section)) {
       checkPublished(item, name);
-      const fields = name === 'work' ? ['title','slug','overview','problem','role'] : name === 'experience' ? ['role','organization'] : ['title','url'];
+      const fields = name === 'work' ? ['title','slug','overview','problem','role'] : name === 'experience' ? ['role','organization'] : name === 'evidence' ? ['value'] : ['title','url'];
       fields.forEach(field => requireText(item[field], `${name}.${item.id}.${field}`));
+      if (name === 'evidence') {
+        for (const [locale, catalog] of Object.entries(catalogs)) {
+          if (catalog.publication === 'published') requireText(catalog.messages.evidence?.contexts?.[item.id], `${locale}.evidence.${item.id}.context`);
+        }
+      }
+      if (name === 'writing') {
+        if (!['article', 'preview'].includes(item.kind)) errors.push(`${item.id}: invalid writing kind`);
+        if (item.kind === 'article' && item.url === section.source?.url) errors.push(`${item.id}: article needs its own URL`);
+        for (const [locale, catalog] of Object.entries(catalogs)) {
+          if (catalog.publication === 'published') requireText(catalog.messages.writing?.entries?.[item.id]?.title, `${locale}.writing.${item.id}.title`);
+        }
+      }
       if (name === 'work' && !['planned','in-progress','released'].includes(item.status)) errors.push(`${item.id}: invalid project status`);
       for (const field of ['repository','liveDemo','url']) if (item[field] != null && !validDestination(item[field])) errors.push(`${item.id}.${field}: invalid URL`);
       for (const action of item.links || []) if (!validAction(action)) errors.push(`${item.id}: invalid link`);
@@ -102,7 +114,7 @@ export function validateTranslation(base, translated) {
     } else if (a && typeof a === 'object') {
       if (!b || typeof b !== 'object') { errors.push(`${path}: missing object`); return; }
       Object.keys(a).forEach(key => {
-        if (['href','id','imageId','kind','publication','className','mailTo','email','icon','name'].includes(key) && a[key] !== b[key]) errors.push(`${path}.${key}: translated invariant`);
+        if (['href','id','imageId','avatarId','kind','publication','className','mailTo','email','icon','name'].includes(key) && a[key] !== b[key]) errors.push(`${path}.${key}: translated invariant`);
         walk(a[key], b[key], `${path}.${key}`);
       });
     } else if (typeof a !== typeof b || (typeof b === 'string' && (!b.trim() || /\bTODO\b/.test(b)))) errors.push(`${path}: missing translation`);

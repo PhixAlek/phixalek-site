@@ -12,12 +12,16 @@
           "href": "#home"
         },
         {
-          "label": "Sobre mí",
-          "href": "#about"
-        },
-        {
           "label": "Proyectos",
           "href": "#work"
+        },
+        {
+          "label": "Blog",
+          "href": "#writing"
+        },
+        {
+          "label": "Sobre mí",
+          "href": "#about"
         },
         {
           "label": "Contacto",
@@ -45,7 +49,8 @@
     "work": {
       "book": "Agendar una llamada",
       "open": "Abrir",
-      "image": "{title} — imagen del proyecto"
+      "image": "{title} — imagen del proyecto",
+      "details": "Detalles técnicos"
     },
     "booking": {
       "close": "Cerrar",
@@ -101,6 +106,54 @@
     },
     "language": {
       "switch": "Switch to English"
+    },
+    "evidence": {
+      "title": "Experiencia e impacto",
+      "years": "años",
+      "contexts": {
+        "web": "Desarrollando y mejorando aplicaciones web.",
+        "clinical": "Reducción del tiempo de carga en un módulo de notas clínicas.",
+        "teaching": "Estudiantes y desarrolladores formados o mentorizados en educación y capacitación empresarial."
+      },
+      "loadTime": "De aproximadamente seis segundos a aproximadamente dos segundos"
+    },
+    "writing": {
+      "title": "Últimas publicaciones",
+      "preview": "Vista previa · Sin publicar",
+      "entries": {
+        "building-flowly": {
+          "title": "Lo que estoy aprendiendo al construir Flowly"
+        }
+      },
+      "allPosts": "Ver todas las publicaciones",
+      "states": {
+        "loading": {
+          "title": "Cargando la última publicación…",
+          "message": "Consultando Substack."
+        },
+        "empty": {
+          "title": "Próximamente, nuevas publicaciones",
+          "message": "Todavía no hay publicaciones en Substack. Puedes visitar mi perfil."
+        },
+        "unavailable": {
+          "title": "Publicaciones no disponibles por ahora",
+          "message": "No se pudo cargar Substack. Puedes visitar mi perfil."
+        }
+      }
+    },
+    "closing": {
+      "more": "Más sobre mí",
+      "sendMessage": "Enviar un mensaje",
+      "closeMessage": "Cerrar formulario",
+      "talk": "Hablemos",
+      "intro": "Creo productos útiles, sigo aprendiendo y comparto lo que aprendo.",
+      "aboutLabel": "Sobre mí",
+      "aboutTitle": "Más que código.",
+      "contactTitle": "¿Tienes un proyecto en mente?"
+    },
+    "footer": {
+      "backToTop": "Volver al inicio",
+      "social": "Redes sociales"
     }
   }
 }

@@ -33,6 +33,7 @@ export default {
   experiments: { topLevelAwait: true },
   module: {
     rules: [
+      { test: /\.woff2$/i, type: 'asset/resource', generator: { filename: 'fonts/[name][ext]' } },
       // CSS desde src (inyecta en runtime)
       {
         test: /\.css$/i,

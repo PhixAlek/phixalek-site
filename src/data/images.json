@@ -15,6 +15,21 @@
       "id": "demome-01",
       "src": "demome-01.webp",
       "alt": "PhixAlek — Portfolio project image"
+    },
+    {
+      "id": "phixalek-profile",
+      "src": "phixalek-profile.gif",
+      "staticSrc": "phixalek-profile-static.png",
+      "width": 480,
+      "height": 480,
+      "alt": ""
+    },
+    {
+      "id": "mountains",
+      "src": "mountains.svg",
+      "alt": "",
+      "width": 1200,
+      "height": 400
     }
   ]
 }

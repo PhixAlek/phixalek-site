@@ -1,4 +1,4 @@
-import { content, bind, text, languageButton } from '../../../content/index.js';
+import { content, ui, bind, text, languageButton } from '../../../content/index.js';
 
 const ICONS = {
   substack: `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M3 2h18v2H3zm0 5h18v2H3zm0 5h18v11l-9-5-9 5z"/></svg>`,
@@ -17,42 +17,55 @@ export function Footer(){
   const wrap = document.createElement('div');
   wrap.className = 'container';
 
-  // fila 1: meta
-  const meta = document.createElement('div');
-  meta.className = 'ft-meta';
+  const back = document.createElement('a');
+  back.className = 'ft-back';
+  back.href = '#home';
+  const arrow = document.createElement('span');
+  arrow.textContent = '↑';
+  arrow.setAttribute('aria-hidden', 'true');
+  const backLabel = document.createElement('span');
+  text(backLabel, () => ui.footer.backToTop);
+  back.append(arrow, backLabel);
 
-  const left = document.createElement('div');
-  left.className = 'ft-copy';
-  left.textContent = `© ${new Date().getFullYear()} ${content.hero.name}`;
-
-  const center = document.createElement('div');
-  center.className = 'ft-info';
-  text(center, () => `${data.location} · ${data.language} · ${data.role}`);
-
-  const right = document.createElement('div');
-  right.className = 'ft-mail';
-  const mail = document.createElement('a');
-  mail.href = `mailto:${data.email}`;
-  mail.textContent = data.email;
-  right.appendChild(mail);
-
-  meta.append(languageButton('language-footer'), left, center, right);
+  const copyright = document.createElement('span');
+  copyright.className = 'ft-copy';
+  text(copyright, () => `© ${new Date().getFullYear()} ${content.hero.name}`);
+  const language = languageButton('language-footer');
 
   // fila 2: redes sociales
-  const social = document.createElement('div');
+  const social = document.createElement('nav');
   social.className = 'ft-social';
+  bind(social, 'attr:aria-label', () => ui.footer.social);
   (data.social || []).forEach(s => {
     const a = document.createElement('a');
     a.className = 'ft-ico';
+    a.dataset.profile = s.icon;
     a.href = s.href;
     a.target = '_blank';
     a.rel = 'noopener noreferrer';
     a.ariaLabel = s.name;
     a.innerHTML = ICONS[s.icon] || '';
+    const label = document.createElement('span');
+    label.textContent = s.name;
+    a.append(label);
     social.appendChild(a);
   });
 
-  wrap.append(meta, social);
+  // Keep visual, reading and keyboard order aligned at each breakpoint.
+  const profiles = [...social.children];
+  const mobile = window.matchMedia('(max-width: 767px)');
+  const priority = ['github', 'linkedin', 'substack', 'youtube', 'hackerrank'];
+  const arrange = () => {
+    const ordered = mobile.matches
+      ? [...profiles].sort((a, b) => priority.indexOf(a.dataset.profile) - priority.indexOf(b.dataset.profile))
+      : profiles;
+    social.append(...ordered);
+    wrap.append(...(mobile.matches
+      ? [language, back, social, copyright]
+      : [language, social, back, copyright]));
+  };
+  arrange();
+  mobile.addEventListener('change', arrange);
   el.appendChild(wrap);
   return el;
 }

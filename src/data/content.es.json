@@ -1,7 +1,7 @@
 {
   "hero": {
     "name": "Phixalek",
-    "subtitle": "Desarrollador de software enfocado en [[.NET]], [[Angular]] y [[aplicaciones web]].",
+    "subtitle": "Desarrollador de software enfocado en [[.NET]], [[Angular]] y [[complement:aplicaciones web]].",
     "ctaPrimary": {
       "text": "Hablemos",
       "href": "#contact"
@@ -9,18 +9,19 @@
     "ctaSecondary": {
       "text": "Ver proyectos",
       "href": "#work"
-    }
+    },
+    "avatarId": "phixalek-profile"
   },
   "about": {
     "eyebrow": "Software • Consulting • Game Dev",
     "title": "¿Quién es Phixalek?",
-    "lead": "Alejandro Segura nació en Colombia y estudia Ingeniería Multimedia. Su trabajo combina el [[desarrollo de software]] y proyectos personales que unen tecnología y narrativa.",
-    "body": "Está desarrollando **Flowly**, un proyecto de finanzas personales que comienza con ((.NET 10)), y **Bloomink**, su estudio independiente, donde trabaja en *No Witness*: una experiencia narrativa de supervivencia inspirada en Resident Evil y Silent Hill, creada con ((UE5 + C++)).\n\nActualmente vive en Hermosillo, México, estudia Ingeniería Multimedia y enseña programación.",
+    "lead": "Alejandro Segura nació en Colombia y estudia [[Ingeniería Multimedia]]. Su trabajo combina el [[desarrollo de software]] y proyectos personales que unen tecnología y narrativa.",
+    "body": "Está desarrollando **Flowly**, un proyecto de finanzas personales que comienza con [[.NET 10]], y **Bloomink**, su estudio independiente, donde trabaja en *No Witness*: una experiencia narrativa de supervivencia inspirada en Resident Evil y Silent Hill, creada con [[UE5 + C++]].\n\nActualmente vive en Sonora, México, estudia [[Ingeniería Multimedia]] y enseña programación.",
     "bullets": [
-      "Backend: ((.NET, C#, DDD, Clean Architecture)) → sistemas escalables y fáciles de mantener",
-      "Frontend: ((Angular, TypeScript)) → aplicaciones con una experiencia de uso clara",
-      "Videojuegos: ((UE5, C++)) + [[Pixel Art]] → procesos optimizados y narrativa",
-      "Prácticas: ((CI/CD, Clean Code))"
+      "Backend: [[.NET, C#, DDD, Clean Architecture]] → sistemas escalables y fáciles de mantener",
+      "Frontend: [[Angular, TypeScript]] → aplicaciones con una experiencia de uso clara",
+      "Videojuegos: [[UE5, C++]] + [[Pixel Art]] → procesos optimizados y narrativa",
+      "Prácticas: [[CI/CD, Clean Code]]"
     ]
   },
   "projects": {
@@ -32,8 +33,8 @@
         "tags": [
           ".NET 10",
           "Angular SPA",
+          "DDD",
           "PostgreSQL",
-          "GitHub",
           "GitHub Actions",
           "CI/CD"
         ],
@@ -50,7 +51,11 @@
         ],
         "id": "flowly",
         "publication": "published",
-        "imageId": "finbit-01"
+        "imageId": "finbit-01",
+        "tagStyles": {
+          ".NET 10": "primary",
+          "Angular SPA": "complement"
+        }
       },
       {
         "title": "Consultoría",
@@ -78,7 +83,11 @@
           "Revisión exprés (48 h)",
           "Plan de mejora y hoja de ruta",
           "Implementación guiada"
-        ]
+        ],
+        "tagStyles": {
+          "Integrations": "primary",
+          "Refactoring": "primary"
+        }
       },
       {
         "id": "phixalek-site",
@@ -87,6 +96,7 @@
         "desc": "Este sitio usa JavaScript para la interfaz, EmailJS para los mensajes de contacto y la API de Google Calendar para consultar disponibilidad y agendar llamadas.",
         "tags": [
           "JavaScript",
+          "Webpack",
           "EmailJS",
           "Calendar API",
           "Netlify"
@@ -102,7 +112,12 @@
             "href": "https://github.com/PhixAlek/phixalek-site/blob/AS-arquitectura-contenido-2026-09-28/docs/ARCHITECTURE.md"
           }
         ],
-        "imageId": "demome-01"
+        "imageId": "demome-01",
+        "tagStyles": {
+          "JavaScript": "primary",
+          "Webpack": "primary",
+          "Netlify": "primary"
+        }
       }
     ]
   },
@@ -111,7 +126,7 @@
     "mailTo": "hi@phixalek.com"
   },
   "footer": {
-    "location": "Hermosillo, México",
+    "location": "Sonora, México",
     "language": "Inglés / Español",
     "role": "Desarrollador de software",
     "email": "hi@phixalek.com",

@@ -12,12 +12,16 @@
           "href": "#home"
         },
         {
-          "label": "About",
-          "href": "#about"
-        },
-        {
           "label": "Projects",
           "href": "#work"
+        },
+        {
+          "label": "Blog",
+          "href": "#writing"
+        },
+        {
+          "label": "About",
+          "href": "#about"
         },
         {
           "label": "Contact",
@@ -45,7 +49,8 @@
     "work": {
       "book": "Book a call",
       "open": "Open",
-      "image": "{title} — project image"
+      "image": "{title} — project image",
+      "details": "Technical details"
     },
     "booking": {
       "close": "Close",
@@ -101,6 +106,54 @@
     },
     "language": {
       "switch": "Cambiar a español"
+    },
+    "evidence": {
+      "title": "Experience and impact",
+      "years": "Years",
+      "contexts": {
+        "web": "Building and improving web applications.",
+        "clinical": "Reduced load time in a clinical-notes module.",
+        "teaching": "Students and developers taught or mentored in education and corporate training."
+      },
+      "loadTime": "Approximately six seconds to approximately two seconds"
+    },
+    "writing": {
+      "title": "Latest Writing",
+      "preview": "Preview · Not published",
+      "entries": {
+        "building-flowly": {
+          "title": "What I’m learning while building Flowly"
+        }
+      },
+      "allPosts": "View all posts",
+      "states": {
+        "loading": {
+          "title": "Loading the latest post…",
+          "message": "Checking Substack."
+        },
+        "empty": {
+          "title": "New posts are on the way",
+          "message": "No published posts on Substack yet. You can visit my profile."
+        },
+        "unavailable": {
+          "title": "Posts are temporarily unavailable",
+          "message": "Substack couldn’t load. You can still visit my profile."
+        }
+      }
+    },
+    "closing": {
+      "more": "More about me",
+      "sendMessage": "Send a message",
+      "closeMessage": "Close form",
+      "talk": "Let’s talk",
+      "intro": "I build useful products, learn continuously, and enjoy sharing what I learn.",
+      "aboutLabel": "About",
+      "aboutTitle": "More than just code.",
+      "contactTitle": "Have a project in mind?"
+    },
+    "footer": {
+      "backToTop": "Back to top",
+      "social": "Social profiles"
     }
   }
 }
