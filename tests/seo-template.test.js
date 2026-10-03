@@ -44,7 +44,17 @@ test('a fresh configuration renders valid structured data and approved fallback 
   const content = JSON.parse(await readFile(path.join(root, 'src/data/content.json'), 'utf8'));
   const html = await compileTemplate({ seo: buildSeo(content) });
   const json = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1];
-  assert.equal(JSON.parse(json)['@graph'][0].name, 'Alejandro Segura');
+  const graph = JSON.parse(json)['@graph'];
+  assert.equal(graph[0].name, 'Alejandro Segura');
+  assert.equal(graph.find(n => n['@type'] === 'ProfilePage').name, 'PhixAlek - Software Developer | .NET & Angular');
+  assert.ok(html.includes('<title>PhixAlek - Software Developer | .NET &amp; Angular</title>'));
+  assert.ok(html.includes('property="og:title" content="PhixAlek - Software Developer | .NET &amp; Angular"'));
+  assert.ok(html.includes('name="twitter:title" content="PhixAlek - Software Developer | .NET &amp; Angular"'));
+  const description = 'Alejandro Segura, software developer with 5+ years building .NET and Angular web applications. Explore Flowly, selected projects and technical writing.';
+  for (const attribute of ['name="description"', 'property="og:description"', 'name="twitter:description"']) {
+    assert.equal(html.split(`<meta ${attribute} `).length - 1, 1);
+    assert.ok(html.includes(`<meta ${attribute} content="${description}">`));
+  }
   assert.ok(html.includes('<div id="app"></div>'));
   const fallback = html.match(/<noscript>([\s\S]*?)<\/noscript>/)[1];
   assert.ok(fallback.includes('https://github.com/PhixAlek/Flowly'));
