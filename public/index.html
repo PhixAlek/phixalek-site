@@ -30,7 +30,9 @@
   <meta name="twitter:image" content="https://phixalek.com/media/portfolio-preview-v2.jpg">
   <meta name="twitter:image:alt" content="PhixAlek portfolio homepage with software development expertise in .NET, Angular and web applications.">
   <link rel="icon" type="image/x-icon" href="./media/phixlaek-logo-alejandro-segura.ico">
+  <% if (typeof seo !== "undefined") { %>
   <script type="application/ld+json"><%= seo.structuredData %></script>
+  <% } %>
   <style>
     .seo-fallback { max-width: 960px; margin: auto; padding: 32px; font-family: Arial, Helvetica, sans-serif; line-height: 1.6; color: #292933; }
     .seo-fallback section, .seo-fallback article { margin-block: 32px; }
@@ -38,6 +40,7 @@
   </style>
 </head>
 <body>
-  <div id="app"><%= seo.fallback %></div>
+  <div id="app"></div>
+  <noscript><% if (typeof seo !== "undefined") { %><%= seo.fallback %><% } %></noscript>
 </body>
 </html>

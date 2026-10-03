@@ -1,3 +1,4 @@
+import { afterFirstPaint } from '../common/after-first-paint.js';
 import { loadWritingState, applyPostImage, openLatestArticle } from '../writing/latest.js';
 import { mountNavigationWave } from '../common/navigation-wave.js';
 import { writingContent, ui, bind, text, locale } from '../../../content/index.js';
@@ -114,7 +115,7 @@ export function Writing() {
     if (coverImage) applyPostImage(coverImage, current?.image, fallbackImage, () => latestPost === current);
     return latestPost?.url || source;
   };
-  refreshWriting();
+  afterFirstPaint(() => { if (section.isConnected) refreshWriting(); });
   allPosts.addEventListener('click', () => { refreshWriting(true); });
   link.addEventListener('click', event => {
     openLatestArticle(event, () => refreshWriting(true), ui.writing.states.loading.title);
