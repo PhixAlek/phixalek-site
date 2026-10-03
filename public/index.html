@@ -1,13 +1,43 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" prefix="og: https://ogp.me/ns#">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <link rel="preload" href="./fonts/nunito-variable.woff2" as="font" type="font/woff2" crossorigin>
-  <title>Phixalek — Portfolio</title>
+  <title>Alejandro Segura — Portfolio · Software Developer</title>
+  <meta name="description" content="Alejandro Segura's portfolio. Software developer focused on .NET, Angular and web applications. Explore projects and get in touch.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="author" content="Alejandro Segura">
+  <link rel="canonical" href="https://phixalek.com/">
+
+  <!-- Static metadata is available to link previews without running JavaScript. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="PhixAlek">
+  <meta property="og:url" content="https://phixalek.com/">
+  <meta property="og:title" content="Alejandro Segura — Portfolio · Software Developer">
+  <meta property="og:description" content="Software developer focused on .NET, Angular and web applications. Explore my projects and get in touch.">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="es_MX">
+  <meta property="og:image" content="https://phixalek.com/media/portfolio-preview-v2.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="PhixAlek portfolio homepage with software development expertise in .NET, Angular and web applications.">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Alejandro Segura — Portfolio · Software Developer">
+  <meta name="twitter:description" content="Software developer focused on .NET, Angular and web applications. Explore my projects and get in touch.">
+  <meta name="twitter:image" content="https://phixalek.com/media/portfolio-preview-v2.jpg">
+  <meta name="twitter:image:alt" content="PhixAlek portfolio homepage with software development expertise in .NET, Angular and web applications.">
   <link rel="icon" type="image/x-icon" href="./media/phixlaek-logo-alejandro-segura.ico">
+  <script type="application/ld+json"><%= seo.structuredData %></script>
+  <style>
+    .seo-fallback { max-width: 960px; margin: auto; padding: 32px; font-family: Arial, Helvetica, sans-serif; line-height: 1.6; color: #292933; }
+    .seo-fallback section, .seo-fallback article { margin-block: 32px; }
+    .seo-fallback a { color: #35664f; }
+  </style>
 </head>
 <body>
-  <div id="app"></div>
+  <div id="app"><%= seo.fallback %></div>
 </body>
 </html>
