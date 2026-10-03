@@ -10,16 +10,15 @@ import { mountContactEmailJS } from './modules/common/contact.js';
 import { mountReveal } from './modules/common/reveal.js';
 import { mountNavigation } from './modules/common/navigation.js';
 
-async function bootstrap(){
+function bootstrap(){
 
   const app = document.getElementById('app');
   if(!app){ console.error('[index] #app no existe'); return; }
-  app.replaceChildren();
 
   const header = Header();
   const main   = Main();
   const footer = Footer();
-  app.append(header, main, footer);
+  app.replaceChildren(header, main, footer);
 
   mountNavigation(header, main);
   const closing = main.querySelector('.closing');

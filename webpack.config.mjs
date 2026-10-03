@@ -1,4 +1,6 @@
 import path from 'path';
+import { readFileSync } from 'node:fs';
+import { buildSeo } from './scripts/lib/seo.mjs';
 import webpack from 'webpack';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
@@ -47,6 +49,16 @@ export default {
   plugins: [
     new HtmlWebpackPlugin({
       template: 'public/index.html',
+      templateParameters: (compilation, assets, assetTags, options) => {
+        const contentPath = fileURLToPath(new URL('./src/data/content.json', import.meta.url));
+        compilation.fileDependencies.add(contentPath);
+        return {
+          compilation,
+          webpackConfig: compilation.options,
+          htmlWebpackPlugin: { tags: assetTags, files: assets, options },
+          seo: buildSeo(JSON.parse(readFileSync(contentPath, 'utf8'))),
+        };
+      },
       inject: 'body',
     }),
     new CopyWebpackPlugin({

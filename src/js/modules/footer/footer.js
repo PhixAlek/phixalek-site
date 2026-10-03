@@ -54,6 +54,7 @@ export function Footer(){
   // Keep visual, reading and keyboard order aligned at each breakpoint.
   const profiles = [...social.children];
   const mobile = window.matchMedia('(max-width: 767px)');
+  const tablet = window.matchMedia('(min-width: 768px) and (max-width: 1199px), (min-width: 1200px) and (max-width: 1366px) and (pointer: coarse)');
   const priority = ['github', 'linkedin', 'substack', 'youtube', 'hackerrank'];
   const arrange = () => {
     const ordered = mobile.matches
@@ -62,10 +63,13 @@ export function Footer(){
     social.append(...ordered);
     wrap.append(...(mobile.matches
       ? [language, back, social, copyright]
-      : [language, social, back, copyright]));
+      : tablet.matches
+        ? [language, back, social, copyright]
+        : [language, social, back, copyright]));
   };
   arrange();
   mobile.addEventListener('change', arrange);
+  tablet.addEventListener('change', arrange);
   el.appendChild(wrap);
   return el;
 }
