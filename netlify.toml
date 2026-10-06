@@ -20,3 +20,14 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
   external_node_modules = ["googleapis"]
+
+# SPA routes only; missing assets and function endpoints keep their real status.
+[[redirects]]
+  from = "/blog"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/blog/*"
+  to = "/index.html"
+  status = 200

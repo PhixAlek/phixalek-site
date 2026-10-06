@@ -8,7 +8,7 @@ export async function loadImageRegistry(){
   const base = (manifest.base || '').replace(/\/?$/, '/'); // asegura trailing slash
   const map  = new Map((manifest.images || []).map(img => {
     const id = (img.id || '').toString().trim();
-    return [id, { ...img, src: base + img.src }];
+    return [id, { ...img, src: '/' + base.replace(/^\//, '') + img.src }];
   }));
 
   _cache = { base, map };

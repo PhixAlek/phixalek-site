@@ -16,12 +16,12 @@
           "href": "#work"
         },
         {
-          "label": "Blog",
-          "href": "#writing"
-        },
-        {
           "label": "About",
           "href": "#about"
+        },
+        {
+          "label": "Writing",
+          "href": "#writing"
         },
         {
           "label": "Contact",
@@ -154,6 +154,21 @@
     "footer": {
       "backToTop": "Back to top",
       "social": "Social profiles"
+    },
+    "writingPage": {
+      "title": "Notes, lessons and progress.",
+      "intro": "Thoughts on software, building, learning and game development.",
+      "back": "Back",
+      "read": "Read article",
+      "minutes": "min read",
+      "search": "Search articles…",
+      "list": "List",
+      "grid": "Grid",
+      "all": "All",
+      "contents": "On this page",
+      "empty": "No articles found.",
+      "subscribe": "Subscribe",
+      "progress": "Reading progress"
     }
   }
 }

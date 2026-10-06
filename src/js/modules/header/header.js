@@ -15,6 +15,7 @@ export function Header(){
   brand.className = 'brand';
   const home = document.createElement('a');
   home.href = '#home';
+  home.dataset.homeHref = '#home';
   home.textContent = content.hero.name;
   brand.appendChild(home);
 
@@ -23,16 +24,19 @@ export function Header(){
   nav.className = 'nav';
   const fillNavigation = (target, destinations = ui.navigation.items.map(item => item.href)) => {
     destinations.forEach(href => {
-      const link = document.createElement('a'); link.href = href;
+      const link = document.createElement('a');
+      link.dataset.homeHref = href;
+      link.href = href === '#writing' ? '/blog' : href;
       text(link, () => ui.navigation.items.find(item => item.href === href).label);
       target.append(link);
     });
   };
   // Brand returns home; only implemented destinations enter desktop navigation.
-  fillNavigation(nav, ['#work', '#writing', '#about']);
+  fillNavigation(nav, ['#work', '#about', '#writing']);
   const contact = document.createElement('a');
   contact.className = 'btn header-contact';
-  bind(contact, 'attr:href', () => content.hero.ctaPrimary.href);
+  contact.dataset.homeHref = content.hero.ctaPrimary.href;
+  bind(contact, 'attr:href', () => `${window.location.pathname === '/' ? '' : '/'}${content.hero.ctaPrimary.href}`);
   text(contact, () => content.hero.ctaPrimary.text);
   nav.append(contact, languageButton('language-desktop'));
 

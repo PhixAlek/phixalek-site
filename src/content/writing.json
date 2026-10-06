@@ -1,0 +1,17 @@
+{
+  "source": {
+    "provider": "substack",
+    "origin": "https://phixalek.substack.com",
+    "feedPath": "/feed"
+  },
+  "routes": {
+    "index": "/blog"
+  },
+  "fallbackImageId": "mountains",
+  "categories": [],
+  "articleOverrides": {
+    "https://phixalek.substack.com/p/test-post-1": {
+      "language": "en"
+    }
+  }
+}

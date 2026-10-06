@@ -1,20 +1,15 @@
-const PUBLICATION = 'https://phixalek.substack.com';
+import { loadArticles } from './feed.js';
+import { orderedArticles } from '../../../shared/writing/model.js';
 
-function httpsURL(value) {
-  try {
-    const url = new URL(value);
-    return url.protocol === 'https:' && !url.username && !url.password ? url : null;
-  } catch { return null; }
-}
-
+// Preserve the existing Home card and session format while sharing the article model.
 export function selectLatestPost(items) {
-  return items.map(item => {
-    const url = httpsURL(item.url);
-    const title = typeof item.title === 'string' ? item.title.trim() : '';
-    const published = Date.parse(item.published);
-    if (!title || title.length > 500 || !url || url.origin !== PUBLICATION || !url.pathname.startsWith('/p/') || !Number.isFinite(published)) return null;
-    return { title, url: url.href, published: new Date(published).toISOString(), image: httpsURL(item.image)?.href || null };
-  }).filter(Boolean).sort((a, b) => Date.parse(b.published) - Date.parse(a.published))[0] || null;
+  const article = orderedArticles((Array.isArray(items) ? items : []).map(item => item && ({
+    ...item, url: item.url || item.sourceUrl,
+  })))[0];
+  return article ? {
+    title: article.title, url: article.sourceUrl, published: article.published,
+    image: article.image, language: article.language,
+  } : null;
 }
 
 export function parseSubstackFeed(xml) {
@@ -30,16 +25,15 @@ export function parseSubstackFeed(xml) {
       title: child('title')?.textContent,
       url: child('link')?.textContent?.trim(),
       published: child('pubDate')?.textContent,
+      language: child('language')?.textContent,
       image: enclosure?.getAttribute('type')?.startsWith('image/') ? enclosure.getAttribute('url') : media?.getAttribute('url'),
     };
   });
   return selectLatestPost(items);
 }
 
-export async function loadLatestPost(fetchFeed = fetch) {
-  const result = await fetchFeed('/.netlify/functions/latest-writing', { signal: AbortSignal.timeout(8000), cache: 'no-store' });
-  if (!result.ok) throw new Error('Writing unavailable');
-  return parseSubstackFeed(await result.text());
+export async function loadLatestPost(fetchFeed = fetch, options = {}) {
+  return selectLatestPost(await loadArticles({ fetchFeed, force: options.force }));
 }
 
 // Keep the existing local cover visible until a remote image has fully loaded.
@@ -57,7 +51,7 @@ export async function applyPostImage(img, source, fallback, isCurrent = () => tr
 }
 
 
-export const WRITING_SESSION_KEY = 'phixalek.writing-session.v1';
+export const WRITING_SESSION_KEY = 'phixalek.writing-session.v2';
 const pendingSessions = new WeakMap();
 function sessionStorage() {
   try { return globalThis.window?.sessionStorage; } catch { return undefined; }
@@ -81,7 +75,7 @@ export async function loadWritingState(load = loadLatestPost, { storage = sessio
     const accessedAt = saved?.accessedAt || new Date().toISOString();
     let result;
     try {
-      const post = await load();
+      const post = await load(undefined, { force });
       result = post ? { status:'ready', post, accessedAt } : { status:'empty', post:null, accessedAt };
     } catch { result = { status:'unavailable', post:null, accessedAt }; }
     try { storage?.setItem(WRITING_SESSION_KEY, JSON.stringify(result)); } catch { /* Storage restrictions must not break the card. */ }

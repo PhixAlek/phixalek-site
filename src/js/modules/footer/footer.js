@@ -20,6 +20,7 @@ export function Footer(){
   const back = document.createElement('a');
   back.className = 'ft-back';
   back.href = '#home';
+  back.dataset.homeHref = '#home';
   const arrow = document.createElement('span');
   arrow.textContent = '↑';
   arrow.setAttribute('aria-hidden', 'true');

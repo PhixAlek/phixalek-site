@@ -1,4 +1,5 @@
-export const SUBSTACK_FEED = 'https://phixalek.substack.com/feed';
+import { SUBSTACK_FEED } from '../../src/shared/writing/config.js';
+export { SUBSTACK_FEED };
 const MAX_BYTES = 2 * 1024 * 1024;
 
 // Fixed public source: callers cannot turn this function into an arbitrary proxy.

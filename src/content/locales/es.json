@@ -16,12 +16,12 @@
           "href": "#work"
         },
         {
-          "label": "Blog",
-          "href": "#writing"
-        },
-        {
           "label": "Sobre mí",
           "href": "#about"
+        },
+        {
+          "label": "Publicaciones",
+          "href": "#writing"
         },
         {
           "label": "Contacto",
@@ -152,8 +152,23 @@
       "contactTitle": "¿Tienes un proyecto en mente?"
     },
     "footer": {
-      "backToTop": "Volver al inicio",
+      "backToTop": "Volver arriba",
       "social": "Redes sociales"
+    },
+    "writingPage": {
+      "title": "Últimas publicaciones",
+      "intro": "Thoughts on software, building, learning and game development.",
+      "back": "Atrás",
+      "read": "Leer artículo",
+      "minutes": "min de lectura",
+      "search": "Buscar publicaciones…",
+      "list": "Lista",
+      "grid": "Cuadrícula",
+      "all": "Todas",
+      "contents": "En esta página",
+      "empty": "No se encontraron publicaciones.",
+      "subscribe": "Suscribirse",
+      "progress": "Progreso de lectura"
     }
   }
 }

@@ -8,6 +8,7 @@ import { mountBooking }    from './modules/common/booking.js';
 import { mountContactEmailJS } from './modules/common/contact.js';
 
 import { mountReveal } from './modules/common/reveal.js';
+import { mountRouter } from './modules/writing/router.js';
 import { mountNavigation } from './modules/common/navigation.js';
 
 function bootstrap(){
@@ -16,11 +17,49 @@ function bootstrap(){
   if(!app){ console.error('[index] #app no existe'); return; }
 
   const header = Header();
-  const main   = Main();
   const footer = Footer();
-  app.replaceChildren(header, main, footer);
+  app.replaceChildren(header, footer);
+  let home, currentPage, cleanupNavigation, disposePage;
+  const robots = document.querySelector('meta[name=robots]');
+  const originalRobots = robots?.content;
+  mountRouter(async (route, isCurrent) => {
+    cleanupNavigation?.();
+    cleanupNavigation = null;
+    const isHome = route.kind === 'home';
+    document.querySelectorAll('[data-home-href]').forEach(link => {
+      const destination = link.dataset.homeHref;
+      link.href = destination === '#writing' ? '/blog' : `${isHome ? '' : '/'}${destination}`;
+      if (!isHome && destination === '#writing') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    const backTop = footer.querySelector('.ft-back');
+    backTop.href = isHome ? '#home' : '#main-content';
+    if (robots) robots.content = isHome ? originalRobots : 'noindex, follow';
+    disposePage?.();
+    disposePage = null;
+    currentPage?.remove();
+    currentPage = null;
+    if (home) {
+      home.dataset.navigationReady = 'false';
+      document.dispatchEvent(new CustomEvent('site:home-paused'));
+      home.hidden = !isHome; home.id = isHome ? 'main-content' : 'home-content'; }
+    if (isHome) {
+      if (!home) { home = Main(); home.dataset.navigationReady = 'false'; app.insertBefore(home, footer); mountHome(home); }
+      cleanupNavigation = mountNavigation(header, home);
+    } else {
+      const { WritingPage } = await import('./modules/writing/pages.js');
+      if (!isCurrent()) return;
+      const result = WritingPage(route);
+      currentPage = result.page;
+      disposePage = result.dispose;
+      app.insertBefore(currentPage, footer);
+      cleanupNavigation = mountNavigation(header, currentPage);
+      await result.ready;
+    }
+  });
+}
 
-  mountNavigation(header, main);
+function mountHome(main) {
   const closing = main.querySelector('.closing');
   if (closing) mountReveal(closing, window, { selector: '.closing-section', pendingClass: 'closing-pending' });
   const writing = main.querySelector('.writing');
@@ -33,5 +72,4 @@ function bootstrap(){
   }
 }
 bootstrap();
-
 
