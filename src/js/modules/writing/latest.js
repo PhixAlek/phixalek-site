@@ -12,26 +12,6 @@ export function selectLatestPost(items) {
   } : null;
 }
 
-export function parseSubstackFeed(xml) {
-  const feed = new DOMParser().parseFromString(xml, 'application/xml');
-  if (feed.querySelector('parsererror') || feed.documentElement.localName !== 'rss') throw new Error('Invalid Substack feed');
-  const channel = [...feed.documentElement.children].find(node => node.localName === 'channel');
-  if (!channel) throw new Error('Invalid Substack feed');
-  const items = [...channel.children].filter(node => node.localName === 'item').map(item => {
-    const child = name => [...item.children].find(node => node.localName === name);
-    const enclosure = child('enclosure');
-    const media = [...item.children].find(node => node.namespaceURI === 'http://search.yahoo.com/mrss/' && ['content', 'thumbnail'].includes(node.localName));
-    return {
-      title: child('title')?.textContent,
-      url: child('link')?.textContent?.trim(),
-      published: child('pubDate')?.textContent,
-      language: child('language')?.textContent,
-      image: enclosure?.getAttribute('type')?.startsWith('image/') ? enclosure.getAttribute('url') : media?.getAttribute('url'),
-    };
-  });
-  return selectLatestPost(items);
-}
-
 export async function loadLatestPost(fetchFeed = fetch, options = {}) {
   return selectLatestPost(await loadArticles({ fetchFeed, force: options.force }));
 }

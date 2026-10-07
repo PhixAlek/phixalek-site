@@ -1,4 +1,5 @@
 import { content, ui, bind, text, languageButton } from '../../../content/index.js';
+import { homeNavigationHref } from '../../../shared/writing/routes.js';
 // src/js/modules/header/header.js
 export function Header(){
   const header = document.createElement('header');
@@ -26,7 +27,7 @@ export function Header(){
     destinations.forEach(href => {
       const link = document.createElement('a');
       link.dataset.homeHref = href;
-      link.href = href === '#writing' ? '/blog' : href;
+      link.href = homeNavigationHref(href, window.location.pathname === '/');
       text(link, () => ui.navigation.items.find(item => item.href === href).label);
       target.append(link);
     });

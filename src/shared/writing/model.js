@@ -14,11 +14,23 @@ export function articleLanguage(value) {
   return ['en', 'es'].includes(language) ? language : null;
 }
 
+function publicationDate(value) {
+  if (typeof value !== 'string' || value.length > 128) return NaN;
+  const iso = value.match(/^(\d{4})-(\d{2})-(\d{2})(?:$|T)/);
+  if (iso) {
+    const [year, month, day] = iso.slice(1).map(Number);
+    const calendar = new Date(Date.UTC(year, month - 1, day));
+    if (calendar.getUTCFullYear() !== year || calendar.getUTCMonth() !== month - 1 || calendar.getUTCDate() !== day) return NaN;
+    if (value.includes('T') && !/(?:Z|[+-]\d{2}:\d{2})$/i.test(value)) return NaN;
+  }
+  return Date.parse(value);
+}
+
 /** Normalize public metadata only. HTML must pass a separate sanitizer before rendering. */
 export function normalizeArticle(source) {
   if (!source || typeof source !== 'object') return null;
   const title = typeof source.title === 'string' ? source.title.trim() : '';
-  const published = typeof source.published === 'string' ? Date.parse(source.published) : NaN;
+  const published = publicationDate(source.published);
   if (!title || title.length > 500 || !Number.isFinite(published)) return null;
   let url;
   try { url = new URL(source.url); } catch { return null; }

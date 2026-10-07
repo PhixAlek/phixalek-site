@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { normalizeArticle, orderedArticles } from '../src/shared/writing/model.js';
-import { articlePath, resolveWritingRoute } from '../src/shared/writing/routes.js';
+import { articlePath, homeNavigationHref, resolveWritingRoute } from '../src/shared/writing/routes.js';
 import { ArticleLanguage } from '../src/js/modules/writing/components/article-language.js';
 
 const source = (slug, published = '2026-10-01', extra = {}) => ({
@@ -62,4 +62,19 @@ test('invalid blog configuration fails before publishing routes or source overri
   assert.ok(errors.some(e => e.includes('duplicate identifier')));
   assert.ok(errors.some(e => e.includes('canonical publication URL')));
   assert.ok(errors.some(e => e.includes('language')));
+});
+
+
+test('Home Writing navigation scrolls to Latest Writing; Writing pages open the archive', () => {
+  assert.equal(homeNavigationHref('#writing', true), '#writing');
+  for (const pathname of ['/blog', '/blog/', '/blog/test-post-1']) {
+    assert.equal(homeNavigationHref('#writing', pathname === '/'), '/blog');
+  }
+});
+
+test('other menu destinations keep Home anchors and return to Home from Writing', () => {
+  for (const destination of ['#home', '#work', '#about', '#contact']) {
+    assert.equal(homeNavigationHref(destination, true), destination);
+    assert.equal(homeNavigationHref(destination, false), `/${destination}`);
+  }
 });

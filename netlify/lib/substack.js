@@ -1,6 +1,6 @@
+import { readFeedText } from '../../src/shared/writing/feed-response.js';
 import { SUBSTACK_FEED } from '../../src/shared/writing/config.js';
 export { SUBSTACK_FEED };
-const MAX_BYTES = 2 * 1024 * 1024;
 
 // Fixed public source: callers cannot turn this function into an arbitrary proxy.
 export function createSubstackHandler({ fetchFeed = fetch } = {}) {
@@ -16,21 +16,7 @@ export function createSubstackHandler({ fetchFeed = fetch } = {}) {
         headers: { Accept: 'application/rss+xml, application/xml, text/xml', 'Cache-Control': 'no-cache' },
         cache: 'no-store',
       });
-      if (!result.ok || !result.body) throw new Error('Feed unavailable');
-      if (Number(result.headers.get('content-length')) > MAX_BYTES) throw new Error('Feed too large');
-      const reader = result.body.getReader();
-      const chunks = [];
-      let bytes = 0;
-      try {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          bytes += value.byteLength;
-          if (bytes > MAX_BYTES) throw new Error('Feed too large');
-          chunks.push(value);
-        }
-      } finally { await reader.cancel(); }
-      const xml = Buffer.concat(chunks).toString('utf8');
+      const xml = await readFeedText(result);
       if (!/<rss\b/i.test(xml) || /<!DOCTYPE|<!ENTITY/i.test(xml)) throw new Error('Invalid feed');
       return {
         statusCode: 200,

@@ -9,6 +9,7 @@ import { mountContactEmailJS } from './modules/common/contact.js';
 
 import { mountReveal } from './modules/common/reveal.js';
 import { mountRouter } from './modules/writing/router.js';
+import { homeNavigationHref } from '../shared/writing/routes.js';
 import { mountNavigation } from './modules/common/navigation.js';
 
 function bootstrap(){
@@ -28,7 +29,7 @@ function bootstrap(){
     const isHome = route.kind === 'home';
     document.querySelectorAll('[data-home-href]').forEach(link => {
       const destination = link.dataset.homeHref;
-      link.href = destination === '#writing' ? '/blog' : `${isHome ? '' : '/'}${destination}`;
+      link.href = homeNavigationHref(destination, isHome);
       if (!isHome && destination === '#writing') link.setAttribute('aria-current', 'page');
       else link.removeAttribute('aria-current');
     });

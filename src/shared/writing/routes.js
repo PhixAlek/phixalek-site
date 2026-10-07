@@ -8,6 +8,12 @@ export function articlePath(slug) {
   return `${base}/${slug}`;
 }
 
+/** Keep Home navigation within its sections; Writing pages link to the archive. */
+export function homeNavigationHref(destination, isHome) {
+  if (destination === '#writing' && !isHome) return base;
+  return `${isHome ? '' : '/'}${destination}`;
+}
+
 /** Resolve paths only: the caller owns navigation, history and page rendering. */
 export function resolveWritingRoute(pathname) {
   if (typeof pathname !== 'string') return null;
