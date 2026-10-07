@@ -1,3 +1,4 @@
+import snapshot from '../src/content/writing-snapshot.json' with { type: 'json' };
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
@@ -46,7 +47,7 @@ test('reader links have safe external navigation and relative links resolve agai
   assert.equal(fragment.querySelector('img').hasAttribute('src'), false);
 });
 test('reading, list navigation and reload reuse the session feed; explicit refresh refetches', async () => {
-  const storage = { value: feed, getItem() { return this.value; }, setItem(_, value) { this.value = value; } };
+  const storage = { value: JSON.stringify({ snapshotFetchedAt: snapshot.fetchedAt, xml: feed }), getItem() { return this.value; }, setItem(_, value) { this.value = value; } };
   let requests = 0;
   const fetchFeed = async () => { requests++; return new Response(feed); };
   const options = { storage, fetchFeed, Parser: view.DOMParser, view };
@@ -68,4 +69,27 @@ test('simultaneous refreshes share one request and reuse immutable imported arti
   assert.equal(first, second); assert.equal(first, third);
   assert.ok(Object.isFrozen(first));
   assert.ok(Object.isFrozen(first[0]));
+});
+
+
+test('failed explicit refresh preserves the current reader content; failed first load uses the versioned copy', async () => {
+  const fresh = await import('../src/js/modules/writing/feed.js?fallback-test');
+  const options = { storage: null, Parser: view.DOMParser, view, force: true };
+  const fallback = await fresh.loadArticles({ ...options, fetchFeed: async () => new Response('', { status: 503 }) });
+  assert.ok(fallback.some(item => item.slug === 'test-post-1'));
+  const loaded = await fresh.loadArticles({ ...options, fetchFeed: async () => new Response(feed) });
+  const retained = await fresh.loadArticles({ ...options, fetchFeed: async () => { throw new Error('Network failure'); } });
+  assert.deepEqual(retained, loaded);
+});
+
+
+test('a new deployed snapshot invalidates old session content without refetching on later navigation', async () => {
+  const fresh = await import('../src/js/modules/writing/feed.js?revision-test');
+  const storage = { value: JSON.stringify({ snapshotFetchedAt: '2020-01-01T00:00:00Z', xml: feed }),
+    getItem() { return this.value; }, setItem(_, value) { this.value = value; } };
+  let requests = 0;
+  const options = { storage, Parser: view.DOMParser, view, fetchFeed: async () => { requests++; return new Response(feed); } };
+  await fresh.loadArticles(options); await fresh.loadArticles(options);
+  assert.equal(requests, 1);
+  assert.equal(JSON.parse(storage.value).snapshotFetchedAt, snapshot.fetchedAt);
 });

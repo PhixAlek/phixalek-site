@@ -56,12 +56,15 @@ test('oversized feeds and non-success HTTP status are rejected', async () => {
     assert.equal((await handler({httpMethod:'GET'})).statusCode,503);
   }
 });
-test('failed feed request rejects for the component to preserve its current preview', async () => {
-  await assert.rejects(loadLatestPost(async (url, options) => {
-    assert.equal(options.cache,'no-store');
-    return new Response('',{status:503});
-  }),/Writing unavailable/);
+test('failed feed request uses the saved publication instead of clearing its preview', async () => {
+  const post = await loadLatestPost(async (url, options) => {
+    assert.equal(options.cache, 'no-store');
+    return new Response('', { status: 503 });
+  });
+  assert.equal(post.url, 'https://phixalek.substack.com/p/test-post-1');
+  assert.equal(post.title, 'Test Post #1');
 });
+
 test('cover stays visible on remote image failure and is restored on a later image error', async t => {
   const original=Object.getOwnPropertyDescriptor(globalThis,'Image');
   let fail=true;

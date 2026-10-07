@@ -1,3 +1,4 @@
+import { validateSnapshot, availableArticles, mergeArticles } from '../../../shared/writing/snapshot.js';
 import { readFeedText } from '../../../shared/writing/feed-response.js';
 
 export const FEED_SESSION_KEY = 'phixalek.writing-feed.v1';
@@ -10,20 +11,34 @@ export async function loadArticles({ fetchFeed = fetch, storage, force = false, 
   if (memory && !force) return memory;
   pending = (async () => {
     // Parsing and HTML sanitization are loaded only when writing content is requested.
-    const { parseArticles } = await import('./import-feed.js');
+    const [{ parseArticles }, { default: snapshot }] = await Promise.all([
+      import('./import-feed.js'), import('../../../content/writing-snapshot.json', { with: { type: 'json' } }),
+    ]);
+    const savedArticles = availableArticles(validateSnapshot(snapshot).articles);
     if (!force) {
       try {
         const saved = storage?.getItem(FEED_SESSION_KEY);
-        if (saved) { memory = parseArticles(saved, Parser, view); return memory; }
+        if (saved) {
+          const cached = JSON.parse(saved);
+          if (cached.snapshotFetchedAt === snapshot.fetchedAt && typeof cached.xml === 'string') {
+            memory = Object.freeze(mergeArticles(savedArticles, parseArticles(cached.xml, Parser, view))); return memory;
+          }
+        }
       } catch { /* Invalid caches are refetched, never rendered. */ }
     }
-    const response = await fetchFeed('/.netlify/functions/latest-writing', { signal: AbortSignal.timeout(8000), cache: 'no-store' });
-    if (!response.ok) throw new Error('Writing unavailable');
-    const xml = await readFeedText(response);
-    const articles = parseArticles(xml, Parser, view);
-    memory = articles;
-    try { storage?.setItem(FEED_SESSION_KEY, xml); } catch { /* Storage quotas do not break reading. */ }
-    return articles;
+    try {
+      const response = await fetchFeed('/.netlify/functions/latest-writing', { signal: AbortSignal.timeout(8000), cache: 'no-store' });
+      if (!response.ok) throw new Error('Writing unavailable');
+      const xml = await readFeedText(response);
+      const articles = parseArticles(xml, Parser, view);
+      memory = Object.freeze(mergeArticles(savedArticles, articles));
+      try { storage?.setItem(FEED_SESSION_KEY, JSON.stringify({ snapshotFetchedAt: snapshot.fetchedAt, xml })); } catch { /* Storage quotas do not break reading. */ }
+      return memory;
+    } catch {
+      // Keep the last successfully rendered copy when an explicit refresh or the provider fails.
+      memory = Object.freeze(availableArticles(memory || savedArticles));
+      return memory;
+    }
   })();
   try { return await pending; } finally { pending = undefined; }
 }

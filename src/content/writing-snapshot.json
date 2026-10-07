@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "source": "https://phixalek.substack.com",
+  "fetchedAt": "2026-10-07T03:27:43.789Z",
+  "articles": [
+    {
+      "id": "https://phixalek.substack.com/p/test-post-1",
+      "slug": "test-post-1",
+      "sourceUrl": "https://phixalek.substack.com/p/test-post-1",
+      "title": "Test Post #1",
+      "published": "2026-10-01T19:12:42.000Z",
+      "image": "https://substackcdn.com/image/fetch/$s_!uhTM!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F49b636a0-f540-4cff-b011-5183fdd0b070_1122x1402.png",
+      "language": "en",
+      "html": "<p>I’m currently building my website and working on connecting Substack as a secondary blogging platform. I want to bring the content I publish on Substack into my website so readers can see it there and, if they want, continue reading on Substack.</p><p>For the initial release of this second version of my website, I’ll pull posts from Substack. In the future, my idea is to display the content directly on my website and create a dedicated page for each article.</p><p>I’m currently reviewing the documentation to understand how to connect Substack to an external website. I find this interesting because it’s similar to integrations I’ve already worked on, such as connecting Google Calendar and using EmailJS to send information and emails.</p><p>My website is almost finished. Below is an AI-generated mockup based on my own concepts.</p><div><figure><a href=\"https://substackcdn.com/image/fetch/$s_!uhTM!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F49b636a0-f540-4cff-b011-5183fdd0b070_1122x1402.png\" target=\"_blank\" rel=\"noopener noreferrer\"><div><img src=\"https://substackcdn.com/image/fetch/$s_!uhTM!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F49b636a0-f540-4cff-b011-5183fdd0b070_1122x1402.png\" width=\"1122\" height=\"1402\" alt=\"\" loading=\"lazy\" decoding=\"async\"><div><div></div></div></div></a></figure></div><h6>Mockup generated with ChatGPT, based on my own ideas and design concepts.</h6><p></p>",
+      "widgets": [
+        {
+          "kind": "subscribe",
+          "url": "https://phixalek.substack.com/subscribe?",
+          "label": "Subscribe"
+        },
+        {
+          "kind": "subscribe",
+          "url": "https://phixalek.substack.com/subscribe?",
+          "label": "Subscribe"
+        }
+      ],
+      "excerpt": "Recent Updates to My Website",
+      "categories": [],
+      "readingMinutes": 1,
+      "updatedAt": "2026-10-07T03:27:43.789Z"
+    }
+  ]
+}

@@ -29,5 +29,8 @@ export function validateWritingConfig(config) {
     } catch { errors.push('writing.articleOverrides: canonical publication URL required'); }
     if (override?.language != null && !['en', 'es'].includes(override.language)) errors.push('writing.articleOverrides.language: en or es required');
   }
+  if (!Array.isArray(config?.removedSlugs) || config.removedSlugs.some(slug => typeof slug !== 'string' || !/^[a-zA-Z0-9][a-zA-Z0-9_-]*$/.test(slug))) {
+    errors.push('writing.removedSlugs: valid article slugs required');
+  }
   return errors;
 }

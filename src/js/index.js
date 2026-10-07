@@ -9,6 +9,9 @@ import { mountContactEmailJS } from './modules/common/contact.js';
 
 import { mountReveal } from './modules/common/reveal.js';
 import { mountRouter } from './modules/writing/router.js';
+import { buildSeo } from '../../scripts/lib/seo.mjs';
+import homeContent from '../data/content.json';
+import { applyPageMetadata, homeMetadata } from '../shared/writing/metadata.js';
 import { homeNavigationHref } from '../shared/writing/routes.js';
 import { mountNavigation } from './modules/common/navigation.js';
 
@@ -19,10 +22,9 @@ function bootstrap(){
 
   const header = Header();
   const footer = Footer();
-  app.replaceChildren(header, footer);
+  let prerender = app.querySelector('[data-writing-prerender]');
+  app.replaceChildren(header, ...(prerender ? [prerender] : []), footer);
   let home, currentPage, cleanupNavigation, disposePage;
-  const robots = document.querySelector('meta[name=robots]');
-  const originalRobots = robots?.content;
   mountRouter(async (route, isCurrent) => {
     cleanupNavigation?.();
     cleanupNavigation = null;
@@ -35,7 +37,13 @@ function bootstrap(){
     });
     const backTop = footer.querySelector('.ft-back');
     backTop.href = isHome ? '#home' : '#main-content';
-    if (robots) robots.content = isHome ? originalRobots : 'noindex, follow';
+    if (isHome) {
+      applyPageMetadata(document, homeMetadata);
+      document.querySelectorAll('script[type="application/ld+json"]').forEach(node => node.remove());
+      const schema = document.createElement('script'); schema.type = 'application/ld+json';
+      schema.textContent = buildSeo(homeContent).structuredData; document.head.append(schema);
+    }
+    if (isHome && prerender) { prerender.remove(); prerender = null; }
     disposePage?.();
     disposePage = null;
     currentPage?.remove();
@@ -53,9 +61,12 @@ function bootstrap(){
       const result = WritingPage(route);
       currentPage = result.page;
       disposePage = result.dispose;
+      if (prerender) { prerender.id = 'prerender-content'; currentPage.hidden = true; }
       app.insertBefore(currentPage, footer);
       cleanupNavigation = mountNavigation(header, currentPage);
       await result.ready;
+      if (!isCurrent()) return;
+      if (prerender) { prerender.remove(); prerender = null; currentPage.hidden = false; }
     }
   });
 }

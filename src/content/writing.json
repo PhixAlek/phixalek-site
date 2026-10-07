@@ -13,5 +13,6 @@
     "https://phixalek.substack.com/p/test-post-1": {
       "language": "en"
     }
-  }
+  },
+  "removedSlugs": []
 }

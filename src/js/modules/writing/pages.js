@@ -1,3 +1,4 @@
+import { applyPageMetadata, writingMetadata, SITE_ORIGIN, writingStructuredData, serializedSchema } from '../../../shared/writing/metadata.js';
 import { ui, text, bind } from '../../../content/index.js';
 import { writingConfig } from '../../../shared/writing/config.js';
 import { loadArticles } from './feed.js';
@@ -26,6 +27,15 @@ export function WritingPage(route) {
       const [articles, registry] = await Promise.all([loadArticles(), loadImageRegistry()]);
       if (!page.isConnected) return;
       const fallback = resolveImage(registry, writingConfig.fallbackImageId);
+      const article = route.kind === 'article' ? articles.find(item => item.slug === route.slug) : null;
+      const metadata = writingMetadata(article, { title: ui.writingPage.title, description: ui.writingPage.intro, image: SITE_ORIGIN + fallback.src });
+      // Unknown SPA URLs must not be indexed as duplicates of the archive.
+      applyPageMetadata(document, metadata, { indexable: route.kind === 'index' || Boolean(article) });
+      document.querySelectorAll('script[type="application/ld+json"]').forEach(node => node.remove());
+      if (route.kind === 'index' || article) {
+        const schema = document.createElement('script'); schema.type = 'application/ld+json'; schema.id = 'writing-structured-data';
+        schema.textContent = serializedSchema(writingStructuredData(article, articles, metadata)); document.head.append(schema);
+      }
       if (route.kind === 'index' && !articles.length) {
         text(status, () => ui.writing.states.empty.message);
         return;
@@ -33,7 +43,6 @@ export function WritingPage(route) {
       status.remove();
       if (route.kind === 'index') listing(container, articles, fallback);
       else {
-        const article = articles.find(item => item.slug === route.slug);
         if (!article) { text(status, () => ui.writing.states.empty.message); container.append(status); return; }
         cleanup = reader(container, article, fallback, registry);
       }
