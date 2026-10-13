@@ -1,5 +1,6 @@
 import { content, ui, bind, text, languageButton } from '../../../content/index.js';
 import { homeNavigationHref } from '../../../shared/writing/routes.js';
+import { mountMobileReadingShortcut } from './mobile-reading-shortcut.js';
 // src/js/modules/header/header.js
 export function Header(){
   const header = document.createElement('header');
@@ -122,7 +123,11 @@ export function Header(){
   }));
   desktop.addEventListener('change', () => { if (desktop.matches) close(); });
 
-  wrap.append(brand, nav, btn);
+  const readingShortcut = document.createElement('button');
+  readingShortcut.type = 'button'; readingShortcut.className = 'mobile-reading-shortcut';
+  bind(readingShortcut, 'attr:aria-label', () => window.location.pathname === '/' ? ui.writingPage.headerShortcutHome : ui.writingPage.headerShortcut);
+  mountMobileReadingShortcut(readingShortcut);
+  wrap.append(brand, readingShortcut, nav, btn);
   header.append(skip, wrap);
   // Keep the fixed dialog outside the glass header’s backdrop containing block.
   document.body.append(drawer);

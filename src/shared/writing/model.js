@@ -60,3 +60,11 @@ export function orderedArticles(items) {
   }
   return [...byId.values()].sort((a, b) => Date.parse(b.published) - Date.parse(a.published) || a.id.localeCompare(b.id));
 }
+
+
+/** Owner-managed taxonomy supplements RSS tags without rewriting the source article. */
+export function withArticleCategories(article) {
+  const extra = writingConfig.articleOverrides[article.sourceUrl]?.categories || [];
+  if (!extra.length) return article;
+  return Object.freeze({ ...article, categories: Object.freeze([...new Set([...article.categories, ...extra])]) });
+}

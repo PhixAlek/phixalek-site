@@ -13,6 +13,7 @@ import { buildSeo } from '../../scripts/lib/seo.mjs';
 import homeContent from '../data/content.json';
 import { applyPageMetadata, homeMetadata } from '../shared/writing/metadata.js';
 import { homeNavigationHref } from '../shared/writing/routes.js';
+import { mountNavigationLoading } from './modules/common/navigation-loading.js';
 import { mountNavigation } from './modules/common/navigation.js';
 
 function bootstrap(){
@@ -23,12 +24,15 @@ function bootstrap(){
   const header = Header();
   const footer = Footer();
   let prerender = app.querySelector('[data-writing-prerender]');
-  app.replaceChildren(header, ...(prerender ? [prerender] : []), footer);
+  const headerSpacer = document.createElement('div'); headerSpacer.className = 'header-spacer'; headerSpacer.setAttribute('aria-hidden', 'true');
+  app.replaceChildren(header, headerSpacer, ...(prerender ? [prerender] : []), footer);
+  mountNavigationLoading(header, footer, { shell: app });
   let home, currentPage, cleanupNavigation, disposePage;
   mountRouter(async (route, isCurrent) => {
     cleanupNavigation?.();
     cleanupNavigation = null;
     const isHome = route.kind === 'home';
+    header.classList.toggle('header-writing', !isHome);
     document.querySelectorAll('[data-home-href]').forEach(link => {
       const destination = link.dataset.homeHref;
       link.href = homeNavigationHref(destination, isHome);

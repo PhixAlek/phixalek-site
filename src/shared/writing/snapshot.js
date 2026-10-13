@@ -1,4 +1,4 @@
-import { normalizeArticle } from './model.js';
+import { normalizeArticle, withArticleCategories } from './model.js';
 import { writingConfig, PUBLICATION } from './config.js';
 
 export const SNAPSHOT_VERSION = 1;
@@ -22,7 +22,7 @@ export function validateSnapshot(snapshot) {
 }
 
 export function availableArticles(articles, removed = writingConfig.removedSlugs || []) {
-  return articles.filter(article => !removed.includes(article.slug));
+  return articles.filter(article => !removed.includes(article.slug)).map(withArticleCategories);
 }
 
 /** RSS is a window, not a deletion log. Explicit tombstones always win. */

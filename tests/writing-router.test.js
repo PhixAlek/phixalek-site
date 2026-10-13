@@ -3,13 +3,13 @@ import assert from 'node:assert/strict';
 import { mountRouter, resolveSiteRoute } from '../src/js/modules/writing/router.js';
 
 function harness(path = '/') {
-  const events = new Map(), documentEvents = new Map(), rendered = [], scrolls = [];
+  const events = new Map(), documentEvents = new Map(), rendered = [], scrolls = [], scrollOptions = [];
   const entries = [{ url: new URL(path, 'https://phixalek.com'), state: {} }];
   let index = 0;
   const target = { setAttribute() {}, focus() {}, scrollIntoView() { scrolls.push('anchor'); } };
   const view = {
     get location() { return entries[index].url; }, scrollY: 120,
-    scrollTo(x, y) { scrolls.push(y); },
+    scrollTo(x, y) { scrolls.push(typeof x === 'object' ? x.top : y); scrollOptions.push(x); },
     addEventListener(name, fn) { events.set(name, fn); }, removeEventListener(name) { events.delete(name); },
     history: {
       scrollRestoration: 'auto', get state() { return entries[index].state; },
@@ -22,7 +22,7 @@ function harness(path = '/') {
     getElementById(id) { return ['main-content', 'work'].includes(id) ? target : null; },
   };
   const router = mountRouter(async route => { rendered.push(route); }, { view, doc });
-  return { router, view, rendered, scrolls, events, documentEvents, entries,
+  return { router, view, rendered, scrolls, scrollOptions, events, documentEvents, entries,
     async move(delta) { index += delta; await events.get('popstate')(); },
   };
 }
@@ -42,6 +42,7 @@ test('Home, index, article and browser back/forward preserve route and scroll', 
   await h.router.navigate('/blog'); await h.router.navigate('/blog/post');
   await h.move(-1); assert.equal(h.rendered.at(-1).kind, 'index');
   assert.equal(h.scrolls.at(-1), 120);
+  assert.deepEqual(h.scrollOptions.at(-1), { left: 0, top: 120, behavior: 'instant' });
   await h.move(-1); assert.equal(h.rendered.at(-1).kind, 'home');
   await h.move(1); assert.equal(h.rendered.at(-1).kind, 'index');
   await h.move(1); assert.equal(h.rendered.at(-1).slug, 'post');
@@ -110,4 +111,20 @@ test('the contextual back arrow uses history when an article was opened from Hom
   const link = { href: 'https://phixalek.com/blog', hasAttribute: name => name === 'data-route-back' };
   h.documentEvents.get('click')({ button: 0, target: { closest: () => link }, preventDefault() {} });
   assert.equal(returned, true);
+});
+
+test('loading ends when content is ready, before waiting for the arrival cue', async () => {
+  const { JSDOM } = await import('jsdom');
+  const dom = new JSDOM('<main id="main-content"></main>', { url: 'https://phixalek.com/blog' });
+  const view = dom.window, frames = [], states = [];
+  view.scrollTo = () => {};
+  view.requestAnimationFrame = callback => { frames.push(callback); };
+  view.document.addEventListener('site:navigation-loading', event => states.push(event.detail.active));
+  const router = mountRouter(async () => {}, { view, doc: view.document });
+  await Promise.resolve(); await Promise.resolve();
+  assert.deepEqual(states, [true, false]);
+  while (frames.length) frames.shift()();
+  await router.ready;
+  assert.equal(states.at(-1), false);
+  router.destroy(); dom.window.close();
 });

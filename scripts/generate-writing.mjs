@@ -1,3 +1,4 @@
+import { deriveCategories } from '../src/shared/writing/listing-model.js';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { validateSnapshot, availableArticles } from '../src/shared/writing/snapshot.js';
 import { renderWritingHTML, writingSitemap } from './lib/writing-render.mjs';
@@ -22,7 +23,7 @@ async function page(path, article) {
 await page(config.routes.index);
 for (const article of articles) await page(articlePath(article.slug), article);
 await mkdir(new URL('dist/data/', root), { recursive: true });
-await writeFile(new URL('dist/data/writing.json', root), JSON.stringify({ ...snapshot, articles }) + '\n');
+await writeFile(new URL('dist/data/writing.json', root), JSON.stringify({ ...snapshot, articles, categories: deriveCategories(articles, { definitions: config.categories }) }) + '\n');
 await writeFile(new URL('dist/sitemap.xml', root), writingSitemap(articles));
 console.log(`Writing: generated archive, ${articles.length} article pages and sitemap from the saved copy.`);
 

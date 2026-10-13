@@ -15,23 +15,34 @@ export function mountRouter(render, { view = window, doc = document } = {}) {
   const display = async (restore = false) => {
     const current = ++revision;
     const route = resolveSiteRoute(view.location.pathname);
-    await render(route, () => current === revision);
-    if (current !== revision) return;
-    let target;
-    try { target = view.location.hash && doc.getElementById(decodeURIComponent(view.location.hash.slice(1))); } catch { /* Invalid URL escapes cannot interrupt rendering. */ }
-    if (restore && Number.isFinite(view.history.state?.scroll)) view.scrollTo(0, view.history.state.scroll);
-    else if (target) target.scrollIntoView({ block: 'start' });
-    else view.scrollTo(0, 0);
-    const focus = target || doc.getElementById('main-content');
-    focus?.setAttribute('tabindex', '-1');
-    focus?.focus({ preventScroll: true });
-    if (route.kind === 'home' && await afterScrollArrival(view, () => current === revision)) {
-      const main = doc.getElementById('main-content');
-      if (main?.dataset) main.dataset.navigationReady = 'true';
-      if (doc.dispatchEvent && view.CustomEvent) doc.dispatchEvent(new view.CustomEvent('site:home-arrived', {
-        detail: { hash: view.location.hash || '#home' },
-      }));
-    }
+    const notifyLoading = active => {
+      if (doc.dispatchEvent && view.CustomEvent) doc.dispatchEvent(new view.CustomEvent('site:navigation-loading', { detail: { active } }));
+    };
+    notifyLoading(true);
+    try {
+      await render(route, () => current === revision);
+      if (current !== revision) return;
+      let target;
+      try { target = view.location.hash && doc.getElementById(decodeURIComponent(view.location.hash.slice(1))); } catch { /* Invalid URL escapes cannot interrupt rendering. */ }
+      if (restore && Number.isFinite(view.history.state?.scroll)) view.scrollTo({ left: 0, top: view.history.state.scroll, behavior: 'instant' });
+      else if (target) target.scrollIntoView({ block: 'start' });
+      else view.scrollTo(0, 0);
+      const focus = target || doc.getElementById('main-content');
+      focus?.setAttribute('tabindex', '-1');
+      focus?.focus({ preventScroll: true });
+      // Content is ready: navigation cues must not keep the loading bar alive.
+      notifyLoading(false);
+      if (route.kind === 'home' && await afterScrollArrival(view, () => current === revision)) {
+        const main = doc.getElementById('main-content');
+        if (main?.dataset) main.dataset.navigationReady = 'true';
+        if (doc.dispatchEvent && view.CustomEvent) doc.dispatchEvent(new view.CustomEvent('site:home-arrived', {
+          detail: { hash: view.location.hash || '#home' },
+        }));
+      }
+      if (route.kind !== 'home' && await afterScrollArrival(view, () => current === revision)) {
+        if (doc.dispatchEvent && view.CustomEvent) doc.dispatchEvent(new view.CustomEvent('site:writing-arrived'));
+      }
+    } finally { if (current === revision) notifyLoading(false); }
   };
   const navigate = async href => {
     const url = new URL(href, view.location.href);
@@ -64,6 +75,10 @@ export function mountRouter(render, { view = window, doc = document } = {}) {
       target.scrollIntoView({ block: 'start' });
       target.setAttribute('tabindex', '-1');
       target.focus({ preventScroll: true });
+      const arrivalRevision = revision;
+      void afterScrollArrival(view, () => arrivalRevision === revision).then(arrived => {
+        if (arrived && url.hash === '#main-content' && doc.dispatchEvent && view.CustomEvent) doc.dispatchEvent(new view.CustomEvent('site:writing-arrived'));
+      });
       return;
     }
     // Keep native Home anchors and their existing animation/history handlers.
@@ -81,6 +96,7 @@ export function mountRouter(render, { view = window, doc = document } = {}) {
   const ready = display(true);
   return { ready, navigate, destroy() {
     revision++;
+    if (doc.dispatchEvent && view.CustomEvent) doc.dispatchEvent(new view.CustomEvent('site:navigation-loading', { detail: { active: false } }));
     view.history.scrollRestoration = previousRestoration;
     doc.removeEventListener('click', click);
     doc.removeEventListener('site:navigate', requested);

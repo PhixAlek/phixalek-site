@@ -17,6 +17,7 @@ export function validateWritingConfig(config) {
     for (const category of categories) {
       if (!category?.id || ids.has(category.id)) errors.push('writing.categories: missing or duplicate identifier');
       ids.add(category?.id);
+      if (category?.aliases != null && (!Array.isArray(category.aliases) || category.aliases.some(alias => typeof alias !== 'string' || !alias.trim()))) errors.push('writing.categories.aliases: nonempty strings required');
       if (typeof category?.labels?.en !== 'string' || !category.labels.en.trim() || typeof category?.labels?.es !== 'string' || !category.labels.es.trim()) errors.push('writing.categories: approved English and Spanish labels required');
     }
   }
@@ -27,10 +28,16 @@ export function validateWritingConfig(config) {
       const url = new URL(sourceUrl);
       if (!origin || url.origin !== origin.origin || url.username || url.password || url.search || url.hash || !/^\/p\/[a-zA-Z0-9][a-zA-Z0-9_-]*$/.test(url.pathname)) throw new Error();
     } catch { errors.push('writing.articleOverrides: canonical publication URL required'); }
+    if (override?.categories != null && (!Array.isArray(override.categories) || override.categories.some(tag => typeof tag !== 'string' || !tag.trim() || tag.length > 100))) errors.push('writing.articleOverrides.categories: nonempty category names required');
     if (override?.language != null && !['en', 'es'].includes(override.language)) errors.push('writing.articleOverrides.language: en or es required');
   }
   if (!Array.isArray(config?.removedSlugs) || config.removedSlugs.some(slug => typeof slug !== 'string' || !/^[a-zA-Z0-9][a-zA-Z0-9_-]*$/.test(slug))) {
     errors.push('writing.removedSlugs: valid article slugs required');
   }
+  const listing = config?.listing;
+  if (!listing || !Number.isInteger(listing.batchSize) || listing.batchSize < 1 || listing.batchSize > 12
+    || !Number.isInteger(listing.maxRenderedCards) || listing.maxRenderedCards < listing.batchSize || listing.maxRenderedCards > 100
+    || (listing.mobileCycles !== undefined && (!Number.isInteger(listing.mobileCycles) || listing.mobileCycles < 1 || listing.mobileCycles > 20))
+    || typeof listing.repeatMobile !== 'boolean') errors.push('writing.listing: valid batch size, card limit and repeat flag required');
   return errors;
 }

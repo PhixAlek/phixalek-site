@@ -1,5 +1,6 @@
 import path from 'path';
 import { readFileSync } from 'node:fs';
+import { WritingCategoriesPlugin } from './scripts/lib/writing-categories.mjs';
 import { buildSeo } from './scripts/lib/seo.mjs';
 import webpack from 'webpack';
 import dotenv from 'dotenv';
@@ -48,6 +49,7 @@ export default {
     ],
   },
   plugins: [
+    new WritingCategoriesPlugin(),
     new HtmlWebpackPlugin({
       template: 'public/index.html',
       templateParameters: (compilation, assets, assetTags, options) => {

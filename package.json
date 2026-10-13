@@ -1,6 +1,6 @@
 {
   "name": "phixalek-site",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "private": true,
   "scripts": {
     "dev": "netlify dev",
@@ -8,13 +8,15 @@
     "build": "webpack --config webpack.config.mjs --mode production",
     "start": "npm run dev",
     "dev:web": "webpack serve --config webpack.config.mjs --mode development",
-    "predev": "node scripts/check-node.mjs",
-    "predev:netlify": "node scripts/check-node.mjs",
+    "predev": "node scripts/check-node.mjs && node scripts/generate-writing-categories.mjs --local",
+    "predev:netlify": "node scripts/check-node.mjs && node scripts/generate-writing-categories.mjs --local",
     "validate:content": "node scripts/validate-content.mjs",
-    "prebuild": "npm run validate:content",
+    "prebuild": "npm run validate:content && node scripts/generate-writing-categories.mjs",
     "test": "node --test tests/*.test.js",
     "writing:update": "node scripts/update-writing.mjs",
-    "postbuild": "node scripts/generate-writing.mjs"
+    "postbuild": "node scripts/generate-writing.mjs",
+    "predev:web": "node scripts/generate-writing-categories.mjs --local",
+    "pretest": "node scripts/generate-writing-categories.mjs"
   },
   "type": "module",
   "devDependencies": {

@@ -49,6 +49,10 @@ function apply(node, property, value) {
   else node[property] = value;
 }
 export function unbind(node, property) { bindings.get(node)?.delete(property); }
+/** Release detached repeated components without waiting for a language change. */
+export function releaseBindings(root) {
+  for (const node of bindings.keys()) if (node === root || root.contains(node)) bindings.delete(node);
+}
 export const text = (node, getter) => bind(node, 'textContent', getter);
 export function setLanguage(next, persist = true) {
   if (!catalogs[next]) return;

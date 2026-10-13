@@ -93,3 +93,13 @@ test('a new deployed snapshot invalidates old session content without refetching
   assert.equal(requests, 1);
   assert.equal(JSON.parse(storage.value).snapshotFetchedAt, snapshot.fetchedAt);
 });
+
+
+test('Writing page renders its compiled copy without waiting for an external request', async () => {
+  const fresh = await import('../src/js/modules/writing/feed.js?immediate-snapshot-test');
+  let requested = false;
+  const items = await fresh.loadArticles({ storage: null, preferSnapshot: true, Parser: view.DOMParser, view,
+    fetchFeed: async () => { requested = true; throw new Error('Provider must not block the page'); } });
+  assert.equal(requested, false);
+  assert.ok(items.some(item => item.slug === 'test-post-1'));
+});

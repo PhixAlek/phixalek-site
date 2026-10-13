@@ -14,5 +14,11 @@
       "language": "en"
     }
   },
-  "removedSlugs": []
+  "removedSlugs": [],
+  "listing": {
+    "batchSize": 4,
+    "maxRenderedCards": 32,
+    "repeatMobile": true,
+    "mobileCycles": 3
+  }
 }
