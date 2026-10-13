@@ -15,6 +15,9 @@ export function localArticles(data) {
     if (!article || !post.slug.startsWith('local-demo-') || ids.has(article.id)
       || typeof post.excerpt !== 'string' || !Array.isArray(post.paragraphs)
       || !post.paragraphs.every(value => typeof value === 'string')
+      || (post.sections != null && (!Array.isArray(post.sections) || !post.sections.every(section =>
+        typeof section.title === 'string' && Array.isArray(section.paragraphs)
+        && section.paragraphs.every(value => typeof value === 'string'))))
       || !Array.isArray(post.categories) || !post.categories.every(value => typeof value === 'string')
       || !Number.isInteger(post.readingMinutes) || post.readingMinutes < 1
       || (post.image != null && !/^\/media\/[a-zA-Z0-9_-]+\.(webp|jpg|png|svg)$/.test(post.image))) {
@@ -22,7 +25,9 @@ export function localArticles(data) {
     }
     ids.add(article.id);
     return { ...article, image: post.image ?? null, localDemo: true, excerpt: post.excerpt,
-      html: post.paragraphs.map(value => `<p>${escape(value)}</p>`).join(''),
+      html: post.paragraphs.map(value => `<p>${escape(value)}</p>`).join('')
+        + (post.sections || []).map(section => `<h2>${escape(section.title)}</h2>`
+          + section.paragraphs.map(value => `<p>${escape(value)}</p>`).join('')).join(''),
       categories: post.categories, readingMinutes: post.readingMinutes, widgets: [], updatedAt: article.published };
   }).sort((a, b) => Date.parse(b.published) - Date.parse(a.published));
 }

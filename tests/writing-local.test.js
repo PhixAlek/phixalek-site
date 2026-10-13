@@ -29,3 +29,10 @@ test('production ignores even an invalid local file and clears generated example
   assert.deepEqual(await generateLocalWriting(root), []);
   assert.deepEqual(JSON.parse(await readFile(new URL(LOCAL_WRITING_OUTPUT, root), 'utf8')), { enabled: false, articles: [] });
 });
+
+test('optional local sections exercise the reader without accepting raw HTML', () => {
+  const post = { ...data.posts[0], sections: [{ title: '<img src=x>', paragraphs: ['Section text.'] }] };
+  const [article] = localArticles({ enabled: true, posts: [post] });
+  assert.ok(article.html.includes('<h2>&lt;img src=x&gt;</h2><p>Section text.</p>'));
+  assert.throws(() => localArticles({ enabled: true, posts: [{ ...post, sections: [{ title: 'Bad', paragraphs: [null] }] }] }));
+});

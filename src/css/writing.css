@@ -104,6 +104,9 @@
 .editorial-story > img { width: 100%; height: auto; max-height: 480px; object-fit: cover; border-radius: 12px; margin-block: 32px; }
 .editorial-author { display: flex; align-items: center; gap: 12px; margin-top: 28px; font-size: 15px; }
 .editorial-author img { border-radius: 50%; }
+.editorial-author-details { display: flex; flex-direction: column; gap: 2px; line-height: 1.4; }
+.editorial-author-name { font-weight: 700; }
+.editorial-author-role { font-size: 13px; color: var(--muted); }
 .editorial-prose { font-size: 18px; line-height: 1.75; overflow-wrap: anywhere; hyphens: none; }
 .editorial-prose p { margin-block: 20px; }
 .editorial-prose h1, .editorial-prose h2, .editorial-prose h3 { font-size: 28px; margin-block: 32px 16px; scroll-margin-top: 110px; }
@@ -123,10 +126,10 @@
  .editorial-toolbar { gap: 12px; }
  .editorial-filters { width: 100%; }
  .editorial-reader-layout { display: block; }
- .editorial-toc { display: none; }
+ .editorial-toc { display: block; }
  .editorial-prose { font-size: 17px; }
 }
-@media (min-width: 768px) and (max-width: 1023px) { .editorial-reader-layout { display: block; } .editorial-toc { display: none; } }
+@media (min-width: 768px) and (max-width: 1023px) { .editorial-reader-layout { display: block; } .editorial-toc { display: block; } }
 
 .nav a[aria-current="page"], .drawer-nav a[aria-current="page"] { font-weight:800; text-decoration:underline; text-decoration-color:var(--terracotta); text-decoration-thickness:2px; text-underline-offset:6px; }
 .editorial-intro { isolation:isolate; }
@@ -368,3 +371,39 @@
 .editorial-thumbnail-title .editorial-title-line { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; min-height: 1.15em; }
 .editorial-thumbnail-title .editorial-title-line-first { max-width: 85%; margin-left: auto; }
 
+
+/* Reader formats preserve imported prose while keeping a comfortable reading measure. */
+.editorial-story { min-width: 0; }
+.editorial-story h1 { font-size: clamp(30px, 3.8vw, 48px); line-height: 1.15; text-wrap: balance; }
+.editorial-story > .editorial-deck { margin-block: 16px 24px; font-size: clamp(17px, 1.7vw, 21px); }
+.editorial-story > img { display: block; width: 100%; aspect-ratio: 16 / 9; margin-block: 28px; }
+.editorial-prose { max-width: 68ch; }
+.editorial-prose > :first-child { margin-top: 0; }
+.editorial-prose h2 { font-size: clamp(24px, 2.5vw, 30px); line-height: 1.3; }
+.editorial-prose h3 { font-size: clamp(20px, 2vw, 24px); line-height: 1.35; }
+.editorial-prose :is(h2,h3) { scroll-margin-top: calc(var(--header-height, 80px) + 24px); }
+.editorial-prose :is(ul,ol) { padding-left: 1.5em; margin-block: 20px; }
+.editorial-prose li + li { margin-top: 8px; }
+.editorial-prose blockquote { margin: 24px 0; padding: 4px 20px; border-left: 3px solid var(--accent); color: var(--muted); }
+.editorial-prose blockquote p { margin-block: 12px; }
+.editorial-prose a { text-decoration: underline; text-underline-offset: 3px; }
+.editorial-prose code { font-size: .88em; background: #f4f6f5; padding: .12em .3em; border-radius: 4px; }
+.editorial-prose pre { max-width: 100%; font-size: 15px; line-height: 1.6; }
+.editorial-prose pre code { padding: 0; background: transparent; white-space: pre; overflow-wrap: normal; }
+.editorial-prose :is(th,td) { padding: 10px 14px; border-bottom: 1px solid var(--line); text-align: left; }
+.editorial-prose hr { border: 0; border-top: 1px solid var(--line); margin-block: 32px; }
+.editorial-toc { align-self: start; max-height: calc(100svh - 140px); overflow-y: auto; }
+.editorial-toc summary { cursor: pointer; font-size: 13px; color: var(--muted); font-weight: 800; }
+.editorial-toc nav { margin-top: 16px; }
+.editorial-toc a { color: var(--muted); line-height: 1.4; padding-left: 10px; border-left: 2px solid transparent; }
+.editorial-toc a[aria-current=location] { color: var(--accent); font-weight: 800; text-decoration: none; border-left-color: var(--accent); }
+.editorial-toc .editorial-toc-subsection { padding-left: 22px; font-size: 13px; }
+.editorial-toc a:focus-visible, .editorial-prose a:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
+@media (min-width: 1024px) { .editorial-toc summary { list-style: none; cursor: default; } .editorial-toc summary::-webkit-details-marker { display: none; } }
+@media (max-width: 1023px) {
+ .editorial-reader-layout { display: block; }
+ .editorial-toc { position: static; padding: 16px; margin-block: 24px; border: 0; border-radius: 12px; background: var(--accent-soft); max-height: none; }
+ .editorial-toc nav { max-height: 45svh; overflow-y: auto; scrollbar-width: none; }
+ .editorial-toc nav::-webkit-scrollbar { display: none; }
+ .editorial-prose { max-width: none; }
+}

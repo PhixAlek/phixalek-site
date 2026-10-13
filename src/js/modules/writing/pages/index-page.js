@@ -2,7 +2,7 @@ import { createWritingHeading } from '../../../../shared/writing/hero-heading.js
 import { compiledCategories } from '../categories.js';
 import { ui, text, bind, releaseBindings } from '../../../../content/index.js';
 import { writingConfig } from '../../../../shared/writing/config.js';
-import { EDITORIAL_DESKTOP_QUERY, filterArticles, categoryForTag } from '../../../../shared/writing/listing-model.js';
+import { EDITORIAL_DESKTOP_QUERY, filterArticles, categoryForTag, selectFeedArticles } from '../../../../shared/writing/listing-model.js';
 import { ArticleCard } from '../components/article-card.js';
 import { mountFeed } from '../components/feed-controller.js';
 import { mountFilterPopover, placeFilterButtons } from '../components/filter-popover.js';
@@ -76,9 +76,9 @@ export function listing(container, articles, fallback, view = window) {
     const primaryCount = wide.matches ? 4 : 3;
     placeFilterButtons(filters, panel, overflow, filterButtons.map(([button]) => button), primaryCount);
     moreFilters.classList.toggle('has-selected-filter', categories.findIndex(item => item.id === category) >= primaryCount);
-    const matches = filterArticles(articles, { query: search.value, category, categories: compiledCategories });
     const isFiltered = Boolean(search.value.trim() || category);
-    if (featured) { featured.hidden = isFiltered; featuredShell.hidden = isFiltered; }
+    const matches = filterArticles(selectFeedArticles(articles, { desktop: wide.matches, filtered: isFiltered }),
+      { query: search.value, category, categories: compiledCategories });
     container.classList.toggle('editorial-feed-layout', !wide.matches);
     list.classList.toggle('is-grid', wide.matches && mode === 'grid');
     list.setAttribute('role', wide.matches ? 'list' : 'feed');
@@ -88,9 +88,9 @@ export function listing(container, articles, fallback, view = window) {
     clear.hidden = !search.value;
     filterButtons.forEach(([button, id]) => button.setAttribute('aria-pressed', String(id === category)));
     [...views.children].forEach(button => button.setAttribute('aria-pressed', String(button.dataset.view === mode)));
-    const rows = isFiltered ? matches : wide.matches ? matches.slice(1) : matches.length > 1 ? matches.slice(1) : matches;
+    const rows = matches;
     loadingControls.hidden = !rows.length;
-    if (!matches.length) {
+    if (!matches.length && (isFiltered || !articles.length)) {
       const empty = document.createElement('div'); empty.className = 'editorial-empty';
       const image = document.createElement('img'); image.src = fallback.src; image.alt = ''; image.width = 640; image.height = 336;
       const title = document.createElement('h2'); text(title, () => ui.writingPage.empty);

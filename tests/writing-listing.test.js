@@ -2,7 +2,7 @@ import { ArticleComments } from '../src/js/modules/writing/components/article-co
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
-import { filterArticles, feedBatch, deriveCategories, categoryForTag } from '../src/shared/writing/listing-model.js';
+import { filterArticles, feedBatch, deriveCategories, categoryForTag, selectFeedArticles } from '../src/shared/writing/listing-model.js';
 import { createArticleCard } from '../src/js/modules/writing/components/card-dom.js';
 import { mountFeed } from '../src/js/modules/writing/components/feed-controller.js';
 import { ArticleActions, mountArticleActions } from '../src/js/modules/writing/components/article-actions.js';
@@ -15,6 +15,20 @@ const article = (slug, extra = {}) => ({ id: `https://phixalek.substack.com/p/${
 const data = [article('net', { title: 'Café with .NET', categories: ['Software'] }), article('game', { categories: ['Game Development'] })];
 const categories = [{ id: 'software', labels: { en: 'Software', es: 'Software' } },
   { id: 'game-dev', labels: { en: 'Game Dev', es: 'Game Dev' }, aliases: ['Game Development'] }];
+
+test('filters and search operate on discovery posts, independently of Featured', () => {
+  const featured = article('featured', { categories: ['Software'] });
+  const articles = [featured, ...data];
+  for (const desktop of [false, true]) {
+    const rows = selectFeedArticles(articles, { desktop, filtered: true });
+    assert.deepEqual(filterArticles(rows, { category: 'software', categories }).map(item => item.slug), ['net']);
+    assert.deepEqual(filterArticles(rows, { query: 'featured' }), []);
+    assert.equal(articles[0], featured);
+    assert.deepEqual(selectFeedArticles(articles, { desktop }), data);
+  }
+  assert.deepEqual(selectFeedArticles([featured]), [featured]);
+  assert.deepEqual(selectFeedArticles([featured], { filtered: true }), []);
+});
 
 test('search is case/accent insensitive and composes with JSON category aliases', () => {
   assert.deepEqual(filterArticles(data, { query: 'CAFE' }).map(item => item.slug), ['net']);

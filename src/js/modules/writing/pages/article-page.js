@@ -3,6 +3,7 @@ import { ui, text, bind, content } from '../../../../content/index.js';
 import { articleFragment } from '../article-html.js';
 import { articleDate, articleImage } from '../components/article-card.js';
 import { resolveImage } from '../../images/registry.js';
+import { mountReaderContents } from '../components/reader-contents.js';
 
 export function reader(container, article, fallback, registry) {
   const layout = document.createElement('div'); layout.className = 'editorial-reader-layout';
@@ -16,23 +17,19 @@ export function reader(container, article, fallback, registry) {
   const portrait = resolveImage(registry, 'phixalek-profile');
   if (portrait) { const image = document.createElement('img'); image.src = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     ? '/media/' + portrait.staticSrc : portrait.src; image.alt = ''; image.width = 44; image.height = 44; author.append(image); }
-  const authorName = document.createElement('span'); authorName.textContent = `${content.hero.name} · Software Developer`; author.append(authorName);
+  const authorDetails = document.createElement('div'); authorDetails.className = 'editorial-author-details';
+  const authorName = document.createElement('span'); authorName.className = 'editorial-author-name'; authorName.textContent = content.hero.name;
+  const authorRole = document.createElement('span'); authorRole.className = 'editorial-author-role'; authorRole.textContent = 'Software Developer';
+  authorDetails.append(authorName, authorRole); author.append(authorDetails);
   const prose = document.createElement('div'); prose.className = 'editorial-prose'; prose.append(articleFragment(article.html, window, article.sourceUrl));
-  story.append(meta, heading, excerpt, author, articleImage(article, fallback), prose, ArticleComments(article, { ui, text }));
-  const aside = document.createElement('aside'); aside.className = 'editorial-toc';
-  const title = document.createElement('p'); text(title, () => ui.writingPage.contents);
-  const nav = document.createElement('nav'); bind(nav, 'attr:aria-label', () => ui.writingPage.contents);
-  prose.querySelectorAll('h1,h2,h3').forEach((heading, index) => {
-    if (!heading.id) heading.id = `article-heading-${index + 1}`;
-    const anchor = document.createElement('a'); anchor.href = `#${heading.id}`; anchor.textContent = heading.textContent; nav.append(anchor);
-  });
-  if (nav.children.length) { aside.append(title, nav); layout.append(story, aside); }
-  else { layout.classList.add('without-toc'); layout.append(story); }
+  const cover = articleImage(article, fallback); cover.loading = 'eager'; cover.fetchPriority = 'high';
+  story.append(meta, heading, excerpt, author, cover, prose, ArticleComments(article, { ui, text }));
+  layout.append(story);
+  const disposeContents = mountReaderContents(layout, story, prose, { label: node => text(node, () => ui.writingPage.contents) });
   container.append(layout);
   const progress = document.createElement('progress'); progress.className = 'editorial-progress'; progress.max = 1;
   bind(progress, 'attr:aria-label', () => ui.writingPage.progress);
   const update = () => { const rect = story.getBoundingClientRect(); progress.value = Math.max(0, Math.min(1, -rect.top / Math.max(1, rect.height - window.innerHeight))); };
   window.addEventListener('scroll', update, { passive: true }); update(); container.append(progress);
-  return () => window.removeEventListener('scroll', update);
+  return () => { disposeContents(); window.removeEventListener('scroll', update); };
 }
-
