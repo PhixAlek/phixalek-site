@@ -30,7 +30,7 @@ export function createArticleCard(article, fallback, { doc = document, ui, text,
   const heading = doc.createElement('h2'); heading.textContent = article.title;
   const excerpt = doc.createElement('p'); excerpt.textContent = article.excerpt;
   const categories = doc.createElement('div'); categories.className = 'editorial-tags';
-  article.categories.slice(0, 2).forEach(category => { const tag = doc.createElement('button'); tag.type = 'button'; tag.dataset.articleTag = category; tag.textContent = category; categories.append(tag); });
+  article.categories.slice(0, 4).forEach(category => { const tag = doc.createElement('button'); tag.type = 'button'; tag.dataset.articleTag = category; tag.textContent = category; categories.append(tag); });
   const action = doc.createElement('span'); action.className = 'editorial-read';
   text(action, () => `${ui.writingPage.read} →`);
   copy.append(meta, heading, excerpt, categories, action);

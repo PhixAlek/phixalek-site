@@ -1,9 +1,10 @@
 // Match CSS: portrait tablets use the feed; wide landscape screens use list/grid.
 export const EDITORIAL_DESKTOP_QUERY = '(min-width: 1024px) and (orientation: landscape), (min-width: 1200px)';
 
-/** Featured is independent of discovery; preserve the single-post mobile browsing fallback. */
+/** Keep Featured fixed above discovery; include it when a filter/search explicitly matches it. */
 export function selectFeedArticles(articles, { desktop = false, filtered = false } = {}) {
-  return desktop || filtered || articles.length > 1 ? articles.slice(1) : articles;
+  if (filtered) return articles;
+  return desktop || articles.length > 1 ? articles.slice(1) : articles;
 }
 const searchable = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 

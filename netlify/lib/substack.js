@@ -1,14 +1,16 @@
+import { readPublicTags } from '../../scripts/lib/writing-tags.mjs';
 import { readFeedText } from '../../src/shared/writing/feed-response.js';
-import { SUBSTACK_FEED } from '../../src/shared/writing/config.js';
+import { PUBLICATION, SUBSTACK_FEED } from '../../src/shared/writing/config.js';
 export { SUBSTACK_FEED };
 
 // Fixed public source: callers cannot turn this function into an arbitrary proxy.
-export function createSubstackHandler({ fetchFeed = fetch } = {}) {
+export function createSubstackHandler({ fetchFeed = fetch, fetchPage = fetchFeed } = {}) {
   return async event => {
     if (event.httpMethod !== 'GET') return {
       statusCode: 405, headers: { Allow: 'GET', 'Cache-Control': 'no-store' }, body: '',
     };
     try {
+      const deadline = Date.now() + 7000;
       const feedURL = new URL(SUBSTACK_FEED);
       feedURL.searchParams.set('_refresh', String(Date.now()));
       const result = await fetchFeed(feedURL.href, {
@@ -18,14 +20,32 @@ export function createSubstackHandler({ fetchFeed = fetch } = {}) {
       });
       const xml = await readFeedText(result);
       if (!/<rss\b/i.test(xml) || /<!DOCTYPE|<!ENTITY/i.test(xml)) throw new Error('Invalid feed');
+      const includeTags = event.queryStringParameters?.tags === '1';
+      const tagsBySource = {};
+      if (includeTags) {
+        const urls = new Set();
+        for (const match of xml.matchAll(/<link>\s*([^<]+?)\s*<\/link>/g)) {
+          try { const url = new URL(match[1].trim());
+            if (url.origin === PUBLICATION && !url.username && !url.password && /^\/p\/[a-zA-Z0-9_-]+$/.test(url.pathname)) urls.add(url.origin + url.pathname);
+          } catch { /* Reject malformed or foreign links. */ }
+        }
+        await Promise.all([...urls].slice(0, 20).map(async source => {
+          try {
+            const response = await fetchPage(source, { signal: AbortSignal.timeout(Math.max(1, Math.min(3000, deadline - Date.now()))), redirect: 'error', cache: 'no-store', headers: { Accept: 'text/html' } });
+            if (!response.ok) return;
+            const tags = readPublicTags(await response.text(), source);
+            if (tags !== null) tagsBySource[source] = tags;
+          } catch { /* RSS content remains available if tag metadata cannot load. */ }
+        }));
+      }
       return {
         statusCode: 200,
         headers: {
-          'Content-Type': 'application/rss+xml; charset=utf-8',
+          'Content-Type': includeTags ? 'application/json; charset=utf-8' : 'application/rss+xml; charset=utf-8',
           'Cache-Control': 'no-store',
           'X-Content-Type-Options': 'nosniff',
         },
-        body: xml,
+        body: includeTags ? JSON.stringify({ xml, tagsBySource }) : xml,
       };
     } catch {
       return {

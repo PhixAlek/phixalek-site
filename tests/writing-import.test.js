@@ -97,3 +97,13 @@ test('shared transport enforces byte limits without Content-Length and preserves
   await assert.rejects(readFeedText(new Response('x'.repeat(MAX_FEED_BYTES + 1))), /too large/);
   await assert.rejects(readFeedText(new Response('error', {status:503})), /unavailable/);
 });
+
+test('launch notice is removed without stripping actual quotations or H5 formatting', () => {
+  const dom = new JSDOM('');
+  const html = '<blockquote><p><em>Test post for checking the reading layout, filters, and Substack interactions on PhixAlek. Cover image generated with AI.</em></p></blockquote><h5>A section</h5><blockquote><p><em>A useful quotation.</em> <strong>A factual point.</strong></p></blockquote>';
+  const result = importArticleBody(html, { view: dom.window });
+  assert.equal(result.html.includes('Test post for checking'), false);
+  assert.ok(result.html.includes('<h5>A section</h5>'));
+  assert.ok(result.html.includes('<blockquote><p><em>A useful quotation.</em> <strong>A factual point.</strong></p></blockquote>'));
+  dom.window.close();
+});

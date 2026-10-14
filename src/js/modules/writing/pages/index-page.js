@@ -1,8 +1,7 @@
 import { createWritingHeading } from '../../../../shared/writing/hero-heading.js';
-import { compiledCategories } from '../categories.js';
 import { ui, text, bind, releaseBindings } from '../../../../content/index.js';
 import { writingConfig } from '../../../../shared/writing/config.js';
-import { EDITORIAL_DESKTOP_QUERY, filterArticles, categoryForTag, selectFeedArticles } from '../../../../shared/writing/listing-model.js';
+import { EDITORIAL_DESKTOP_QUERY, deriveCategories, filterArticles, categoryForTag, selectFeedArticles } from '../../../../shared/writing/listing-model.js';
 import { ArticleCard } from '../components/article-card.js';
 import { mountFeed } from '../components/feed-controller.js';
 import { mountFilterPopover, placeFilterButtons } from '../components/filter-popover.js';
@@ -47,12 +46,13 @@ export function listing(container, articles, fallback, view = window) {
   bind(loader, 'attr:aria-label', () => ui.writing.states.loading.message);
   const spinner = document.createElement('span'); spinner.className = 'editorial-loading-spinner'; spinner.setAttribute('aria-hidden', 'true'); loader.append(spinner);
   const loadingControls = document.createElement('div'); loadingControls.className = 'editorial-loading-controls'; loadingControls.append(loader, more, automatic);
+  const currentCategories = deriveCategories(articles, { definitions: writingConfig.categories });
   const saved = view.history?.state?.writingListing;
   search.value = typeof saved?.query === 'string' ? saved.query : '';
   search.maxLength = 500;
-  let category = compiledCategories.some(item => item.id === saved?.category) ? saved.category : '';
+  let category = currentCategories.some(item => item.id === saved?.category) ? saved.category : '';
   let mode = saved?.mode === 'grid' ? 'grid' : 'list', disposeFeed = () => {}, restoring = true;
-  const categories = [{ id: '', labels: null }, ...compiledCategories];
+  const categories = [{ id: '', labels: null }, ...currentCategories];
   const filterButtons = [];
   let filterPopover;
   const wide = view.matchMedia(EDITORIAL_DESKTOP_QUERY);
@@ -78,7 +78,7 @@ export function listing(container, articles, fallback, view = window) {
     moreFilters.classList.toggle('has-selected-filter', categories.findIndex(item => item.id === category) >= primaryCount);
     const isFiltered = Boolean(search.value.trim() || category);
     const matches = filterArticles(selectFeedArticles(articles, { desktop: wide.matches, filtered: isFiltered }),
-      { query: search.value, category, categories: compiledCategories });
+      { query: search.value, category, categories: currentCategories });
     container.classList.toggle('editorial-feed-layout', !wide.matches);
     list.classList.toggle('is-grid', wide.matches && mode === 'grid');
     list.setAttribute('role', wide.matches ? 'list' : 'feed');
@@ -155,7 +155,7 @@ export function listing(container, articles, fallback, view = window) {
   const selectTag = event => {
     const tag = event.target.closest('button[data-article-tag]');
     if (!tag || !container.contains(tag)) return;
-    const selected = categoryForTag(tag.dataset.articleTag, compiledCategories);
+    const selected = categoryForTag(tag.dataset.articleTag, currentCategories);
     if (!selected) return;
     category = selected; search.value = ''; update();
     toolbar.scrollIntoView({ block: 'start', behavior: view.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });

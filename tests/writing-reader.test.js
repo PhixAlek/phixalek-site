@@ -103,3 +103,14 @@ test('Writing page renders its compiled copy without waiting for an external req
   assert.equal(requested, false);
   assert.ok(items.some(item => item.slug === 'test-post-1'));
 });
+
+test('first Writing entry fetches current content once even when Home has populated the cache', async () => {
+  const fresh = await import('../src/js/modules/writing/feed.js?first-writing-visit');
+  let requests = 0;
+  const options = { storage: null, Parser: view.DOMParser, view, fetchFeed: async () => { requests++; return new Response(feed); } };
+  await fresh.loadArticles({ ...options, preferSnapshot: true }); assert.equal(requests, 0);
+  await fresh.loadArticles({ ...options, preferSnapshot: true, writingVisit: true }); assert.equal(requests, 1);
+  await fresh.loadArticles({ ...options, preferSnapshot: true, writingVisit: true });
+  await fresh.loadArticles(options); assert.equal(requests, 1);
+  await fresh.loadArticles({ ...options, writingVisit: true, force: true }); assert.equal(requests, 2);
+});

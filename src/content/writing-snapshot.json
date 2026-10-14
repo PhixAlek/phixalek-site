@@ -1,8 +1,58 @@
 {
   "version": 1,
   "source": "https://phixalek.substack.com",
-  "fetchedAt": "2026-10-07T03:27:43.789Z",
+  "fetchedAt": "2026-10-14T03:42:58.360Z",
   "articles": [
+    {
+      "id": "https://phixalek.substack.com/p/a-calmer-interface-starts-with-fewer",
+      "slug": "a-calmer-interface-starts-with-fewer",
+      "sourceUrl": "https://phixalek.substack.com/p/a-calmer-interface-starts-with-fewer",
+      "title": "A calmer interface starts with fewer decisions",
+      "published": "2026-10-14T03:28:33.000Z",
+      "image": "https://substackcdn.com/image/fetch/$s_!eiyT!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fff24d15f-b0d5-4fe1-8b87-ab63b3bc09e5_1536x1024.png",
+      "language": null,
+      "html": "<div><figure><a href=\"https://substackcdn.com/image/fetch/$s_!eiyT!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fff24d15f-b0d5-4fe1-8b87-ab63b3bc09e5_1536x1024.png\" target=\"_blank\" rel=\"noopener noreferrer\"><div><img src=\"https://substackcdn.com/image/fetch/$s_!eiyT!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fff24d15f-b0d5-4fe1-8b87-ab63b3bc09e5_1536x1024.png\" width=\"1456\" height=\"971\" alt=\"\" loading=\"lazy\" decoding=\"async\"><div><div></div></div></div></a></figure></div><p>A minimal interface makes the next step easy to identify. Removing elements helps only when the remaining controls still explain what someone can do.</p><h5>Choose what deserves attention</h5><p>On an article page, reading is the main activity. The title introduces the subject, the body develops it, and navigation helps someone return to the feed. Sharing and comments should remain available without competing with the text.</p><h5>Use space with intention</h5><p>Keep related information close together. Use larger gaps when the purpose changes, such as between an article and its comments. Check the result on a phone and a desktop: equal spacing does not always look balanced at both sizes.</p><h5>Keep the quiet details useful</h5><p>Reserve space for images before they load. Make keyboard focus visible. When someone returns from an article, restore their filters and scroll position. These details make the interface predictable without adding more controls.</p>",
+      "widgets": [],
+      "excerpt": "Clear hierarchy, useful spacing, and predictable navigation.",
+      "categories": [
+        "Notes",
+        "Frontend",
+        "Design"
+      ],
+      "readingMinutes": 1,
+      "updatedAt": "2026-10-14T03:42:58.360Z",
+      "engagement": {
+        "likes": 0,
+        "comments": 0,
+        "fetchedAt": "2026-10-14T03:32:56.024Z",
+        "sourceUrl": "https://phixalek.substack.com/p/a-calmer-interface-starts-with-fewer"
+      }
+    },
+    {
+      "id": "https://phixalek.substack.com/p/build-one-useful-feature-at-a-time",
+      "slug": "build-one-useful-feature-at-a-time",
+      "sourceUrl": "https://phixalek.substack.com/p/build-one-useful-feature-at-a-time",
+      "title": "Build one useful feature at a time",
+      "published": "2026-10-14T03:26:30.000Z",
+      "image": "https://substackcdn.com/image/fetch/$s_!NOL1!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F26a975ff-898b-422e-b2c8-275a61b864e2_1536x1024.png",
+      "language": null,
+      "html": "<div><figure><a href=\"https://substackcdn.com/image/fetch/$s_!NOL1!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F26a975ff-898b-422e-b2c8-275a61b864e2_1536x1024.png\" target=\"_blank\" rel=\"noopener noreferrer\"><div><img src=\"https://substackcdn.com/image/fetch/$s_!NOL1!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F26a975ff-898b-422e-b2c8-275a61b864e2_1536x1024.png\" width=\"1456\" height=\"971\" alt=\"\" loading=\"lazy\" decoding=\"async\"><div><div></div></div></div></a></figure></div><p>A useful feature starts with a specific task. Before opening the editor, I write down what someone should be able to do when the work is finished. If that requires several unrelated steps, I reduce the scope.</p><h4>Start with one clear outcome</h4><p>For a personal finance tool, the first task could be recording an expense. The initial version needs an amount, a date, and a way to save. Dashboards and predictions can wait until that basic flow works.</p><h4>Make the feedback visible</h4><p>After saving, the interface should confirm what happened. Show the new entry and a short confirmation. If saving fails, keep the information already entered and explain how to retry.</p><h4>Leave room for the next iteration</h4><p>Once the basic flow works, review where someone hesitates. Add the next feature when it solves a specific problem. Keep each change small enough to test independently.</p>",
+      "widgets": [],
+      "excerpt": "A simple expense flow: enter, save, and confirm.",
+      "categories": [
+        "Product",
+        "Notes",
+        "Software"
+      ],
+      "readingMinutes": 1,
+      "updatedAt": "2026-10-14T03:42:58.360Z",
+      "engagement": {
+        "likes": 0,
+        "comments": 0,
+        "fetchedAt": "2026-10-14T03:32:56.337Z",
+        "sourceUrl": "https://phixalek.substack.com/p/build-one-useful-feature-at-a-time"
+      }
+    },
     {
       "id": "https://phixalek.substack.com/p/test-post-1",
       "slug": "test-post-1",
@@ -27,7 +77,53 @@
       "excerpt": "Recent Updates to My Website",
       "categories": [],
       "readingMinutes": 1,
-      "updatedAt": "2026-10-07T03:27:43.789Z"
+      "updatedAt": "2026-10-07T03:27:43.789Z",
+      "engagement": {
+        "likes": 1,
+        "comments": 3,
+        "fetchedAt": "2026-10-14T03:32:56.720Z",
+        "sourceUrl": "https://phixalek.substack.com/p/test-post-1",
+        "preview": [
+          {
+            "id": 351689555,
+            "postId": 218392512,
+            "authorId": 554545303,
+            "author": "PhixAlek",
+            "body": "Text de coemnatrio",
+            "date": "2026-10-03T04:51:24.352Z",
+            "avatar": "https://substack-post-media.s3.amazonaws.com/public/images/fa316280-12d4-4c52-aeaf-52c72e665ceb_480x480.png",
+            "likes": 1,
+            "isAuthor": true,
+            "replies": "2 replies by PhixAlek",
+            "repliesPreview": [
+              {
+                "id": 351689921,
+                "parentId": 351689555,
+                "sourceUrl": "https://substack.com/profile/554545303-phixalek/note/c-351689921",
+                "author": "PhixAlek",
+                "body": "it works?",
+                "date": "2026-10-03T04:52:38.000Z",
+                "avatar": "https://substack-post-media.s3.amazonaws.com/public/images/fa316280-12d4-4c52-aeaf-52c72e665ceb_480x480.png",
+                "likes": 1,
+                "isAuthor": true,
+                "replies": ""
+              },
+              {
+                "id": 351690048,
+                "parentId": 351689921,
+                "sourceUrl": "https://substack.com/profile/554545303-phixalek/note/c-351690048",
+                "author": "PhixAlek",
+                "body": "Maybe",
+                "date": "2026-10-03T04:53:01.602Z",
+                "avatar": "https://substack-post-media.s3.amazonaws.com/public/images/fa316280-12d4-4c52-aeaf-52c72e665ceb_480x480.png",
+                "likes": 1,
+                "isAuthor": true,
+                "replies": ""
+              }
+            ]
+          }
+        ]
+      }
     }
   ]
 }

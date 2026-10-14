@@ -1,3 +1,4 @@
+import savedWriting from '../src/content/writing-snapshot.json' with { type: 'json' };
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createSubstackHandler, SUBSTACK_FEED } from '../netlify/lib/substack.js';
@@ -61,8 +62,9 @@ test('failed feed request uses the saved publication instead of clearing its pre
     assert.equal(options.cache, 'no-store');
     return new Response('', { status: 503 });
   });
-  assert.equal(post.url, 'https://phixalek.substack.com/p/test-post-1');
-  assert.equal(post.title, 'Test Post #1');
+  const latestSaved = [...savedWriting.articles].sort((a, b) => Date.parse(b.published) - Date.parse(a.published))[0];
+  assert.equal(post.url, latestSaved.sourceUrl);
+  assert.equal(post.title, latestSaved.title);
 });
 
 test('cover stays visible on remote image failure and is restored on a later image error', async t => {

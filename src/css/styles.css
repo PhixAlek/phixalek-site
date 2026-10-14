@@ -606,10 +606,10 @@ html,body{ background:#fff; }
 .header{ background:rgb(255 255 255 / 94%); backdrop-filter:blur(12px); border-bottom-color:transparent; }
 .nav a.header-contact{ border-radius:999px; }
 .nav a.header-contact,.contact-message,.booking-primary{
-  background:#40734e;
+  background:var(--action-green);
   box-shadow:0 4px 12px rgb(60 112 78 / 16%);
 }
-.nav a.header-contact:hover,.contact-message:hover,.booking-primary:hover{ background:#386b49; }
+.nav a.header-contact:hover,.contact-message:hover,.booking-primary:hover{ background:var(--action-green-hover); }
 .hero{ position:relative; isolation:isolate; overflow:hidden; background:linear-gradient(100deg,#edf4ee 0%,#fff 28%,#fff 77%,#fcefe8 100%); }
 .hero::before,.hero::after{
   content:''; position:absolute; z-index:-1; pointer-events:none; border-radius:50%;
@@ -858,4 +858,10 @@ html,body{ background:#fff; }
 @media (max-width: 767px) {
  body:has(.writing-page[data-writing-view="index"], main.site:not(.writing-page):not([hidden])) .mobile-reading-shortcut { display: block; flex: 1 1 auto; min-width: 44px; min-height: 44px; padding: 0; margin: 0; border: 0; background: transparent; box-shadow: none; touch-action: manipulation; }
  .mobile-reading-shortcut:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 8px; }
+}
+
+/* Portrait tablets use the same drawer as phones; landscape retains desktop navigation. */
+@media(min-width: 768px) and (max-width: 1199px) and (orientation: portrait) {
+ .header .nav { display: none !important; }
+ .header .nav-toggle { display: flex; margin-left: auto; }
 }

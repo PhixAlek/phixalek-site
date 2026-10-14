@@ -28,5 +28,7 @@ await writeFile(new URL('dist/sitemap.xml', root), writingSitemap(articles));
 console.log(`Writing: generated archive, ${articles.length} article pages and sitemap from the saved copy.`);
 
 // Static files take precedence; unknown/deleted article URLs return an actual 404.
-await writeFile(new URL('dist/blog/__not-found.html', root), renderWritingHTML(template, [], { ...options, notFound: true }));
+const notFoundHTML = renderWritingHTML(template, articles, { ...options, notFound: true });
+await writeFile(new URL('dist/blog/__not-found.html', root), notFoundHTML);
+await writeFile(new URL('dist/404.html', root), notFoundHTML);
 await writeFile(new URL('dist/_redirects', root), '/blog/* /blog/__not-found.html 404\n');

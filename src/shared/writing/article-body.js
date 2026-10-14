@@ -32,6 +32,14 @@ export function importArticleBody(html, { view = globalThis.window, sourceUrl = 
     FORBID_TAGS: blocked, FORBID_CONTENTS: blocked,
     ALLOW_DATA_ATTR: false, ALLOW_ARIA_ATTR: false,
   });
+  // Owner-requested removal of the exact temporary notice used in the two launch examples.
+  // Keep all other quotations and their inline emphasis unchanged.
+  const launchNotice = 'Test post for checking the reading layout, filters, and Substack interactions on PhixAlek. Cover image generated with AI.';
+  fragment.querySelectorAll('p').forEach(node => {
+    if (node.textContent.trim() !== launchNotice) return;
+    const quote = node.parentElement; node.remove();
+    if (quote?.tagName === 'BLOCKQUOTE' && !quote.textContent.trim() && !quote.querySelector('img')) quote.remove();
+  });
   const widgets = [];
   // Select outer wrappers only so a nested subscription widget becomes one record.
   const wrappers = [...fragment.querySelectorAll(widgetSelectors)].filter(node => !node.parentElement?.closest(widgetSelectors));

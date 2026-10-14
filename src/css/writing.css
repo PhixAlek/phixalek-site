@@ -1,6 +1,6 @@
 /* Writing uses the shared typography, header and footer with its own editorial layout. */
 .writing-page { min-height: 75svh; padding-block: 24px 56px; }
-.editorial-container { max-width: 1200px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+.editorial-container { max-width: 1320px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
 .editorial-back { margin-bottom: -12px; justify-self: start; font-size: 24px; display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; color: var(--text-1); border: 0; }
 .editorial-back:hover { transform: translateX(-3px); }
 .editorial-intro { padding: 0 0 8px; position: relative; overflow: hidden; }
@@ -279,7 +279,7 @@
 .editorial-feed-layout .editorial-read { display: none; }
 .editorial-feed-layout .editorial-tags > button:nth-child(n+3) { display: none; }
 .editorial-feed-layout .editorial-toolbar { position: relative; z-index: 10; padding-block: 4px; }
-.editorial-list.is-grid .editorial-tags > button:nth-child(n+4) { display: none; }
+.editorial-list.is-grid .editorial-tags > button:nth-child(n+5) { display: none; }
 .editorial-card-link { cursor: pointer; }
 .editorial-toolbar button[aria-pressed=true] { font-weight: 800; }
 @media (hover: none) {
@@ -315,6 +315,10 @@
 
 .editorial-share-dialog { position: fixed; inset: auto 0 0; margin: 0 auto; width: min(440px, 100%); border: 0; border-radius: 24px 24px 0 0; padding: 24px 24px calc(24px + env(safe-area-inset-bottom)); }
 .editorial-share-dialog input { width: 100%; margin-block: 12px; }
+@media (min-width: 1024px) and (orientation: landscape), (min-width: 1200px) {
+ .editorial-share-dialog { inset: 0; margin: auto; width: min(440px, calc(100% - 32px)); max-height: calc(100svh - 48px); overflow-y: auto; border-radius: 20px; padding: 28px; }
+}
+
 
 .editorial-thumbnail-title { color: #0c1220; }
 .editorial-thumbnail-meta { color: #374151; }
@@ -406,4 +410,208 @@
  .editorial-toc nav { max-height: 45svh; overflow-y: auto; scrollbar-width: none; }
  .editorial-toc nav::-webkit-scrollbar { display: none; }
  .editorial-prose { max-width: none; }
+}
+
+.editorial-subscribe { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 24px; border-radius: 16px; background: var(--panel); box-shadow: 0 3px 12px rgb(30 40 35 / 4%); }
+.editorial-subscribe h2 { font-size: 20px; margin: 0 0 8px; }
+.editorial-subscribe p { font-size: 15px; margin: 0; color: var(--muted); }
+.editorial-subscribe > .btn { flex-shrink: 0; }
+.editorial-comments button:disabled { opacity: .5; cursor: default; }
+.editorial-provider-dialog .btn { min-height: 44px; }
+@media(max-width: 767px) { .editorial-subscribe { padding: 20px; flex-direction: column; align-items: flex-start; gap: 16px; } }
+
+.editorial-reader-engagement { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid var(--line); margin-top: 32px; padding-block: 16px; }
+.editorial-reader-social { display: flex; align-items: center; gap: 16px; }
+.editorial-reader-social :is(button,a) { display: inline-flex; align-items: center; gap: 8px; padding: 0; min-height: 44px; min-width: 44px; background: transparent; border: 0; color: var(--text-1); font: inherit; font-size: 14px; text-decoration: none; cursor: pointer; }
+.editorial-reader-social :is(button,a):focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+@media(max-width: 480px) { .editorial-reader-social { gap: 12px; } }
+
+.editorial-reader-social .has-reactions, .editorial-comment-likes.has-reactions { color: var(--accent-red); }
+.editorial-subscribe { background: linear-gradient(110deg, #fbf6f2, #f9f8f6); gap: 20px; }
+.editorial-subscribe-icon { flex: 0 0 60px; width: 60px; height: 60px; display: grid; place-items: center; border-radius: 50%; background: #fae9db; color: var(--accent-red); }
+.editorial-subscribe > div { flex: 1; }
+.editorial-subscribe > .btn { background: var(--accent-red); border-color: transparent; color: white; border-radius: 8px; padding: 12px 28px; }
+.editorial-comments-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+.editorial-comments-header h2 { margin: 0; }
+.editorial-comments .editorial-comment-link { border: 0; padding: 0; background: transparent; color: var(--muted); font: inherit; font-size: 13px; cursor: pointer; min-height: 44px; text-align: left; }
+.editorial-comments > p { font-size: 13px; }
+.editorial-comment-list { padding: 0; margin: 24px 0 0; list-style: none; }
+.editorial-comment { display: flex; align-items: flex-start; gap: 12px; margin-block: 24px; }
+.editorial-comment-avatar { position: relative; flex: 0 0 36px; width: 36px; height: 36px; border-radius: 50%; background: var(--accent-soft); display: grid; place-items: center; overflow: hidden; }
+.editorial-comment-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.editorial-comment-copy { flex: 1; min-width: 0; }
+.editorial-comment-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; }
+.editorial-comment-meta time { color: var(--muted); font-size: 12px; }
+.editorial-comment-author { color: var(--accent-red); font-size: 11px; border: 1px solid #f3d5c8; border-radius: 4px; padding: 2px 6px; }
+.editorial-comments .editorial-comment-body { margin-block: 8px 0; font-size: 15px; color: var(--text-1); white-space: pre-wrap; overflow-wrap: anywhere; }
+.editorial-comment-actions { display: flex; align-items: center; gap: 16px; font-size: 13px; color: var(--muted); }
+.editorial-comments .editorial-comment-replies { padding: 10px 16px; background: transparent; border: 0; border-left: 1px solid var(--line); color: var(--muted); font: inherit; font-size: 13px; cursor: pointer; text-align: left; }
+.editorial-comments button:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+@media(max-width: 767px) { .editorial-subscribe { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; } .editorial-subscribe-icon { width: 44px; height: 44px; } .editorial-subscribe > .btn { grid-column: 2; justify-self: start; padding: 10px 20px; } .editorial-subscribe h2 { font-size: 17px; } .editorial-subscribe p { font-size: 13px; } }
+
+.editorial-comment-more { display: inline-block; margin-top: 16px; font-size: 14px; font-weight: 800; color: var(--muted); text-decoration: none; min-height: 44px; }
+.editorial-draft-preview { width: 100%; padding: 12px; font: inherit; font-size: 14px; resize: vertical; }
+.editorial-draft-status { font-size: 13px !important; }
+
+.editorial-comment-thread-toggle { margin-top: 8px; }
+.editorial-comment-thread-toggle summary { cursor: pointer; font-size: 13px; font-weight: 700; color: var(--muted); padding-block: 10px; }
+.editorial-comment-thread { list-style: none; padding: 0 0 0 14px; margin: 8px 0 0; border-left: 1px solid var(--line); }
+.editorial-comment-thread .editorial-comment { margin-block: 16px; }
+.editorial-comment-thread .editorial-comment-avatar { flex-basis: 28px; width: 28px; height: 28px; font-size: 12px; }
+.editorial-comment-thread-toggle summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.editorial-subscribe-embedded { display: grid; grid-template-columns: 60px minmax(0, 1fr) minmax(300px, 480px); align-items: center; }
+.editorial-subscribe-form { min-width: 0; text-align: center; }
+.editorial-subscribe-fields { display: flex; gap: 12px; align-items: center; }
+.editorial-subscribe-fields input[type="email"] { min-width: 0; flex: 1; height: 44px; border: 0; border-radius: 8px; background: white; padding: 0 14px; font: inherit; }
+.editorial-subscribe-fields .btn { min-height: 44px; padding: 10px 24px; border: 0; border-radius: 8px; color: white; background: var(--accent-red); }
+.editorial-subscribe .editorial-subscribe-terms { font-size: 10px; margin: 0; }
+.editorial-subscribe-terms a { color: var(--muted); text-underline-offset: 2px; }
+.editorial-subscribe-fields :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.editorial-subscribe-fallback { border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 12px; min-height: 44px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+@media(max-width: 1023px) {
+ .editorial-subscribe-embedded { grid-template-columns: 44px minmax(0, 1fr); gap: 16px; }
+ .editorial-subscribe-embedded .editorial-subscribe-form { grid-column: 1 / -1; }
+}
+
+/* Center recovery content; related posts remain compact and separate from the message. */
+.editorial-error-lead { text-align: center; max-width: 660px; margin: 0 auto 40px; }
+.editorial-error-lead > img { display: block; width: min(100%, 540px); height: auto; margin-inline: auto; }
+.editorial-error h1 { font-size: clamp(26px, 4vw, 36px); line-height: 1.2; margin: 12px 0; }
+.editorial-error-lead p { color: var(--muted); line-height: 1.6; }
+.editorial-error-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 24px; margin-top: 24px; }
+.editorial-error-controls > * { min-height: 44px; display: inline-flex; align-items: center; }
+.editorial-error-related h2 { font-size: 20px; margin-bottom: 16px; }
+.editorial-error-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.editorial-error-cards article { background: white; border-radius: 16px; padding: 12px; box-shadow: 0 3px 12px rgb(30 40 35 / 4%); }
+.editorial-error-cards a { display: block; color: var(--text-1); text-decoration: none; }
+.editorial-error-cards a:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; border-radius: 12px; }
+.editorial-error-cards img { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 10px; }
+.editorial-error-cards h3 { font-size: 17px; line-height: 1.3; margin: 14px 0 8px; }
+.editorial-error-cards p { font-size: 14px; color: var(--muted); line-height: 1.5; margin: 0; }
+@media(max-width: 767px) { .editorial-error-cards { grid-template-columns: 1fr; } .editorial-error-lead { margin-bottom: 24px; } }
+
+/* Grid and mobile share the same preview and real engagement controls. */
+:is(.editorial-list.is-grid, .editorial-feed-layout .editorial-list) .editorial-card-copy { padding: 8px 16px 12px; }
+:is(.editorial-list.is-grid, .editorial-feed-layout .editorial-list) .editorial-card-copy > p { display: -webkit-box; }
+:is(.editorial-list.is-grid, .editorial-feed-layout .editorial-list) .editorial-card-copy > .editorial-tags { display: flex; }
+:is(.editorial-list.is-grid, .editorial-feed-layout .editorial-list) .editorial-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; padding: 4px 12px 12px; }
+.editorial-actions :is(button, a) { min-width: 44px; width: auto; height: 44px; display: inline-flex; gap: 6px; align-items: center; justify-content: center; padding: 0 8px; color: var(--text-1); font: inherit; font-size: 13px; text-decoration: none; border-radius: 8px; }
+.editorial-actions .has-reactions { color: var(--accent-red); }
+.editorial-actions a:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+
+:is(.editorial-list.is-grid, .editorial-feed-layout .editorial-list) > .editorial-card { display: flex; flex-direction: column; }
+:is(.editorial-list.is-grid, .editorial-feed-layout .editorial-list) .editorial-card-link { height: auto; }
+:is(.editorial-list.is-grid, .editorial-feed-layout .editorial-list) .editorial-actions { margin-top: auto; flex-shrink: 0; }
+
+:is(.editorial-list.is-grid, .editorial-feed-layout .editorial-list) .editorial-tags:empty { display: none; }
+
+/* An explicit external invitation replaces the local comment composer. */
+.editorial-comments { position: relative; padding-top: 20px; }
+.editorial-comments::before { content: ''; display: block; width: 28px; height: 2px; margin-bottom: 14px; background: var(--accent-red); }
+.editorial-comments-header .editorial-comment-link { color: var(--accent-red); }
+.editorial-comment-invitation { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 20px; align-items: center; padding: 24px; border-radius: 12px; background: linear-gradient(110deg, #fbf6f2, #f9f8f6); margin: 20px 0 32px; }
+.editorial-comment-invitation-icon { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: #f8e8dd; color: var(--accent-red); }
+.editorial-comment-invitation h3 { margin: 0 0 8px; font-size: 18px; line-height: 1.3; }
+.editorial-comment-invitation p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.editorial-comment-cta { white-space: nowrap; min-height: 48px; padding: 12px 20px; border-radius: 10px; background: var(--accent); color: white; border: 0; font: inherit; font-size: 14px; text-decoration: none; }
+.editorial-comment-cta:hover { color: white; }
+.editorial-comment-cta:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
+@media(max-width: 767px) { .editorial-comment-invitation { grid-template-columns: 44px minmax(0, 1fr); gap: 16px; padding: 20px; } .editorial-comment-invitation-icon { width: 44px; height: 44px; } .editorial-comment-invitation h3 { font-size: 16px; } .editorial-comment-cta { grid-column: 1 / -1; text-align: center; white-space: normal; } .editorial-comments-header { align-items: flex-start; } }
+
+/* Grid/feed discovery keeps only compact topic labels beneath the image. */
+:is(.editorial-list.is-grid, .editorial-feed-layout .editorial-list) .editorial-card-copy > p { display: none; }
+:is(.editorial-list.is-grid, .editorial-feed-layout .editorial-list) .editorial-tags { margin-top: 0; gap: 6px; }
+:is(.editorial-list.is-grid, .editorial-feed-layout .editorial-list) .editorial-tags button { font-size: 11px; padding: 4px 10px; min-height: 32px; }
+
+/* Keep the filled action legible when shared button hover styles apply. */
+.editorial-comment-invitation .editorial-comment-cta:is(:hover, :active, :focus-visible) { background: var(--accent-hover, #2d5643); color: white; border-color: transparent; text-decoration: none; }
+.editorial-comment-label-compact { display: none; }
+@media(max-width: 767px) {
+ .editorial-comment-invitation { grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 12px; margin-block: 16px 24px; }
+ .editorial-comment-invitation-icon, .editorial-comment-invitation p, .editorial-comment-label-full { display: none; }
+ .editorial-comment-invitation h3 { margin: 0; font-size: 14px; line-height: 1.4; }
+ .editorial-comment-invitation .editorial-comment-cta { grid-column: auto; min-height: 44px; padding: 10px 12px; font-size: 13px; border-radius: 8px; }
+ .editorial-comment-label-compact { display: inline; }
+}
+
+/* Mobile invitation follows the icon / copy / action composition. */
+@media(max-width: 767px) {
+ .editorial-comment-invitation { grid-template-columns: 40px minmax(0, 1fr) auto; gap: 10px; padding: 16px 12px; align-items: start; }
+ .editorial-comment-invitation-icon { display: grid; width: 40px; height: 40px; }
+ .editorial-comment-invitation-icon svg { width: 24px; height: 24px; }
+ .editorial-comment-invitation h3 { margin-bottom: 6px; font-size: 14px; line-height: 1.35; }
+ .editorial-comment-invitation p { display: block; font-size: 12px; line-height: 1.5; }
+ .editorial-comment-invitation .editorial-comment-cta { align-self: start; margin-top: 8px; padding: 10px 12px; background: var(--accent-red); color: white; }
+ .editorial-comment-invitation .editorial-comment-cta:is(:hover, :active, :focus-visible) { background: #923f2c; color: white; }
+ .editorial-comment-avatar { flex-basis: 40px; width: 40px; height: 40px; }
+ .editorial-subscribe-fields .btn { background: var(--accent); color: white; }
+ .editorial-subscribe-fields .btn:is(:hover, :active, :focus-visible) { background: var(--accent-hover, #2d5643); color: white; }
+}
+@media(max-width: 359px) {
+ .editorial-comment-invitation { grid-template-columns: 36px minmax(0, 1fr); }
+ .editorial-comment-invitation-icon { width: 36px; height: 36px; }
+ .editorial-comment-invitation .editorial-comment-cta { grid-column: 2; justify-self: start; margin-top: 0; }
+}
+
+/* Limit the new destination palette to the actual Substack call-to-action buttons. */
+.editorial-comment-invitation .editorial-comment-cta, .editorial-subscribe-fields .btn { background: var(--action-substack); color: white; border-radius: 8px; }
+.editorial-comment-invitation .editorial-comment-cta:is(:hover,:active,:focus-visible), .editorial-subscribe-fields .btn:is(:hover,:active,:focus-visible) { background: var(--action-substack-hover); color: white; }
+.editorial-back { color: var(--muted); }
+.editorial-comments-header h2 { color: var(--text-1); }
+
+/* Auxiliary social controls remain neutral, independently of the CTA palette. */
+.editorial-actions :is(button,a), .editorial-reader-social :is(button,a) { color: var(--muted); }
+
+/* Recent comment previews form a small, distinct group beneath the invitation. */
+.editorial-latest-comments { margin: 28px 0 16px; font-size: 18px; line-height: 1.3; }
+.editorial-latest-comments::before { content: ''; display: block; width: 28px; height: 2px; background: var(--accent-red); margin-bottom: 12px; }
+.editorial-comment-list { margin-top: 0; }
+.editorial-comment-list > .editorial-comment { padding: 16px; margin-block: 12px; border: 1px solid rgb(220 224 223 / 45%); border-radius: 12px; background: rgb(255 255 255 / 60%); }
+.editorial-comment-list > .editorial-comment > .editorial-comment-copy { border-bottom: 0; padding-bottom: 0; }
+.editorial-comment-invitation .editorial-comment-cta:disabled { opacity: 1; cursor: default; }
+@media(max-width: 767px) {
+ .editorial-comment-invitation { grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; padding: 14px; }
+ .editorial-comment-invitation h3 { margin-bottom: 0; }
+ .editorial-comment-invitation .editorial-comment-cta { align-self: center; margin-top: 0; min-height: 44px; padding: 8px 10px; font-size: 12px; }
+ .editorial-comment-list > .editorial-comment { padding: 12px; gap: 10px; }
+}
+@media(max-width: 359px) { .editorial-comment-invitation { grid-template-columns: 36px minmax(0, 1fr); } .editorial-comment-invitation .editorial-comment-cta { grid-column: 1 / -1; justify-self: center; } }
+/* Tablets share the centered dialog; phones retain a compact bottom sheet. */
+@media(min-width: 768px) {
+ .editorial-share-dialog { inset: 0; margin: auto; width: min(440px, calc(100% - 32px)); max-height: calc(100svh - 48px); overflow-y: auto; border-radius: 20px; padding: 28px; }
+}
+@media(min-width: 768px) and (orientation: portrait) {
+ .editorial-subscribe-embedded { grid-template-columns: 56px minmax(0, 1fr); column-gap: 24px; }
+ .editorial-subscribe-icon { width: 56px; height: 56px; }
+ .editorial-subscribe-embedded .editorial-subscribe-form { grid-column: 1 / -1; }
+}
+
+.editorial-subscribe .editorial-subscribe-terms { margin-top: 12px; line-height: 1.5; color: var(--muted); }
+
+/* Preserve Substack’s heading levels and quote emphasis in the site typography. */
+.editorial-prose :is(h4,h5) { color: var(--text-1); font-size: 22px; line-height: 1.3; font-weight: 800; margin: 28px 0 12px; scroll-margin-top: calc(var(--header-height,80px) + 24px); }
+.editorial-prose blockquote { border: 0; border-inline-start: 3px solid var(--accent); padding: 4px 20px; margin: 24px 0; color: var(--muted); }
+.editorial-prose blockquote :is(em,strong) { font-style: inherit; }
+.editorial-prose blockquote em { font-style: italic; }
+.editorial-prose blockquote strong { font-weight: 800; }
+.editorial-comments-empty { color: var(--muted); margin-top: 24px; }
+@media(max-width:767px) { .editorial-prose :is(h4,h5) { font-size: 20px; } }
+
+/* Reader covers retain the discovery image treatment, with no decorative text. */
+.editorial-reader-cover { width: 100%; aspect-ratio: 16 / 9; max-height: 480px; border-radius: 12px; margin-block: 32px; }
+/* Reader-only glass: discovery list/grid/feed retain their existing treatment. */
+.editorial-reader-cover.is-regular-cover { --reader-glass-surface: linear-gradient(135deg, rgb(255 255 255 / 38%), rgb(255 255 255 / 74%) 45%, rgb(255 255 255 / 84%)); }
+.editorial-reader-cover::after {
+ background: var(--reader-glass-surface, linear-gradient(135deg, rgb(237 245 240 / 38%), rgb(255 252 249 / 74%) 45%, rgb(255 238 230 / 84%)));
+ backdrop-filter: blur(18px) saturate(110%); -webkit-backdrop-filter: blur(18px) saturate(110%);
+ mask-image: linear-gradient(135deg, rgb(0 0 0 / 18%), rgb(0 0 0 / 65%) 24%, #000 48%); -webkit-mask-image: linear-gradient(135deg, rgb(0 0 0 / 18%), rgb(0 0 0 / 65%) 24%, #000 48%);
+}
+
+@media(max-width:767px) { .editorial-intro .editorial-heading { margin-top: 24px; } }
+@media(min-width:768px) and (max-width:1199px) and (orientation:landscape) {
+ .editorial-subscribe-embedded { grid-template-columns: 60px minmax(0,1fr); column-gap: 24px; }
+ .editorial-subscribe-embedded .editorial-subscribe-copy { justify-self: center; }
+ .editorial-subscribe-embedded .editorial-subscribe-icon { justify-self: end; }
+ .editorial-subscribe-embedded .editorial-subscribe-form { grid-column: 1 / -1; width: min(100%,480px); justify-self: center; }
 }

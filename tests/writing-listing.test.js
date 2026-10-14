@@ -1,3 +1,4 @@
+import { mountReaderEngagement } from '../src/js/modules/writing/components/reader-engagement.js';
 import { ArticleComments } from '../src/js/modules/writing/components/article-comments.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -16,18 +17,18 @@ const data = [article('net', { title: 'Café with .NET', categories: ['Software'
 const categories = [{ id: 'software', labels: { en: 'Software', es: 'Software' } },
   { id: 'game-dev', labels: { en: 'Game Dev', es: 'Game Dev' }, aliases: ['Game Development'] }];
 
-test('filters and search operate on discovery posts, independently of Featured', () => {
+test('filters and search include matching Featured without changing the fixed hero', () => {
   const featured = article('featured', { categories: ['Software'] });
   const articles = [featured, ...data];
   for (const desktop of [false, true]) {
     const rows = selectFeedArticles(articles, { desktop, filtered: true });
-    assert.deepEqual(filterArticles(rows, { category: 'software', categories }).map(item => item.slug), ['net']);
-    assert.deepEqual(filterArticles(rows, { query: 'featured' }), []);
+    assert.deepEqual(filterArticles(rows, { category: 'software', categories }).map(item => item.slug), ['featured', 'net']);
+    assert.deepEqual(filterArticles(rows, { query: 'featured' }).map(item => item.slug), ['featured']);
     assert.equal(articles[0], featured);
     assert.deepEqual(selectFeedArticles(articles, { desktop }), data);
   }
   assert.deepEqual(selectFeedArticles([featured]), [featured]);
-  assert.deepEqual(selectFeedArticles([featured], { filtered: true }), []);
+  assert.deepEqual(selectFeedArticles([featured], { filtered: true }), [featured]);
 });
 
 test('search is case/accent insensitive and composes with JSON category aliases', () => {
@@ -105,12 +106,13 @@ test('comment action navigates to the internal comments destination without acti
   assert.equal(actions.querySelector('a button'), null);
   dispose();
 });
-test('comments destination exists, can receive focus and exposes only the provider notice and link', () => {
+test('comments destination exists, can receive focus and opens the provider notice before redirecting', () => {
   const f = fixture();
   const section = ArticleComments(data[0], { doc: f.doc, ui, text }); f.container.append(section);
   assert.equal(section.id, 'comments'); section.focus(); assert.equal(f.doc.activeElement, section);
   assert.ok(section.textContent.includes('Substack'));
-  assert.equal(section.querySelector('a').href, data[0].sourceUrl + '#comments');
+  assert.equal(section.querySelector('a').href, data[0].sourceUrl + '/comments');
+  assert.equal(section.querySelector('.editorial-comment-cta').dataset.substackAction, 'comments');
   assert.equal(section.querySelector('form'), null);
 });
 test('share copies our article URL; it does not navigate readers to Substack', async () => {
@@ -244,12 +246,12 @@ test('lazy feed shows a loading state before rendering, deduplicates triggers an
   assert.equal(f.list.getAttribute('aria-busy'), 'false');
 });
 
-test('cards show up to two original tags without inventing tags for untagged posts', () => {
+test('cards retain four original tags without inventing tags for untagged posts', () => {
   const f = fixture();
   const record = { ...data[0], published: '2026-10-01T12:00:00Z', readingMinutes: 3, categories: ['Design', 'Portfolio', 'Writing', 'Notes', 'Other'] };
   const options = { doc: f.doc, ui, bind, text, getLocale: () => 'en' };
   const card = createArticleCard(record, { src: '/media/mountains.svg' }, options);
-  assert.deepEqual([...card.querySelectorAll('.editorial-tags button')].map(node => node.textContent), record.categories.slice(0, 2));
+  assert.deepEqual([...card.querySelectorAll('.editorial-tags button')].map(node => node.textContent), record.categories.slice(0, 4));
   const untagged = createArticleCard({ ...record, categories: [] }, { src: '/media/mountains.svg' }, options);
   assert.equal(untagged.querySelectorAll('.editorial-tags button').length, 0);
 });
@@ -328,4 +330,46 @@ test('failed copying keeps the sheet open for manual copy without scheduling dis
   await new Promise(resolve => setTimeout(resolve, 0));
   assert.equal(dialog.open, true); assert.equal(f.doc.activeElement, dialog.querySelector('input'));
   dispose();
+});
+
+test('grid/mobile actions retain empty icons with zero and show available counts and keep like navigation independent of the card', () => {
+  const dom = new JSDOM(''); const doc = dom.window.document;
+  const bind = (node, property, get) => node.setAttribute(property.slice(5), get());
+  const ui = catalog.messages;
+  const post = article('real-post', { engagement: { likes: 2, comments: 3 } });
+  const actions = ArticleActions(post, { doc, ui, bind });
+  assert.equal(actions.querySelector('.editorial-card-likes').getAttribute('href'), '/blog/real-post#article-engagement');
+  assert.equal(actions.querySelector('.editorial-card-likes span').textContent, '2');
+  assert.ok(actions.querySelector('.editorial-card-likes').classList.contains('has-reactions'));
+  assert.equal(actions.querySelector('[data-article-action=comments] span').textContent, '3');
+  assert.equal(actions.querySelector('[data-article-action=share] span'), null);
+  const unknown = ArticleActions(article('no-counts'), { doc, ui, bind });
+  assert.equal(unknown.querySelector('.editorial-card-likes span').textContent, '0');
+  assert.equal(unknown.querySelector('[data-article-action=comments] span').textContent, '0');
+  const fake = ArticleActions({ ...post, localDemo: true }, { doc, ui, bind });
+  assert.equal(fake.querySelector('.editorial-card-likes span').textContent, '0');
+  const zero = ArticleActions({ ...post, engagement: { likes: 0, comments: 0 } }, { doc, ui, bind });
+  assert.equal(zero.querySelector('.editorial-card-likes span').textContent, '0');
+  assert.equal(zero.querySelector('[data-article-action=comments] span').textContent, '0');
+  dom.window.close();
+});
+
+test('reader keeps empty heart and comment icons as zeros without visible Comments labels', () => {
+  const f = fixture(); const post = article('empty-counter');
+  const story = f.doc.createElement('article'), prose = f.doc.createElement('div'); story.append(prose); f.container.append(story);
+  const dispose = mountReaderEngagement(story, prose, post, { ui, text, bind, view: f.view });
+  const controls = story.querySelector('.editorial-reader-social');
+  assert.equal(controls.querySelectorAll('svg').length, 3);
+  assert.equal(controls.querySelector('[data-substack-action=likes] span').textContent, '0');
+  assert.equal(controls.querySelector('[href="#comments"] span').textContent, '0');
+  assert.equal(controls.children[2].querySelector('span').textContent, ui.writingPage.share);
+  assert.equal(post.engagement, undefined);
+  dispose();
+});
+
+test('cards retain up to four source tags for desktop; compact visibility is controlled by CSS', () => {
+  const f = fixture();
+  const record = { ...data[0], published: '2026-10-01', readingMinutes: 2, categories: ['One','Two','Three','Four','Five'] };
+  const card = createArticleCard(record, { src: '/media/mountains.svg' }, { doc: f.doc, ui, bind, text, getLocale: () => 'en' });
+  assert.deepEqual([...card.querySelectorAll('[data-article-tag]')].map(node => node.textContent), ['One','Two','Three','Four']);
 });

@@ -96,5 +96,7 @@ test('unknown/deleted article fallback has noindex and no misleading canonical o
   assert.equal(doc.querySelector('meta[name=robots]').content, 'noindex, follow');
   assert.equal(doc.querySelector('link[rel=canonical]'), null);
   assert.equal(doc.querySelector('script[type="application/ld+json"]'), null);
-  assert.equal(doc.querySelector('h1').textContent, messages.messages.writingPage.empty);
+  assert.equal(doc.querySelector('h1').textContent, messages.messages.writingPage.errorHeading);
+  assert.equal(doc.querySelector('.editorial-error-lead img').getAttribute('src'), '/media/mountains.svg');
+  assert.equal(doc.querySelector('.editorial-error-controls [target=_blank]').href, 'https://phixalek.substack.com/');
 });

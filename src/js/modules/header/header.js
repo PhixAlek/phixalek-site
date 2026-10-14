@@ -69,7 +69,7 @@ export function Header(){
   fillNavigation(mobileNav);
   drawer.append(closeButton, mobileNav, languageButton('language-drawer'));
 
-  const desktop = window.matchMedia('(min-width: 768px)');
+  const desktop = window.matchMedia('(min-width: 768px) and (orientation: landscape), (min-width: 1200px)');
   let previousOverflow = '';
   let background = [];
   const controls = () => [...drawer.querySelectorAll('button, a[href]')];

@@ -18,6 +18,12 @@
   --sage: #81b29a;
   --terracotta: #e07a5f;
   /* Dark variants keep small text and white-on-accent actions readable. */
+  --action-secondary: #59616b;
+  --sage-ink: #35664f;
+  --action-green: #40734e;
+  --action-green-hover: #386b49;
+  --action-substack: #bf4b2a;
+  --action-substack-hover: #923f2c;
   --accent: #35664f;
   --accent-hover: #294f3d;
   --accent-soft: #edf4ef;

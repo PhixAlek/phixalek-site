@@ -16,7 +16,8 @@
     "writing:update": "node scripts/update-writing.mjs",
     "postbuild": "node scripts/generate-writing.mjs",
     "predev:web": "node scripts/generate-writing-categories.mjs --local",
-    "pretest": "node scripts/generate-writing-categories.mjs"
+    "pretest": "node scripts/generate-writing-categories.mjs",
+    "writing:engagement": "node scripts/update-writing-engagement.mjs"
   },
   "type": "module",
   "devDependencies": {

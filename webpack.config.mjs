@@ -1,3 +1,4 @@
+import { createSubstackHandler } from './netlify/lib/substack.js';
 import path from 'path';
 import { readFileSync } from 'node:fs';
 import { WritingCategoriesPlugin } from './scripts/lib/writing-categories.mjs';
@@ -33,6 +34,15 @@ export default {
     hot: true,
     compress: true,
     historyApiFallback: true,
+    setupMiddlewares(middlewares) {
+      // Standalone webpack serves the same fixed-source RSS route as Netlify.
+      const writingFeed = createSubstackHandler();
+      middlewares.unshift({ name: 'writing-feed', path: '/.netlify/functions/latest-writing', middleware: async (request, response) => {
+        const result = await writingFeed({ httpMethod: request.method, queryStringParameters: request.query });
+        response.status(result.statusCode).set(result.headers).send(result.body);
+      } });
+      return middlewares;
+    },
   },
   experiments: { topLevelAwait: true },
   module: {
