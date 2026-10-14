@@ -77,6 +77,7 @@ export function updateSnapshot(previous, incoming, { now = new Date().toISOStrin
 export function mergeFeedArticles(previous, incoming) {
   const saved = new Map(previous.map(article => [article.id, article]));
   return mergeArticles(previous, incoming.map(article => ({ ...article,
+    language: article.language || saved.get(article.id)?.language || null,
     categories: [...new Set([...(saved.get(article.id)?.categories || []), ...article.categories])],
   })));
 }

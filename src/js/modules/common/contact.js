@@ -28,6 +28,7 @@ export function mountContactEmailJS({ serviceId, templateId, publicKey }){
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
     if (form.getAttribute('aria-busy') === 'true') return;
+    if (!form.reportValidity()) { text(status, () => ui.contact.required); return; }
 
     const fd = new FormData(form);
     const payload = {

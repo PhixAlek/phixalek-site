@@ -35,10 +35,10 @@ export function ArticleActions(article, { doc = document, ui, bind }) {
 }
 
 /** Delegated controls stay outside the main article link. */
-export function mountArticleActions(container, articles, { view = window, ui, text }) {
+export function mountArticleActions(container, articles, { view = window, ui, text, bind, release }) {
   const bySlug = new Map(articles.map(article => [article.slug, article]));
   const doc = container.ownerDocument;
-  const share = mountShareDialog(container, { view, ui, text });
+  const share = mountShareDialog(container, { view, ui, text, bind, release });
   const click = async event => {
     const button = event.target.closest('button[data-article-action]');
     if (!button || !container.contains(button) || button.disabled) return;

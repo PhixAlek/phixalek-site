@@ -1,12 +1,16 @@
 import { validateSnapshot, availableArticles, mergeArticles, mergeFeedArticles } from '../../../shared/writing/snapshot.js';
+import { articleLanguage } from '../../../shared/writing/model.js';
 import { readFeedText } from '../../../shared/writing/feed-response.js';
 
 export const FEED_SESSION_KEY = 'phixalek.writing-feed.v1';
 let pending;
 let memory;
 let writingVisitStarted = false;
-const mergeFreshFeed = (saved, incoming, tagsBySource = {}) => {
+const mergeFreshFeed = (saved, incoming, tagsBySource = {}, languagesBySource = {}) => {
   const tags = article => { const value = tagsBySource?.[article.sourceUrl]; return Array.isArray(value) && value.length <= 50 && value.every(tag => typeof tag === 'string' && tag.trim() && tag.length <= 100 && !/[\u0000-\u001f<>]/.test(tag)) ? value : null; };
+  const language = article => articleLanguage(languagesBySource?.[article.sourceUrl]) || article.language;
+  saved = saved.map(article => ({ ...article, language: language(article) }));
+  incoming = incoming.map(article => ({ ...article, language: language(article) }));
   const base = saved.map(article => tags(article) !== null ? { ...article, categories: tags(article) } : article);
   const fresh = incoming.map(article => tags(article) !== null ? { ...article, categories: [...new Set([...article.categories, ...tags(article)])] } : article);
   return mergeFeedArticles(base, fresh);
@@ -35,7 +39,7 @@ export async function loadArticles({ fetchFeed = fetch, storage, force = false, 
         if (saved) {
           const cached = JSON.parse(saved);
           if (cached.snapshotFetchedAt === snapshot.fetchedAt && typeof cached.xml === 'string') {
-            memory = immutableArticles(mergeFreshFeed(savedArticles, parseArticles(cached.xml, Parser, view), cached.tagsBySource)); return memory;
+            memory = immutableArticles(mergeFreshFeed(savedArticles, parseArticles(cached.xml, Parser, view), cached.tagsBySource, cached.languagesBySource)); return memory;
           }
         }
       } catch { /* Invalid caches are refetched, never rendered. */ }
@@ -47,10 +51,10 @@ export async function loadArticles({ fetchFeed = fetch, storage, force = false, 
       if (!response.ok) throw new Error('Writing unavailable');
       const body = await readFeedText(response);
       const payload = response.headers.get('content-type')?.includes('application/json') ? JSON.parse(body) : { xml: body };
-      const xml = payload.xml; const tagsBySource = payload.tagsBySource || {};
+      const xml = payload.xml; const tagsBySource = payload.tagsBySource || {}; const languagesBySource = payload.languagesBySource || {};
       const articles = parseArticles(xml, Parser, view);
-      memory = immutableArticles(mergeFreshFeed(savedArticles, articles, tagsBySource));
-      try { storage?.setItem(FEED_SESSION_KEY, JSON.stringify({ snapshotFetchedAt: snapshot.fetchedAt, xml, tagsBySource })); } catch { /* Storage quotas do not break reading. */ }
+      memory = immutableArticles(mergeFreshFeed(savedArticles, articles, tagsBySource, languagesBySource));
+      try { storage?.setItem(FEED_SESSION_KEY, JSON.stringify({ snapshotFetchedAt: snapshot.fetchedAt, xml, tagsBySource, languagesBySource })); } catch { /* Storage quotas do not break reading. */ }
       return memory;
     } catch {
       // Keep the last successfully rendered copy when an explicit refresh or the provider fails.

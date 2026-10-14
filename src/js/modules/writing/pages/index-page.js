@@ -51,6 +51,8 @@ export function listing(container, articles, fallback, view = window) {
   search.value = typeof saved?.query === 'string' ? saved.query : '';
   search.maxLength = 500;
   let category = currentCategories.some(item => item.id === saved?.category) ? saved.category : '';
+  let language = ['en', 'es'].includes(saved?.language) ? saved.language : '';
+  const languageButtons = [];
   let mode = saved?.mode === 'grid' ? 'grid' : 'list', disposeFeed = () => {}, restoring = true;
   const categories = [{ id: '', labels: null }, ...currentCategories];
   const filterButtons = [];
@@ -59,7 +61,7 @@ export function listing(container, articles, fallback, view = window) {
   const saveState = () => {
     if (!view.history?.replaceState) return;
     const cards = [...list.children].filter(node => node.classList.contains('editorial-card'));
-    const state = { query: search.value, category, mode, compact: !wide.matches,
+    const state = { query: search.value, category, language, mode, compact: !wide.matches,
       startOffset: Math.max(0, Number(cards[0]?.getAttribute('aria-posinset') || 1) - 1),
       rendered: cards.length, auto: automatic.getAttribute('aria-pressed') !== 'false' };
     try { view.history.replaceState({ ...view.history.state, writingListing: state }, '', view.location.href); } catch { /* History storage is optional. */ }
@@ -75,10 +77,10 @@ export function listing(container, articles, fallback, view = window) {
     searchWrap.hidden = !wide.matches;
     const primaryCount = wide.matches ? 4 : 3;
     placeFilterButtons(filters, panel, overflow, filterButtons.map(([button]) => button), primaryCount);
-    moreFilters.classList.toggle('has-selected-filter', categories.findIndex(item => item.id === category) >= primaryCount);
-    const isFiltered = Boolean(search.value.trim() || category);
+    moreFilters.classList.toggle('has-selected-filter', Boolean(language) || categories.findIndex(item => item.id === category) >= primaryCount);
+    const isFiltered = Boolean(search.value.trim() || category || language);
     const matches = filterArticles(selectFeedArticles(articles, { desktop: wide.matches, filtered: isFiltered }),
-      { query: search.value, category, categories: currentCategories });
+      { query: search.value, category, language, categories: currentCategories });
     container.classList.toggle('editorial-feed-layout', !wide.matches);
     list.classList.toggle('is-grid', wide.matches && mode === 'grid');
     list.setAttribute('role', wide.matches ? 'list' : 'feed');
@@ -87,6 +89,7 @@ export function listing(container, articles, fallback, view = window) {
     views.hidden = !wide.matches;
     clear.hidden = !search.value;
     filterButtons.forEach(([button, id]) => button.setAttribute('aria-pressed', String(id === category)));
+    languageButtons.forEach(([button, code]) => button.setAttribute('aria-pressed', String(code === language)));
     [...views.children].forEach(button => button.setAttribute('aria-pressed', String(button.dataset.view === mode)));
     const rows = matches;
     loadingControls.hidden = !rows.length;
@@ -94,10 +97,10 @@ export function listing(container, articles, fallback, view = window) {
       const empty = document.createElement('div'); empty.className = 'editorial-empty';
       const image = document.createElement('img'); image.src = fallback.src; image.alt = ''; image.width = 640; image.height = 336;
       const title = document.createElement('h2'); text(title, () => ui.writingPage.empty);
-      const reason = document.createElement('p'); text(reason, () => search.value.trim() && category ? ui.writingPage.emptyCombined : search.value.trim() ? ui.writingPage.emptySearch : category ? ui.writingPage.emptyFilter : ui.writingPage.emptyArchive);
+      const reason = document.createElement('p'); text(reason, () => search.value.trim() && (category || language) ? ui.writingPage.emptyCombined : search.value.trim() ? ui.writingPage.emptySearch : category ? ui.writingPage.emptyFilter : language ? ui.writingPage.emptyLanguage : ui.writingPage.emptyArchive);
       const reset = document.createElement('button'); reset.type = 'button'; reset.className = 'btn';
       text(reset, () => ui.writingPage.clearFilters); reset.hidden = !isFiltered;
-      reset.addEventListener('click', () => { category = ''; search.value = ''; update(); filterButtons[0][0].focus({ preventScroll: true }); });
+      reset.addEventListener('click', () => { category = ''; language = ''; search.value = ''; update(); filterButtons[0][0].focus({ preventScroll: true }); });
       empty.append(image, title, reason, reset); list.append(empty); saveState(); restoring = false; return;
     }
     const settings = writingConfig.listing;
@@ -132,13 +135,24 @@ export function listing(container, articles, fallback, view = window) {
     text(button, () => item.labels ? item.labels[document.documentElement.lang] || item.labels.en : ui.writingPage.all);
     button.addEventListener('click', () => {
       category = item.id;
-      if (!category) search.value = '';
+      if (!category) { search.value = ''; language = ''; }
       filterPopover?.close(panel.contains(button));
       update();
     });
     (index > 3 ? panel : filters).append(button); filterButtons.push([button, item.id]);
   });
-  if (categories.length > 4) filters.append(overflow);
+  const languageGroup = document.createElement('div'); languageGroup.className = 'editorial-language-filters';
+  languageGroup.dataset.filterSection = 'language'; languageGroup.setAttribute('role', 'group');
+  bind(languageGroup, 'attr:aria-label', () => ui.writingPage.languageFilter);
+  const languageHeading = document.createElement('p'); text(languageHeading, () => ui.writingPage.languageFilter);
+  languageGroup.append(languageHeading);
+  for (const code of ['en', 'es']) {
+    const button = document.createElement('button'); button.type = 'button'; button.dataset.languageFilter = code;
+    text(button, () => code === 'en' ? ui.writingPage.english : ui.writingPage.spanish);
+    button.addEventListener('click', () => { language = code; filterPopover?.close(true); update(); });
+    languageButtons.push([button, code]); languageGroup.append(button);
+  }
+  panel.append(languageGroup); filters.append(overflow);
   filterPopover = mountFilterPopover(overflow, moreFilters, panel);
   for (const value of ['list', 'grid']) {
     const button = document.createElement('button'); button.type = 'button'; button.dataset.view = value;
@@ -163,7 +177,7 @@ export function listing(container, articles, fallback, view = window) {
     (active && filters.contains(active) ? active : moreFilters).focus({ preventScroll: true });
   };
   container.addEventListener('click', selectTag);
-  const disposeActions = mountArticleActions(container, articles, { view, ui, text, bind });
+  const disposeActions = mountArticleActions(container, articles, { view, ui, text, bind, release: releaseBindings });
   wide.addEventListener('change', update); update();
   return () => { container.removeEventListener('click', selectTag); filterPopover.dispose(); disposeFeed(); releaseBindings(container); disposeActions(); wide.removeEventListener('change', update); search.removeEventListener('input', update); clear.removeEventListener('click', clearSearch); };
 }

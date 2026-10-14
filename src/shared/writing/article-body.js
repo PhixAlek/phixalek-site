@@ -84,6 +84,11 @@ export function importArticleBody(html, { view = globalThis.window, sourceUrl = 
       if (value !== null && (!/^\d+$/.test(value) || Number(value) < 1 || Number(value) > 10000)) node.removeAttribute(attr);
     }
   });
+  // Keep prerendered image links usable before the interactive reader hydrates.
+  fragment.querySelectorAll('a[href]').forEach(link => {
+    if (!link.textContent.trim() && link.querySelector('img') &&
+      ![...link.querySelectorAll('img')].some(image => image.alt?.trim())) link.setAttribute('aria-label', 'Open image in a new tab');
+  });
   const container = view.document.createElement('div'); container.append(fragment);
   return { html: container.innerHTML, text: plainText(container), widgets };
 }

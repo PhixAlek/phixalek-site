@@ -13,9 +13,16 @@ export function SubscriptionEmbed({ doc, ui, text, bind }) {
   form.action = new URL('/subscribe', writingConfig.source.origin).href;
   form.method = 'get'; form.target = '_blank'; form.setAttribute('rel', 'noopener noreferrer');
   const email = doc.createElement('input'); email.type = 'email'; email.name = 'email'; email.required = true;
-  email.autocomplete = 'email'; bind(email, 'attr:placeholder', () => ui.writingPage.email);
+  const mobile = doc.defaultView?.matchMedia?.('(max-width:767px)');
+  const placeholder = () => mobile?.matches ? ui.writingPage.emailMobile : ui.writingPage.email;
+  const updatePlaceholder = () => { email.placeholder = placeholder(); };
+  mobile?.addEventListener('change', updatePlaceholder);
+  section.dispose = () => mobile?.removeEventListener('change', updatePlaceholder);
+  email.autocomplete = 'email'; bind(email, 'attr:placeholder', placeholder);
   bind(email, 'attr:aria-label', () => ui.writingPage.email);
-  const submit = doc.createElement('button'); submit.type = 'submit'; submit.className = 'btn'; text(submit, () => ui.writingPage.subscribe);
+  const submit = doc.createElement('button'); submit.type = 'submit'; submit.className = 'btn';
+  const label = doc.createElement('span'); text(label, () => ui.writingPage.subscribe);
+  submit.append(label);
   form.append(email, submit);
   const terms = doc.createElement('p'); terms.className = 'editorial-subscribe-terms';
   const termsLink = doc.createElement('a'); termsLink.href = 'https://substack.com/tos'; termsLink.target = '_blank'; termsLink.rel = 'noopener noreferrer';

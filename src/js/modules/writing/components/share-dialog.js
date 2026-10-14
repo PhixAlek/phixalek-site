@@ -1,11 +1,11 @@
 /** One copy-link sheet shared by every article card. */
-export function mountShareDialog(container, { view = window, ui, text }) {
+export function mountShareDialog(container, { view = window, ui, text, bind = (node, property, get) => node.setAttribute(property.slice(5), get()), release = () => {} }) {
   const doc = container.ownerDocument;
   const dialog = doc.createElement('dialog'); dialog.className = 'editorial-dialog editorial-share-dialog';
   const heading = doc.createElement('h2'); heading.id = 'writing-share-heading'; text(heading, () => ui.writingPage.share);
   dialog.setAttribute('aria-labelledby', heading.id);
   const field = doc.createElement('input'); field.type = 'url'; field.readOnly = true;
-  field.setAttribute('aria-label', ui.writingPage.copyLink);
+  bind(field, 'attr:aria-label', () => ui.writingPage.copyLink);
   const copy = doc.createElement('button'); copy.type = 'button'; copy.className = 'btn'; text(copy, () => ui.writingPage.copyLink);
   const close = doc.createElement('button'); close.type = 'button'; text(close, () => ui.writingPage.close);
   const controls = doc.createElement('div'); controls.className = 'editorial-dialog-controls'; controls.append(close, copy);
@@ -36,7 +36,7 @@ export function mountShareDialog(container, { view = window, ui, text }) {
     } finally { copy.disabled = false; }
   });
   return {
-    open(url, button) { cancelClose(); revision++; copy.disabled = false; opener = button; field.value = url; status.textContent = ''; dialog.showModal(); copy.focus(); },
-    dispose() { disposed = true; cancelClose(); revision++; if (dialog.open) dialog.close(); dialog.remove(); },
+    open(url, button) { cancelClose(); revision++; copy.disabled = false; opener = button; field.value = url; text(status, () => ''); dialog.showModal(); copy.focus(); },
+    dispose() { disposed = true; cancelClose(); revision++; if (dialog.open) dialog.close(); release(dialog); dialog.remove(); },
   };
 }

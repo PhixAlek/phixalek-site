@@ -54,6 +54,9 @@
   --space-12: 48px;
   --space-16: 64px;
   --space-24: 96px;
+  --control-height: 44px;
+  --radius-pill: 999px;
+  --radius-external: 8px;
   --radius: 16px;
   --radius-sm: 10px;
   --pad: clamp(16px, 3vw, 32px);

@@ -7,7 +7,8 @@ export function ArticleComments(article, { doc = document, ui, text, bind = (nod
   const notice = doc.createElement('p'); text(notice, () => article.localDemo ? ui.writingPage.localCommentsNotice : ui.writingPage.commentsNotice);
   const action = (label, className) => {
     const button = doc.createElement('button'); button.type = 'button'; button.className = className;
-    button.dataset.substackAction = 'comments'; button.disabled = Boolean(article.localDemo); if (label) text(button, label); return button;
+    button.dataset.substackAction = 'comments'; button.disabled = Boolean(article.localDemo); if (label) text(button, label);
+    bind(button, 'attr:aria-label', () => ui.writingPage.replyOnSubstack); return button;
   };
   const header = doc.createElement('div'); header.className = 'editorial-comments-header';
   header.append(heading);
@@ -20,7 +21,7 @@ export function ArticleComments(article, { doc = document, ui, text, bind = (nod
   const comment = doc.createElement(article.localDemo ? 'button' : 'a'); comment.className = 'btn editorial-comment-cta';
   if (article.localDemo) { comment.type = 'button'; comment.disabled = true; }
   else { comment.href = article.sourceUrl + '/comments'; comment.target = '_blank'; comment.rel = 'noopener noreferrer'; comment.dataset.substackAction = 'comments'; }
-  const fullLabel = doc.createElement('span'); fullLabel.className = 'editorial-comment-label-full'; text(fullLabel, () => ui.writingPage.commentOnSubstack + ' ↗');
+  const fullLabel = doc.createElement('span'); fullLabel.className = 'editorial-comment-label-full'; text(fullLabel, () => ui.writingPage.comment + ' ↗');
   const compactLabel = doc.createElement('span'); compactLabel.className = 'editorial-comment-label-compact'; text(compactLabel, () => ui.writingPage.comment + ' ↗');
   bind(comment, 'attr:aria-label', () => ui.writingPage.commentOnSubstack); comment.append(fullLabel, compactLabel);
   invitation.append(icon, invitationCopy, comment); section.append(header, notice, invitation);
@@ -41,7 +42,16 @@ export function ArticleComments(article, { doc = document, ui, text, bind = (nod
       if (comment.isAuthor) { const badge = doc.createElement('span'); badge.className = 'editorial-comment-author'; text(badge, () => ui.writingPage.commentAuthor); meta.append(badge); }
       const body = doc.createElement('p'); body.className = 'editorial-comment-body'; body.textContent = comment.body;
       const actions = doc.createElement('div'); actions.className = 'editorial-comment-actions';
-      if (comment.likes != null) { const likes = doc.createElement('span'); likes.textContent = `♡ ${comment.likes}`; likes.className = 'editorial-comment-likes'; if (comment.likes > 1) likes.classList.add('has-reactions'); actions.append(likes); }
+      if (comment.likes != null) {
+        const likes = doc.createElement(article.localDemo ? 'span' : 'a');
+        likes.textContent = `♡ ${comment.likes}`; likes.className = 'editorial-comment-likes';
+        if (!article.localDemo) {
+          likes.href = comment.sourceUrl || article.sourceUrl + '/comments'; likes.target = '_blank'; likes.rel = 'noopener noreferrer';
+          likes.dataset.substackAction = 'likes';
+          bind(likes, 'attr:aria-label', () => `${ui.writingPage.likesOnSubstack}: ${comment.likes}`);
+        }
+        if (comment.likes > 1) likes.classList.add('has-reactions'); actions.append(likes);
+      }
       actions.append(action(() => ui.writingPage.reply, 'editorial-comment-link'));
       copy.append(meta, body, actions);
       const children = depth < 4 ? replies.filter(reply => reply.parentId === comment.id) : [];

@@ -185,3 +185,16 @@ test('modified click preserves native navigation and refreshes the card', () => 
   });
   assert.equal(calls,1);
 });
+
+test('live enrichment returns the per-post language alongside tags using the same page request', async () => {
+  const source = 'https://phixalek.substack.com/p/language-test'; let pages = 0;
+  const html = 'window._preloads=JSON.parse(' + JSON.stringify(JSON.stringify({ post: { canonical_url: source, language: 'es', postTags: [{ name: 'Notes' }] } })) + ')';
+  const handler = createSubstackHandler({
+    fetchFeed: async () => new Response(`<rss><channel><item><link>${source}</link></item></channel></rss>`),
+    fetchPage: async url => { assert.equal(url, source); pages++; return new Response(html); },
+  });
+  const response = await handler({ httpMethod: 'GET', queryStringParameters: { tags: '1' } });
+  assert.equal(response.statusCode, 200); const body = JSON.parse(response.body);
+  assert.deepEqual(body.languagesBySource, { [source]: 'es' });
+  assert.deepEqual(body.tagsBySource, { [source]: ['Notes'] }); assert.equal(pages, 1);
+});

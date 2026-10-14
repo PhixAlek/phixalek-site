@@ -1,5 +1,7 @@
 import '../css/tokens.css';
 import '../css/styles.css';
+import { mountSubstackInteractions } from './modules/writing/components/substack-interactions.js';
+import { ui, text, bind, releaseBindings } from '../content/index.js';
 
 import { Header } from './modules/header/header.js';
 import { Main }   from './modules/main/index.js';
@@ -27,6 +29,7 @@ function bootstrap(){
   const headerSpacer = document.createElement('div'); headerSpacer.className = 'header-spacer'; headerSpacer.setAttribute('aria-hidden', 'true');
   app.replaceChildren(header, headerSpacer, ...(prerender ? [prerender] : []), footer);
   mountNavigationLoading(header, footer, { shell: app });
+  mountSubstackInteractions(app, { outboundLinks: true, newsletter: false, ui, text, bind, release: releaseBindings });
   let home, currentPage, cleanupNavigation, disposePage;
   mountRouter(async (route, isCurrent) => {
     cleanupNavigation?.();

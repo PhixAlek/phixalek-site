@@ -9,7 +9,7 @@ const paths = {
 };
 
 /** Counts are a dated public snapshot, never locally incremented reactions. */
-export function mountReaderEngagement(story, prose, article, { ui, text, bind, view = window }) {
+export function mountReaderEngagement(story, prose, article, { ui, text, bind, release, view = window }) {
   const doc = story.ownerDocument;
   const row = doc.createElement('div'); row.className = 'editorial-reader-engagement'; row.id = 'article-engagement'; row.tabIndex = -1;
   const controls = doc.createElement('div'); controls.className = 'editorial-reader-social';
@@ -29,7 +29,7 @@ export function mountReaderEngagement(story, prose, article, { ui, text, bind, v
   control('comments', count('comments'));
   const share = control('share');
   row.append(controls); prose.after(row);
-  const sheet = mountShareDialog(story, { view, ui, text });
+  const sheet = mountShareDialog(story, { view, ui, text, bind, release });
   const open = () => sheet.open(new URL(articlePath(article.slug), SITE_ORIGIN).href, share);
   share.addEventListener('click', open);
   return () => { share.removeEventListener('click', open); sheet.dispose(); row.remove(); };

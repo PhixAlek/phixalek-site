@@ -1,6 +1,7 @@
+import { ArticleLanguage } from '../components/article-language.js';
 import { createReaderCover } from '../components/reader-cover.js';
 import { ArticleComments } from '../components/article-comments.js';
-import { ui, text, bind, content } from '../../../../content/index.js';
+import { ui, text, bind, content, releaseBindings } from '../../../../content/index.js';
 import { articleFragment } from '../article-html.js';
 import { articleDate } from '../components/article-card.js';
 import { resolveImage } from '../../images/registry.js';
@@ -13,6 +14,7 @@ export function reader(container, article, fallback, registry, { featured = fals
   const meta = document.createElement('div'); meta.className = 'editorial-meta';
   const minutes = document.createElement('span'); text(minutes, () => `${article.readingMinutes} ${ui.writingPage.minutes}`);
   meta.append(articleDate(article), minutes);
+  const language = ArticleLanguage(article.language); if (language) meta.append(language);
   const heading = document.createElement('h1'); heading.textContent = article.title;
   const excerpt = document.createElement('p'); excerpt.className = 'editorial-deck'; excerpt.textContent = article.excerpt;
   const author = document.createElement('div'); author.className = 'editorial-author';
@@ -23,12 +25,12 @@ export function reader(container, article, fallback, registry, { featured = fals
   const authorName = document.createElement('span'); authorName.className = 'editorial-author-name'; authorName.textContent = content.hero.name;
   const authorRole = document.createElement('span'); authorRole.className = 'editorial-author-role'; authorRole.textContent = 'Software Developer';
   authorDetails.append(authorName, authorRole); author.append(authorDetails);
-  const prose = document.createElement('div'); prose.className = 'editorial-prose'; prose.append(articleFragment(article.html, window, article.sourceUrl));
+  const prose = document.createElement('div'); prose.className = 'editorial-prose'; prose.append(articleFragment(article.html, window, article.sourceUrl, { labelImageLink: node => bind(node, 'attr:aria-label', () => ui.writingPage.openImage) }));
   const cover = createReaderCover(article, fallback, { featured });
   story.append(meta, heading, excerpt, author, cover, prose, ArticleComments(article, { ui, text, bind }));
   layout.append(story);
   const disposeContents = mountReaderContents(layout, story, prose, { label: node => text(node, () => ui.writingPage.contents), includeComments: article.engagement?.comments > 0 || Boolean(article.engagement?.preview?.length), commentsLabel: node => text(node, () => ui.writingPage.comments) });
-  const disposeEngagement = mountReaderEngagement(story, prose, article, { ui, text, bind });
+  const disposeEngagement = mountReaderEngagement(story, prose, article, { ui, text, bind, release: releaseBindings });
   container.append(layout);
   const progress = document.createElement('progress'); progress.className = 'editorial-progress'; progress.max = 1;
   bind(progress, 'attr:aria-label', () => ui.writingPage.progress);

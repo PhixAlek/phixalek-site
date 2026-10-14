@@ -95,7 +95,7 @@ test('imported replies expand locally and retain their parent hierarchy', () => 
   assert.equal(thread.open, false); thread.open = true;
   assert.ok(thread.textContent.includes('First reply')); assert.ok(thread.textContent.includes('Nested reply'));
   assert.equal(thread.querySelectorAll(':scope > ol > li ol').length, 1);
-  assert.equal(thread.querySelector('[data-substack-action]')?.textContent, ui.writingPage.reply);
+  assert.equal(thread.querySelector('[data-substack-action=comments]')?.textContent, ui.writingPage.reply);
   dom.window.close();
 });
 
@@ -121,4 +121,83 @@ test('an empty published discussion says no comments without inventing recent pr
   assert.equal(section.querySelector('.editorial-latest-comments'), null);
   assert.equal(section.querySelector('.editorial-comment-cta').dataset.substackAction, 'comments');
   dom.window.close();
+});
+
+test('shell notice covers provider links, preserves destinations and exempts only Terms', () => {
+  const dom = new JSDOM('<main></main>'), doc = dom.window.document, container = doc.querySelector('main');
+  const dispose = mountSubstackInteractions(container, { outboundLinks: true, newsletter: false, ui, text, bind });
+  const dialog = container.querySelector('dialog');
+  dialog.showModal = () => { dialog.open = true; };
+  dialog.close = () => { dialog.open = false; dialog.dispatchEvent(new dom.window.Event('close')); };
+  for (const href of [article.sourceUrl + '/comments', 'https://substack.com/@phixalek', 'https://phixalek.substack.com/', article.sourceUrl]) {
+    const link = doc.createElement('a'); link.href = href; container.append(link);
+    const event = new dom.window.MouseEvent('click', { bubbles: true, cancelable: true });
+    link.dispatchEvent(event);
+    assert.equal(event.defaultPrevented, true); assert.equal(dialog.open, true);
+    assert.equal(dialog.querySelector('a').href, href);
+    assert.equal(dialog.querySelector('a').target, '_blank');
+    dialog.querySelector('button').click(); assert.equal(doc.activeElement, link);
+    link.remove();
+  }
+  for (const href of ['https://substack.com/tos', 'https://example.org/', 'https://substack.com.example.org/', '/blog/']) {
+    const link = doc.createElement('a'); link.href = href; container.append(link);
+    // Stop browser navigation separately, after verifying our listener leaves it alone.
+    const event = new dom.window.MouseEvent('click', { bubbles: true, cancelable: true });
+    container.addEventListener('click', e => { assert.equal(e.defaultPrevented, false); e.preventDefault(); }, { once: true });
+    link.dispatchEvent(event); assert.equal(dialog.open, false); link.remove();
+  }
+  dispose(); assert.equal(doc.body.style.overflow, ''); dom.window.close();
+});
+
+test('subscription validates the email and carries it through the cancelable notice without submitting it', () => {
+  const dom = new JSDOM('<main></main>'), doc = dom.window.document, container = doc.querySelector('main');
+  const dispose = mountSubstackInteractions(container, { ui, text, bind });
+  const dialog = container.querySelector('dialog'), form = container.querySelector('form'), email = form.querySelector('input');
+  dialog.showModal = () => { dialog.open = true; };
+  dialog.close = () => { dialog.open = false; dialog.dispatchEvent(new dom.window.Event('close')); };
+  email.value = 'invalid';
+  form.dispatchEvent(new dom.window.Event('submit', { bubbles: true, cancelable: true })); assert.equal(dialog.open, false);
+  email.value = 'example@example.org';
+  const event = new dom.window.Event('submit', { bubbles: true, cancelable: true }); form.dispatchEvent(event);
+  assert.equal(event.defaultPrevented, true); assert.equal(dialog.open, true);
+  const destination = new URL(dialog.querySelector('a').href);
+  assert.equal(destination.pathname, '/subscribe'); assert.equal(destination.searchParams.get('email'), email.value);
+  dialog.querySelector('button').click(); assert.equal(email.value, 'example@example.org'); assert.equal(doc.body.style.overflow, '');
+  dispose(); dom.window.close();
+});
+
+test('shell and article controllers do not intercept each other’s confirmation links or open two notices', () => {
+  const dom = new JSDOM('<div id="shell"><main></main></div>'), doc = dom.window.document;
+  const shell = doc.querySelector('#shell'), page = doc.querySelector('main');
+  page.append(ArticleComments(article, { doc, ui, text }));
+  const cleanupShell = mountSubstackInteractions(shell, { outboundLinks: true, newsletter: false, ui, text, bind });
+  const cleanupPage = mountSubstackInteractions(page, { article, ui, text, bind });
+  for (const dialog of shell.querySelectorAll('dialog')) {
+    dialog.showModal = () => { dialog.open = true; };
+    dialog.close = () => { dialog.open = false; dialog.dispatchEvent(new dom.window.Event('close')); };
+  }
+  page.querySelector('[data-substack-action=comments]').click();
+  assert.equal(shell.querySelectorAll('dialog[open]').length, 1);
+  const proceed = page.querySelector('dialog a');
+  shell.addEventListener('click', e => { assert.equal(e.defaultPrevented, false); e.preventDefault(); }, { once: true });
+  proceed.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true, cancelable: true }));
+  assert.equal(shell.querySelectorAll('dialog[open]').length, 0);
+  cleanupPage(); cleanupShell(); dom.window.close();
+});
+
+test('comment likes open the exact public comment through the provider notice without changing its count', () => {
+  const dom = new JSDOM('<main></main>'), doc = dom.window.document, container = doc.querySelector('main');
+  const sourceUrl = 'https://substack.com/profile/554545303-phixalek/note/c-351689555';
+  container.append(ArticleComments({ ...article, engagement: { comments: 1, preview: [{ id: 351689555, sourceUrl, author: 'PhixAlek', date: '2026-10-03T12:00:00Z', body: 'A public comment', likes: 2, replies: '' }] } }, { doc, ui, text }));
+  const dispose = mountSubstackInteractions(container, { article, ui, text, bind });
+  const dialog = container.querySelector('dialog');
+  dialog.showModal = () => { dialog.open = true; };
+  dialog.close = () => { dialog.open = false; dialog.dispatchEvent(new dom.window.Event('close')); };
+  const like = container.querySelector('.editorial-comment-likes');
+  assert.equal(like.tagName, 'A'); assert.equal(like.href, sourceUrl); assert.equal(like.target, '_blank');
+  like.click(); assert.equal(dialog.open, true);
+  assert.equal(dialog.querySelector('a').href, sourceUrl);
+  assert.equal(dialog.querySelector('p').textContent, ui.writingPage.likesNotice);
+  assert.equal(like.textContent, '♡ 2'); dialog.querySelector('button').click();
+  assert.equal(doc.activeElement, like); dispose(); dom.window.close();
 });

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readPublicTags, enrichArticleTags } from '../scripts/lib/writing-tags.mjs';
+import { readPublicTags, readPublicLanguage, enrichArticleTags } from '../scripts/lib/writing-tags.mjs';
 import { mergeFeedArticles } from '../src/shared/writing/snapshot.js';
 const url = 'https://phixalek.substack.com/p/tagged-post';
 const html = (tags, canonical = url) => 'window._preloads = JSON.parse(' + JSON.stringify(JSON.stringify({ post: { canonical_url: canonical, postTags: tags } })) + ')';
@@ -27,4 +27,21 @@ test('a browser RSS refresh does not erase compiled page tags or mutate the save
   assert.deepEqual(refreshed[0].categories, ['Design', 'Frontend']);
   assert.deepEqual(mergeFeedArticles([saved], [{ ...article, categories: ['Notes'] }])[0].categories, ['Design', 'Frontend', 'Notes']);
   assert.deepEqual(saved.categories, ['Design', 'Frontend']);
+});
+
+const languagePage = (language, canonical = url) => 'window._preloads = JSON.parse(' + JSON.stringify(JSON.stringify({ post: { canonical_url: canonical, language, postTags: [] } })) + ')';
+test('article language comes from the exact post metadata, never the publication or HTML locale', () => {
+  assert.equal(readPublicLanguage(languagePage('en'), url), 'en');
+  assert.equal(readPublicLanguage(languagePage('es-MX'), url), 'es');
+  assert.equal(readPublicLanguage(languagePage('pt'), url), null);
+  assert.equal(readPublicLanguage(languagePage('en', 'https://other.example/p/tagged-post'), url), null);
+  assert.equal(readPublicLanguage('<html lang="en">' + html([]), url), null);
+});
+test('metadata supplies a missing RSS language and retains it when the provider fails', async () => {
+  const imported = await enrichArticleTags({ ...article, language: null }, null, async () => new Response(languagePage('es')));
+  assert.equal(imported.language, 'es');
+  const failed = await enrichArticleTags({ ...article, language: null }, imported, async () => { throw new Error('Unavailable'); });
+  assert.equal(failed.language, 'es');
+  const merged = mergeFeedArticles([imported], [{ ...article, language: null }]);
+  assert.equal(merged[0].language, 'es');
 });

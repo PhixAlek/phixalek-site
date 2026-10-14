@@ -373,3 +373,33 @@ test('cards retain up to four source tags for desktop; compact visibility is con
   const card = createArticleCard(record, { src: '/media/mountains.svg' }, { doc: f.doc, ui, bind, text, getLocale: () => 'en' });
   assert.deepEqual([...card.querySelectorAll('[data-article-tag]')].map(node => node.textContent), ['One','Two','Three','Four']);
 });
+
+test('reopening Share clears translated success feedback and releases its bindings on disposal', async () => {
+  const f = fixture(), bindings = new Map(); let released = false;
+  const copy = { writingPage: { ...ui.writingPage } };
+  const bindText = (node, get) => { bindings.set(node, get); node.textContent = get(); };
+  const bindAttribute = (node, property, get) => { bindings.set(node, () => { node.setAttribute(property.slice(5), get()); return node.textContent; }); node.setAttribute(property.slice(5), get()); };
+  f.view.navigator.clipboard = { writeText: async () => {} };
+  f.container.append(ArticleActions(data[0], { doc: f.doc, ui: copy, bind }));
+  const dispose = mountArticleActions(f.container, data, { view: f.view, ui: copy, text: bindText, bind: bindAttribute, release: root => { released = root.tagName === 'DIALOG'; } });
+  const trigger = f.container.querySelector('[data-article-action="share"]'); trigger.click();
+  const dialog = f.container.querySelector('dialog'); dialog.querySelector('.btn').click();
+  await new Promise(resolve => setTimeout(resolve, 0));
+  assert.equal(dialog.querySelector('[role=status]').textContent, copy.writingPage.copied);
+  dialog.querySelector('button').click(); trigger.click();
+  copy.writingPage.copied = 'Enlace copiado'; copy.writingPage.copyLink = 'Copiar enlace';
+  for (const [node, get] of bindings) node.textContent = get();
+  assert.equal(dialog.querySelector('[role=status]').textContent, '');
+  assert.equal(dialog.querySelector('input').getAttribute('aria-label'), 'Copiar enlace');
+  dispose(); assert.equal(released, true);
+});
+
+test('language filters combine with search and topics without guessing unknown languages', () => {
+  const items = [article('english', { title: 'Useful interface', language: 'en', categories: ['Software'] }),
+    article('spanish', { title: 'Useful interface', language: 'es', categories: ['Software'] }),
+    article('unknown', { title: 'Useful interface', language: null, categories: ['Software'] })];
+  assert.equal(filterArticles(items).length, 3);
+  assert.deepEqual(filterArticles(items, { language: 'es', category: 'software', categories, query: 'useful' }).map(item => item.slug), ['spanish']);
+  assert.deepEqual(filterArticles(items, { language: 'en' }).map(item => item.slug), ['english']);
+  assert.equal(filterArticles(items, { language: 'es', query: 'absent' }).length, 0);
+});

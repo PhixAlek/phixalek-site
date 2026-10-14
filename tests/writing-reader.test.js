@@ -114,3 +114,28 @@ test('first Writing entry fetches current content once even when Home has popula
   await fresh.loadArticles(options); assert.equal(requests, 1);
   await fresh.loadArticles({ ...options, writingVisit: true, force: true }); assert.equal(requests, 2);
 });
+
+test('linked decorative images have an accessible action name without inventing an image description', () => {
+  const fragment = articleFragment('<p><a href="https://example.org/cover.png"><img src="https://example.org/cover.png" alt=""></a><a href="https://example.org/chart.png"><img src="https://example.org/chart.png" alt="Expense chart"></a></p>', view);
+  const links = fragment.querySelectorAll('a');
+  assert.equal(links[0].getAttribute('aria-label'), 'Open image in a new tab');
+  assert.equal(links[0].querySelector('img').alt, '');
+  assert.equal(links[1].getAttribute('aria-label'), null);
+  assert.equal(links[1].querySelector('img').alt, 'Expense chart');
+});
+
+test('live language metadata reaches articles and survives the session cache independently of UI locale', async () => {
+  const fresh = await import('../src/js/modules/writing/feed.js?public-language-refresh');
+  let cached;
+  const storage = { getItem: () => null, setItem: (key, value) => { cached = JSON.parse(value); } };
+  const languagesBySource = { 'https://phixalek.substack.com/p/newest': 'es', 'https://phixalek.substack.com/p/older': 'en' };
+  const items = await fresh.loadArticles({ force: true, storage, Parser: view.DOMParser, view,
+    fetchFeed: async () => new Response(JSON.stringify({ xml: feed, tagsBySource: {}, languagesBySource }), { headers: { 'Content-Type': 'application/json' } }) });
+  assert.equal(items.find(item => item.slug === 'newest').language, 'es');
+  assert.equal(items.find(item => item.slug === 'older').language, 'en');
+  assert.deepEqual(cached.languagesBySource, languagesBySource);
+  const fromCache = await import('../src/js/modules/writing/feed.js?public-language-cache');
+  const restored = await fromCache.loadArticles({ storage: { getItem: () => JSON.stringify(cached) }, Parser: view.DOMParser, view,
+    fetchFeed: async () => { assert.fail('A valid session cache should not fetch again'); } });
+  assert.equal(restored.find(item => item.slug === 'newest').language, 'es');
+});

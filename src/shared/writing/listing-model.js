@@ -31,11 +31,11 @@ export function deriveCategories(articles, { definitions = [], removedSlugs = []
   return [...groups.values()];
 }
 
-export function filterArticles(articles, { query = '', category = '', categories = [] } = {}) {
+export function filterArticles(articles, { query = '', category = '', language = '', categories = [] } = {}) {
   const needle = searchable(query.trim());
   const selected = categories.find(item => item.id === category);
   const aliases = selected ? [selected.id, selected.labels.en, selected.labels.es, ...(selected.aliases || [])].map(searchable) : [];
-  return articles.filter(article => (!category || article.categories.some(tag => aliases.includes(searchable(tag))))
+  return articles.filter(article => (!language || article.language === language) && (!category || article.categories.some(tag => aliases.includes(searchable(tag))))
     && (!needle || searchable(`${article.title} ${article.excerpt} ${article.categories.join(' ')}`).includes(needle)));
 }
 

@@ -75,3 +75,16 @@ test('opening centers the panel without focus overriding scroll and honors reduc
   assert.equal(calls[1].behavior, 'instant');
   f.control.dispose(); f.dom.window.close();
 });
+
+test('the language section stays last and keeps More available even without overflow topics', async () => {
+  const { placeFilterButtons } = await import('../src/js/modules/writing/components/filter-popover.js');
+  const f = fixture(), row = f.doc.createElement('div'), languages = f.doc.createElement('div');
+  f.panel.replaceChildren(); languages.dataset.filterSection = 'language'; f.panel.append(languages);
+  const buttons = Array.from({ length: 5 }, (_, index) => { const button = f.doc.createElement('button'); button.textContent = String(index); return button; });
+  placeFilterButtons(row, f.panel, f.wrapper, buttons, 3);
+  assert.equal(f.panel.lastElementChild, languages);
+  assert.deepEqual([...f.panel.children].slice(0,-1).map(b => b.textContent), ['3','4']);
+  placeFilterButtons(row, f.panel, f.wrapper, buttons, 5);
+  assert.equal(f.panel.lastElementChild, languages); assert.equal(f.wrapper.parentElement, row);
+  f.control.dispose(); f.dom.window.close();
+});

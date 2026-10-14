@@ -27,7 +27,7 @@ export function createThumbnail(article, image, { doc, ui, text, getLocale, feat
   if (!featured) {
     const languageLabel = doc.createElement('span'); languageLabel.className = 'editorial-thumbnail-language';
     languageLabel.textContent = language?.toUpperCase() || ''; languageLabel.hidden = !language;
-    caption.append(title, languageLabel);
+    caption.append(languageLabel, title);
   }
   frame.append(image, caption); return frame;
 }

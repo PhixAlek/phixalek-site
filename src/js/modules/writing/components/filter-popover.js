@@ -47,9 +47,9 @@ export function mountFilterPopover(wrapper, trigger, panel, { doc = document } =
 /** Move existing controls between the row and panel when the layout changes. */
 export function placeFilterButtons(row, panel, overflow, buttons, primaryCount) {
   buttons.forEach((button, index) => {
-    if (index >= primaryCount) panel.append(button);
+    if (index >= primaryCount) panel.insertBefore(button, panel.querySelector('[data-filter-section]'));
     else row.insertBefore(button, overflow.parentElement === row ? overflow : null);
   });
-  if (buttons.length > primaryCount) row.append(overflow);
+  if (buttons.length > primaryCount || panel.querySelector('[data-filter-section]')) row.append(overflow);
   else overflow.remove();
 }
