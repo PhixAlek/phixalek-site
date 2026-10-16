@@ -83,6 +83,7 @@ function card({ id, title, desc, tags = [], tagStyles = {}, actions = [], badges
     meta = document.createElement('div');
     meta.className = 'badges';
     badges.forEach((b, i) => {
+      if (i > 0) meta.append(document.createTextNode(' '));
       const s = document.createElement('span');
       text(s, () => current().badges[i]);
       meta.appendChild(s);

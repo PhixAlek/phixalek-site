@@ -6,10 +6,11 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { deriveCategories } from '../../src/shared/writing/listing-model.js';
 import { validateSnapshot } from '../../src/shared/writing/snapshot.js';
 import { validateWritingConfig } from '../../src/shared/writing/validate.js';
+import { prepareWritingBuild, BUILD_SNAPSHOT } from './writing-build.mjs';
 
-export async function generateWritingCategories(root = new URL('../../', import.meta.url), { local = false } = {}) {
+export async function generateWritingCategories(root = new URL('../../', import.meta.url), { local = false, snapshot: suppliedSnapshot } = {}) {
   const read = async file => JSON.parse(await readFile(new URL(file, root), 'utf8'));
-  const snapshot = validateSnapshot(await read('src/content/writing-snapshot.json'));
+  const snapshot = validateSnapshot(suppliedSnapshot || await read('src/content/writing-snapshot.json'));
   const config = await read('src/content/writing.json');
   const errors = validateWritingConfig(config);
   if (errors.length) throw new Error(errors.join('\n'));
@@ -30,6 +31,9 @@ export class WritingCategoriesPlugin {
     const production = compiler.options.mode !== 'development';
     const productionCategories = fileURLToPath(new URL('../../src/content/writing-categories.production.generated.json', import.meta.url));
     if (production) {
+      new webpack.NormalModuleReplacementPlugin(/writing-snapshot\.json$/, resource => {
+        resource.request = fileURLToPath(new URL('../../' + BUILD_SNAPSHOT, import.meta.url));
+      }).apply(compiler);
       new webpack.NormalModuleReplacementPlugin(/writing-local\.generated\.json$/, resource => {
         resource.request = fileURLToPath(new URL('../../src/content/writing-preview-disabled.json', import.meta.url));
       }).apply(compiler);
@@ -38,7 +42,9 @@ export class WritingCategoriesPlugin {
       }).apply(compiler);
     }
     compiler.hooks.beforeCompile.tapPromise('WritingCategories', async () => {
-      const categories = await generateWritingCategories(undefined, { local: !production });
+      const edition = production ? await prepareWritingBuild() : null;
+      const categories = await generateWritingCategories(undefined, { local: !production, snapshot: edition?.snapshot });
+      if (production) compiler.inputFileSystem?.purge?.(fileURLToPath(new URL('../../' + BUILD_SNAPSHOT, import.meta.url)));
       if (production) {
         await writeFile(productionCategories, JSON.stringify(categories));
         compiler.inputFileSystem?.purge?.(productionCategories);

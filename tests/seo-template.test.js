@@ -7,6 +7,8 @@ import { fileURLToPath } from 'node:url';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { buildSeo } from '../scripts/lib/seo.mjs';
+import { homeMetadata } from '../src/shared/site-seo.js';
+import { JSDOM } from 'jsdom';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 async function compileTemplate(parameters) {
@@ -46,15 +48,17 @@ test('a fresh configuration renders valid structured data and approved fallback 
   const json = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1];
   const graph = JSON.parse(json)['@graph'];
   assert.equal(graph[0].name, 'Alejandro Segura');
-  assert.equal(graph.find(n => n['@type'] === 'ProfilePage').name, 'PhixAlek - Software Developer | .NET & Angular');
-  assert.ok(html.includes('<title>PhixAlek - Software Developer | .NET &amp; Angular</title>'));
-  assert.ok(html.includes('property="og:title" content="PhixAlek - Software Developer | .NET &amp; Angular"'));
-  assert.ok(html.includes('name="twitter:title" content="PhixAlek - Software Developer | .NET &amp; Angular"'));
-  const description = 'Alejandro Segura, software developer with 5+ years building .NET and Angular web applications. Explore Flowly, selected projects and technical writing.';
-  for (const attribute of ['name="description"', 'property="og:description"', 'name="twitter:description"']) {
-    assert.equal(html.split(`<meta ${attribute} `).length - 1, 1);
-    assert.ok(html.includes(`<meta ${attribute} content="${description}">`));
+  assert.equal(graph.find(n => n['@type'] === 'ProfilePage').name, homeMetadata.title);
+  const doc = new JSDOM(html).window.document;
+  assert.equal(doc.title, homeMetadata.title);
+  for (const key of ['title', 'description', 'image']) {
+    assert.equal(doc.querySelector(`meta[property="og:${key}"]`).content, homeMetadata[key]);
+    assert.equal(doc.querySelector(`meta[name="twitter:${key}"]`).content, homeMetadata[key]);
   }
+  assert.equal(doc.querySelectorAll('meta[name="description"]').length, 1);
+  assert.equal(doc.querySelector('meta[name="description"]').content, homeMetadata.description);
+  assert.equal(doc.querySelector('meta[property="og:image:width"]').content, String(homeMetadata.imageWidth));
+  assert.equal(doc.querySelector('meta[property="og:image:height"]').content, String(homeMetadata.imageHeight));
   assert.ok(html.includes('<div id="app"></div>'));
   const fallback = html.match(/<noscript>([\s\S]*?)<\/noscript>/)[1];
   assert.ok(fallback.includes('https://github.com/PhixAlek/Flowly'));

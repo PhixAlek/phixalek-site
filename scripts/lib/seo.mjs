@@ -1,6 +1,7 @@
 import { publishedItems, validAction, validDestination } from '../../src/content/model.js';
+import { AUTHOR, homeMetadata, SITE_ORIGIN } from '../../src/shared/site-seo.js';
 
-const origin = 'https://phixalek.com/';
+const origin = SITE_ORIGIN + '/';
 const personId = `${origin}#person`;
 const plain = value => String(value || '').replace(/\[\[(?:complement:)?(.+?)\]\]/g, '$1').replace(/\*\*|\*/g, '');
 const escape = value => plain(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -14,11 +15,9 @@ export function buildSeo(content) {
     '@context': 'https://schema.org',
     '@graph': [
       {
-        '@type': 'Person', '@id': personId,
-        name: 'Alejandro Segura', alternateName: 'PhixAlek',
-        url: origin, jobTitle: 'Software Developer', description,
+        ...AUTHOR, description,
         sameAs: socials.map(s => s.href),
-        knowsAbout: ['Software Development', '.NET', 'Angular', 'Web Applications', 'Game Development'],
+        knowsAbout: ['Software Development', 'C#', '.NET', 'Angular', 'Web Applications', 'Game Development'],
       },
       {
         '@type': 'WebSite', '@id': `${origin}#website`,
@@ -27,7 +26,7 @@ export function buildSeo(content) {
       },
       {
         '@type': 'ProfilePage', '@id': `${origin}#profile`, url: origin,
-        name: 'PhixAlek - Software Developer | .NET & Angular', description,
+        name: homeMetadata.title, description,
         isPartOf: { '@id': `${origin}#website` }, mainEntity: { '@id': personId },
       },
     ],
@@ -41,8 +40,9 @@ export function buildSeo(content) {
     .filter(Boolean).map(p => `<p>${escape(p)}</p>`).join('');
   const profiles = socials.map(s => `<a href="${escape(s.href)}">${escape(s.name)}</a>`).join(' · ');
   return {
+    metadata: homeMetadata,
     // Prevent editorial text from terminating an inline script.
     structuredData: JSON.stringify(graph).replace(/</g, '\\u003c').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029'),
-    fallback: `<main class="seo-fallback" lang="en"><h1>Alejandro Segura — PhixAlek</h1><p>${escape(description)}</p><section><h2>${escape(content.projects?.title)}</h2>${cards}</section><section><h2>${escape(content.about?.title)}</h2>${biography}</section><nav aria-label="Social profiles">${profiles}</nav><p><a href="mailto:hi@phixalek.com">hi@phixalek.com</a></p></main>`,
+    fallback: `<main class="seo-fallback" lang="en"><h1>Alejandro Segura — PhixAlek</h1><p>${escape(description)}</p><section><h2>${escape(content.projects?.title)}</h2>${cards}</section><section><h2>${escape(content.about?.title)}</h2>${biography}</section><nav aria-label="Writing"><a href="/blog/">Articles and notes by Alejandro Segura</a></nav><nav aria-label="Social profiles">${profiles}</nav><p><a href="mailto:hi@phixalek.com">hi@phixalek.com</a></p></main>`,
   };
 }

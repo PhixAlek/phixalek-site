@@ -14,14 +14,14 @@
   },
   "about": {
     "eyebrow": "Software • Consulting • Game Dev",
-    "title": "Who is Phixalek?",
-    "lead": "Alejandro Segura was born in Colombia and is currently pursuing a [[Multimedia Engineering degree]]. He moves between [[software development]] and personal projects mixing technology with storytelling.",
-    "body": "He is developing **Flowly**, a personal finance project starting with [[.NET 10]]; and **Bloomink**, his indie studio where he is building *No Witness*, a survival narrative inspired by Resident Evil and Silent Hill using [[UE5 + C++]].\n\nNow based in Sonora, Mexico, he is studying Multimedia Engineering and teaching programming.",
+    "title": "More about me",
+    "lead": "Alejandro Segura is a [[software developer]] from Colombia, now living in Sonora, Mexico. He is currently pursuing a degree in [[Multimedia Engineering]].",
+    "body": "His professional background includes building healthcare and B2B applications with [[.NET]] and [[Angular]]. He has also worked in software consulting and taught programming. His experience covers refactoring, performance optimization, and maintaining existing applications.\n\nHe is currently building **Flowly**, a personal finance application using [[.NET 10]]. He is also developing **Bloomink**, his indie game studio, where he is working on *No Witness*, a survival narrative game using [[UE5 and C++]].",
     "bullets": [
-      "Backend: [[.NET, C#, DDD, Clean Architecture]] → scalable & maintainable systems",
-      "Frontend: [[Angular, TypeScript]] → real-world apps with clean UX",
-      "Game Dev: [[UE5, C++]] + [[Pixel Art]] → optimized pipelines & storytelling",
-      "Practices: [[CI/CD, Clean Code]]"
+      "Backend: [[C#, .NET, APIs, SQL]], **Azure, Docker**",
+      "Frontend: [[Angular, TypeScript]]",
+      "Game Dev: [[UE5, C++]], [[Pixel Art]]",
+      "Practices: [[CI/CD]], **Testing**, [[Refactoring, Clean Code]]"
     ]
   },
   "projects": {

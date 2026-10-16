@@ -46,6 +46,11 @@ export function renderWritingHTML(template, articles, { article, messages, fallb
     body = `<div class="editorial-intro"><div class="editorial-intro-lead">${back}<span class="editorial-eyebrow">${escapeHTML(messages.navigation.items.find(item => item.href === '#writing').label)}</span></div>${heading.outerHTML}<p>${escapeHTML(messages.writingPage.intro)}</p></div>${cards[0] ? `<div class="editorial-featured-shell">${cards[0]}</div>` : ''}<div class="editorial-list">${cards.slice(1).join('')}</div>`;
   }
   document.getElementById('app').innerHTML = `<main id="main-content" class="site writing-page writing-prerender" data-writing-prerender data-writing-view="${article ? 'article' : notFound ? 'not-found' : 'index'}"><div class="container editorial-container">${article || notFound ? back : ''}${body}</div></main>`;
+  // Directory-index pages use the final Pretty URL, rather than a redirecting alias.
+  for (const link of document.querySelectorAll('a[href^="/blog"]')) {
+    const url = new URL(link.getAttribute('href'), SITE_ORIGIN);
+    if (/^\/blog(?:\/[\w-]+)?\/?$/.test(url.pathname)) { url.pathname = url.pathname.replace(/\/$/, '') + '/'; link.setAttribute('href', url.pathname + url.search + url.hash); }
+  }
   const style = document.createElement('style');
   style.textContent = '@font-face{font-family:Nunito;src:url(/fonts/nunito-variable.woff2) format("woff2");font-weight:200 900;font-display:swap}.writing-prerender{font-family:Nunito,Arial,sans-serif;color:#292933;max-width:1320px;margin:auto;padding:40px 24px;line-height:1.6}.writing-prerender h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.2}.writing-prerender img{max-width:100%;height:auto}.writing-prerender .editorial-author img{width:44px}.writing-prerender a{color:inherit}.writing-prerender .editorial-card{margin-block:24px}.writing-prerender .editorial-actions{display:none}.writing-prerender .editorial-prose{max-width:760px}.writing-prerender .editorial-meta{color:#626270}.writing-prerender pre{overflow:auto}.writing-prerender table{display:block;overflow:auto}';
   style.textContent += '.editorial-error-lead{text-align:center;max-width:660px;margin:0 auto 40px}.editorial-error-lead>img{width:min(100%,540px)}.editorial-error-controls{display:flex;flex-wrap:wrap;justify-content:center;gap:24px}.editorial-error-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.editorial-error-cards article{padding:12px;border-radius:16px;background:white;box-shadow:0 3px 12px #1e28230a}.editorial-error-cards img{aspect-ratio:3/2;object-fit:cover;border-radius:10px}.editorial-error-cards a{text-decoration:none}@media(max-width:767px){.editorial-error-cards{grid-template-columns:1fr}}';
@@ -58,7 +63,7 @@ export function renderWritingHTML(template, articles, { article, messages, fallb
 }
 
 export function writingSitemap(articles) {
-  const urls = [`<url><loc>${SITE_ORIGIN}/</loc></url>`, `<url><loc>${SITE_ORIGIN}/blog</loc></url>`,
-    ...articles.map(article => `<url><loc>${SITE_ORIGIN}${articlePath(article.slug)}</loc><lastmod>${escapeHTML(article.updatedAt)}</lastmod></url>`)];
+  const urls = [`<url><loc>${SITE_ORIGIN}/</loc></url>`, `<url><loc>${SITE_ORIGIN}/blog/</loc></url>`,
+    ...articles.map(article => `<url><loc>${SITE_ORIGIN}${articlePath(article.slug)}/</loc><lastmod>${escapeHTML(article.updatedAt)}</lastmod></url>`)];
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.join('')}</urlset>\n`;
 }

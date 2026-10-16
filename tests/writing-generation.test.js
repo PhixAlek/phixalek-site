@@ -34,7 +34,7 @@ test('new posts are ordered; RSS window omissions retain the archive; explicit d
   const removed = updateSnapshot(added, [article], { now: later, removed: ['example'] });
   assert.deepEqual(removed.articles.map(item => item.slug), ['example-2']);
   assert.equal(mergeArticles(added.articles, [article], ['example']).length, 1);
-  assert.ok(!writingSitemap(removed.articles).includes('/blog/example</loc>'));
+  assert.ok(!writingSitemap(removed.articles).includes('/blog/example/</loc>'));
 });
 
 test('successful refresh imports edited original content with the same sanitizer', async () => {
@@ -70,7 +70,7 @@ test('generated HTML exposes the full sanitized body, original title and distinc
   assert.equal(doc.querySelector('h1').textContent, record.title);
   assert.ok(doc.querySelector('.editorial-prose').textContent.includes('Original body.'));
   assert.equal(doc.querySelector('.editorial-prose script'), null);
-  assert.equal(doc.querySelector('link[rel=canonical]').href, 'https://phixalek.com/blog/example');
+  assert.equal(doc.querySelector('link[rel=canonical]').href, 'https://phixalek.com/blog/example/');
   assert.ok(doc.querySelector('meta[name=robots]').content.startsWith('index'));
   assert.equal(doc.querySelector('meta[property="og:type"]').content, 'article');
   assert.equal(JSON.parse(doc.querySelector('script[type="application/ld+json"]').textContent).headline, record.title);
@@ -80,10 +80,10 @@ test('generated HTML exposes the full sanitized body, original title and distinc
 test('archive links and sitemap describe only published routes; SPA metadata restores Home', () => {
   const articles = previous().articles;
   const doc = new JSDOM(renderWritingHTML(template, articles, options)).window.document;
-  assert.ok(doc.querySelector('a[href="/blog/example"]'));
-  assert.equal(doc.querySelector('link[rel=canonical]').href, 'https://phixalek.com/blog');
+  assert.ok(doc.querySelector('a[href="/blog/example/"]'));
+  assert.equal(doc.querySelector('link[rel=canonical]').href, 'https://phixalek.com/blog/');
   const sitemap = writingSitemap(articles);
-  assert.ok(sitemap.includes('<loc>https://phixalek.com/blog/example</loc>'));
+  assert.ok(sitemap.includes('<loc>https://phixalek.com/blog/example/</loc>'));
   assert.ok(sitemap.includes(`<lastmod>${now}</lastmod>`));
   applyPageMetadata(doc, homeMetadata);
   assert.equal(doc.title, homeMetadata.title);

@@ -479,11 +479,11 @@ input,textarea{ line-height:1.5; }
 .writing-header{ display:flex; align-items:center; justify-content:space-between; gap:var(--space-6); margin-bottom:var(--space-6); }
 .writing .h2{ margin:0; }
 .writing-all{ display:inline-flex; align-items:center; justify-content:center; gap:var(--space-6); min-height:44px; padding:10px 20px; border:1px solid var(--line); border-radius:999px; color:var(--fg); background:var(--panel); font-weight:700; }
-.writing-all:hover{ text-decoration:none; border-color:var(--line-strong); }
+.writing-all:hover{ text-decoration:none; border-color:color-mix(in srgb,var(--line) 50%,transparent); }
 .writing-all:focus-visible,.writing-entry:focus-visible{ outline:2px solid var(--focus); outline-offset:4px; }
 .writing-entry{ display:grid; grid-template-columns:32px minmax(0,1fr) 24px; align-items:center; gap:var(--space-6); padding:12px 16px 12px 32px; min-height:152px; border:1px solid var(--line); border-radius:var(--radius); background:var(--panel); color:var(--fg); }
 .writing-entry.has-cover{ grid-template-columns:32px minmax(0,1fr) 24px minmax(0,46%); }
-.writing-entry:hover{ text-decoration:none; border-color:var(--line-strong); }
+.writing-entry:hover{ text-decoration:none; border-color:color-mix(in srgb,var(--line) 50%,transparent); }
 .writing-entry h3{ margin:0; font-size:clamp(1.1rem,2vw,1.5rem); line-height:1.4; }
 .writing-entry-copy{ min-width:0; }
 .writing-language{ display:block; margin-bottom:var(--space-2); }
@@ -654,7 +654,9 @@ html,body{ background:#fff; }
 .writing .h2,.closing .about-title,.closing #contact .h2{ font-weight:700; letter-spacing:-.02em; }
 .writing-label,.closing .about-lede{ color:var(--muted); }
 .writing-mark{ background:#ffbda0; }
-.writing-all,.writing-entry,.contact-actions .btn-outline{ border-color:var(--line); }
+.contact-actions .btn-outline{ border-color:var(--line); }
+.writing-all,.writing-entry{ border-color:color-mix(in srgb,var(--line) 35%,transparent); }
+.writing-entry{ box-shadow:0 3px 12px rgb(30 40 35 / 4%); }
 .writing-all,.contact-actions .btn-outline{ box-shadow:0 2px 5px rgb(12 18 32 / 3%); }
 .contact-message{ color:#fff; }
 @media(prefers-reduced-motion:no-preference){
