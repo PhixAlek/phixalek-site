@@ -25,7 +25,7 @@ export function reader(container, article, fallback, registry, { featured = fals
   const authorName = document.createElement('span'); authorName.className = 'editorial-author-name'; authorName.textContent = content.hero.name;
   const authorRole = document.createElement('span'); authorRole.className = 'editorial-author-role'; authorRole.textContent = 'Software Developer';
   authorDetails.append(authorName, authorRole); author.append(authorDetails);
-  const prose = document.createElement('div'); prose.className = 'editorial-prose'; prose.append(articleFragment(article.html, window, article.sourceUrl, { labelImageLink: node => bind(node, 'attr:aria-label', () => ui.writingPage.openImage) }));
+  const prose = document.createElement('div'); prose.className = 'editorial-prose'; prose.append(articleFragment(article.html, window, article.sourceUrl, { coverSource: article.cover?.src, labelImageLink: node => bind(node, 'attr:aria-label', () => ui.writingPage.openImage) }));
   const cover = createReaderCover(article, fallback, { featured });
   story.append(meta, heading, excerpt, author, cover, prose, ArticleComments(article, { ui, text, bind }));
   layout.append(story);

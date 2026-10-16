@@ -4,7 +4,7 @@ import { createWritingError } from '../../src/js/modules/writing/components/writ
 import { ArticleComments } from '../../src/js/modules/writing/components/article-comments.js';
 import { createArticleCard } from '../../src/js/modules/writing/components/card-dom.js';
 import { JSDOM } from 'jsdom';
-import { importArticleBody } from '../../src/shared/writing/article-body.js';
+import { importArticleBody, withOpeningCover } from '../../src/shared/writing/article-body.js';
 import { writingMetadata, applyPageMetadata, SITE_ORIGIN, writingStructuredData, serializedSchema } from '../../src/shared/writing/metadata.js';
 import { articlePath } from '../../src/shared/writing/routes.js';
 
@@ -16,6 +16,8 @@ export const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, chara
 export function renderWritingHTML(template, articles, { article, messages, fallbackImage, profileImage, siteName, notFound = false }) {
   const dom = new JSDOM(template);
   const { document } = dom.window;
+  articles = articles.map(item => withOpeningCover(item, dom.window));
+  if (article) article = withOpeningCover(article, dom.window);
   const failed = notFound || (!article && !articles.length);
   const metadata = writingMetadata(article, { title: failed ? messages.writingPage.errorHeading : messages.writingPage.title, description: failed ? messages.writingPage.errorDescription : messages.writingPage.intro, image: SITE_ORIGIN + fallbackImage });
   applyPageMetadata(document, metadata, { indexable: !failed });
@@ -29,7 +31,7 @@ export function renderWritingHTML(template, articles, { article, messages, fallb
   if (notFound || (!article && !articles.length)) {
     body = createWritingError({ doc: document, ui: messages, text: (node, getter) => { node.textContent = getter(); }, articles, fallback: { src: fallbackImage } }).outerHTML;
   } else if (article) {
-    const clean = importArticleBody(article.html, { view: dom.window, sourceUrl: article.sourceUrl });
+    const clean = importArticleBody(article.html, { view: dom.window, sourceUrl: article.sourceUrl, omitCover: article.cover?.src });
     const cover = createReaderCover(article, { src: fallbackImage }, { doc: document, featured: articles[0]?.id === article.id }).outerHTML;
     body = `<article class="editorial-story" lang="${escapeHTML(article.language || 'en')}"><div class="editorial-meta">${date(article)} <span>${article.readingMinutes} ${escapeHTML(messages.writingPage.minutes)}</span></div><h1>${escapeHTML(article.title)}</h1><p class="editorial-deck">${escapeHTML(article.excerpt)}</p><div class="editorial-author"><img src="${escapeHTML(profileImage)}" width="44" height="44" alt=""><span>${escapeHTML(siteName)} · Software Developer</span></div>${cover}<div class="editorial-prose">${clean.html}</div></article>`;
     body += ArticleComments(article, { doc: document, ui: messages, text: (node, getter) => { node.textContent = getter(); } }).outerHTML;

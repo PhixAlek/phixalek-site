@@ -27,6 +27,7 @@ test('public preview imports only published comments and leaves missing replies 
   const result = readPublicEngagement(html, sourceUrl);
   assert.equal(result.preview.length, 1); assert.equal(result.preview[0].body, comment.body);
   assert.equal(result.preview[0].isAuthor, true); assert.equal(result.preview[0].avatar, null);
+  assert.equal(result.preview[0].sourceUrl, 'https://substack.com/note/c-5');
   assert.equal(result.preview[0].replies, '2 replies');
 });
 

@@ -66,7 +66,7 @@ export function mountContactEmailJS({ serviceId, templateId, publicKey }){
         throw new Error('EmailJS error: ' + res.text);
       }
     }catch(err){
-      console.error(err);
+      console.warn('[contact] Message delivery failed');
       text(status, () => ui.contact.error);
     }finally{
       form.setAttribute('aria-busy', 'false');

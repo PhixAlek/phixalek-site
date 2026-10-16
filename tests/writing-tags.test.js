@@ -33,7 +33,9 @@ const languagePage = (language, canonical = url) => 'window._preloads = JSON.par
 test('article language comes from the exact post metadata, never the publication or HTML locale', () => {
   assert.equal(readPublicLanguage(languagePage('en'), url), 'en');
   assert.equal(readPublicLanguage(languagePage('es-MX'), url), 'es');
-  assert.equal(readPublicLanguage(languagePage('pt'), url), null);
+  assert.equal(readPublicLanguage(languagePage('pt-BR'), url), 'pt');
+  assert.equal(readPublicLanguage(languagePage('fr'), url), 'fr');
+  assert.equal(readPublicLanguage(languagePage('invalid'), url), null);
   assert.equal(readPublicLanguage(languagePage('en', 'https://other.example/p/tagged-post'), url), null);
   assert.equal(readPublicLanguage('<html lang="en">' + html([]), url), null);
 });

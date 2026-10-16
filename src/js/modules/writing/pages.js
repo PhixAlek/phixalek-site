@@ -8,6 +8,7 @@ import { listing, listingIntro } from './pages/index-page.js';
 import { reader } from './pages/article-page.js';
 import { loadImageRegistry, resolveImage } from '../images/registry.js';
 import { createWritingError } from './components/writing-error.js';
+import { mountRelatedCarousel } from './components/related-carousel.js';
 import { mountSubstackInteractions } from './components/substack-interactions.js';
 
 function backLink(route) {
@@ -31,7 +32,8 @@ export function WritingPage(route) {
   const showError = () => {
     cleanup(); releaseBindings(container); container.replaceChildren();
     const error = createWritingError({ ui, text, articles: lastArticles, topic: route.slug || '', fallback: lastFallback, retry: retryLoad });
-    container.append(error); const heading = error.querySelector('h1'); heading.tabIndex = -1; heading.focus({ preventScroll: true }); cleanup = () => { releaseBindings(error); error.remove(); };
+    container.append(error); const disposeCarousel = mountRelatedCarousel(error.querySelector('.editorial-error-cards'));
+    const heading = error.querySelector('h1'); heading.tabIndex = -1; heading.focus({ preventScroll: true }); cleanup = () => { disposeCarousel(); releaseBindings(error); error.remove(); };
     page.dataset.writingView = 'error';
     applyPageMetadata(document, writingMetadata(null, { title: ui.writingPage.errorHeading, description: ui.writingPage.errorDescription }), { indexable: false });
     document.querySelector('link[rel="canonical"]')?.remove();

@@ -1,22 +1,21 @@
 import { PUBLICATION } from '../../src/shared/writing/config.js';
+import { articleLanguage } from '../../src/shared/writing/model.js';
+import { readPublicData } from './writing-public-data.mjs';
 
 /** Only metadata tied to the exact canonical post can enrich the feed. */
 function readPublicPost(html, sourceUrl) {
   if (typeof html !== 'string' || html.length > 2_000_000) return null;
   let url; try { url = new URL(sourceUrl); } catch { return null; }
   if (url.origin !== PUBLICATION || url.username || url.password || !url.pathname.startsWith('/p/')) return null;
-  const match = html.match(/window\._preloads\s*=\s*JSON\.parse\(\s*("(?:\\.|[^"\\])*")\s*\)/);
   try {
-    const post = match && JSON.parse(JSON.parse(match[1]))?.post;
+    const post = readPublicData(html)?.post;
     return post?.canonical_url === sourceUrl ? post : null;
   } catch { return null; }
 }
 
 export function readPublicLanguage(html, sourceUrl) {
   const language = readPublicPost(html, sourceUrl)?.language;
-  if (typeof language !== 'string') return null;
-  const code = language.toLowerCase().split('-')[0];
-  return ['en', 'es'].includes(code) ? code : null;
+  return articleLanguage(language);
 }
 
 /** The public post supplies tags even when RSS omits categories. */

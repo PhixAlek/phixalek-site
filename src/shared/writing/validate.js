@@ -29,7 +29,7 @@ export function validateWritingConfig(config) {
       if (!origin || url.origin !== origin.origin || url.username || url.password || url.search || url.hash || !/^\/p\/[a-zA-Z0-9][a-zA-Z0-9_-]*$/.test(url.pathname)) throw new Error();
     } catch { errors.push('writing.articleOverrides: canonical publication URL required'); }
     if (override?.categories != null && (!Array.isArray(override.categories) || override.categories.some(tag => typeof tag !== 'string' || !tag.trim() || tag.length > 100))) errors.push('writing.articleOverrides.categories: nonempty category names required');
-    if (override?.language != null && !['en', 'es'].includes(override.language)) errors.push('writing.articleOverrides.language: en or es required');
+    if (override?.language != null && (typeof override.language !== 'string' || !/^[a-z]{2}$/.test(override.language))) errors.push('writing.articleOverrides.language: two-letter language code required');
   }
   if (!Array.isArray(config?.removedSlugs) || config.removedSlugs.some(slug => typeof slug !== 'string' || !/^[a-zA-Z0-9][a-zA-Z0-9_-]*$/.test(slug))) {
     errors.push('writing.removedSlugs: valid article slugs required');

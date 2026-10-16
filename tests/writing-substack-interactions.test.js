@@ -4,11 +4,48 @@ import { JSDOM } from 'jsdom';
 import catalog from '../src/content/locales/en.json' with { type: 'json' };
 import { ArticleComments } from '../src/js/modules/writing/components/article-comments.js';
 import { substackDestination, mountSubstackInteractions } from '../src/js/modules/writing/components/substack-interactions.js';
+import { commentURL } from '../src/shared/writing/comment-url.js';
 
 const article = { sourceUrl: 'https://phixalek.substack.com/p/test-post-1' };
 const ui = catalog.messages;
 const text = (node, get) => { node.textContent = get(); };
 const bind = (node, property, get) => node.setAttribute(property.slice(5), get());
+
+test('comment destinations require matching IDs and safe public comment URLs', () => {
+  assert.equal(commentURL({ id: 12, authorId: 7 }), 'https://substack.com/note/c-12');
+  for (const sourceUrl of ['javascript:alert(1)', 'https://other.example/@author/note/c-12',
+    'https://substack.com/profile/7/note/c-13', 'https://user:pass@substack.com/profile/7/note/c-12',
+    'https://substack.com/subscribe']) assert.equal(commentURL({ id: 12, sourceUrl }), null);
+  for (const id of [undefined, -1, 0, 1.5, '12']) assert.equal(commentURL({ id, authorId: 7 }), null);
+});
+
+test('Reply keeps the selected root or nested reply destination through the comments notice', () => {
+  const dom = new JSDOM('<main></main>'), doc = dom.window.document, container = doc.querySelector('main');
+  const base = { author: 'Author', date: '2026-10-03T12:00:00Z', body: 'Comment', likes: 0, replies: '' };
+  const replyUrl = 'https://substack.com/profile/7-author/note/c-12';
+  const nestedUrl = 'https://substack.com/@author/note/c-13';
+  const root = { ...base, id: 11, authorId: 7, repliesPreview: [
+    { ...base, id: 12, parentId: 11, sourceUrl: replyUrl },
+    { ...base, id: 13, parentId: 12, sourceUrl: nestedUrl },
+  ] };
+  container.append(ArticleComments({ ...article, engagement: { comments: 3, preview: [root] } }, { doc, ui, text }));
+  const dispose = mountSubstackInteractions(container, { article, ui, text, bind });
+  const dialog = container.querySelector('dialog');
+  dialog.showModal = () => { dialog.open = true; };
+  dialog.close = () => { dialog.open = false; dialog.dispatchEvent(new dom.window.Event('close')); };
+  container.querySelector('details').open = true;
+  const links = [...container.querySelectorAll('.editorial-comment-link')];
+  const destinations = [11, 12, 13].map(id => `https://substack.com/note/c-${id}`);
+  links.forEach((link, index) => {
+    assert.equal(link.textContent, ui.writingPage.reply); assert.equal(link.href, destinations[index]);
+    assert.equal(link.target, '_blank');
+    link.click(); assert.equal(dialog.open, true);
+    assert.equal(dialog.querySelector('a').href, destinations[index]);
+    assert.equal(dialog.querySelector('p').textContent, ui.writingPage.commentsNotice);
+    dialog.querySelector('button').click(); assert.equal(doc.activeElement, link);
+  });
+  dispose(); dom.window.close();
+});
 
 test('provider destinations belong to the configured publication and reject fake or foreign articles', () => {
   assert.equal(substackDestination('subscribe'), 'https://phixalek.substack.com/subscribe');
@@ -92,10 +129,20 @@ test('imported replies expand locally and retain their parent hierarchy', () => 
   const section = ArticleComments({ ...article, engagement: { comments: 3, preview: [root] } }, { doc, ui, text });
   const thread = section.querySelector('details');
   assert.equal(thread.querySelector('summary').textContent, '2 replies');
+  assert.equal(section.querySelector('.editorial-comment-more').textContent, '2 more comments…');
   assert.equal(thread.open, false); thread.open = true;
+  thread.dispatchEvent(new dom.window.Event('toggle'));
+  assert.equal(thread.querySelector('summary').textContent, ui.writingPage.hideReplies);
+  assert.equal(section.querySelector('.editorial-comment-more').textContent, '1 more comment…');
+  const nestedThread = thread.querySelector('details'); nestedThread.open = true;
+  nestedThread.dispatchEvent(new dom.window.Event('toggle'));
+  assert.equal(section.querySelector('.editorial-comment-more').textContent, 'View all comments on Substack');
   assert.ok(thread.textContent.includes('First reply')); assert.ok(thread.textContent.includes('Nested reply'));
   assert.equal(thread.querySelectorAll(':scope > ol > li ol').length, 1);
   assert.equal(thread.querySelector('[data-substack-action=comments]')?.textContent, ui.writingPage.reply);
+  thread.open = false; thread.dispatchEvent(new dom.window.Event('toggle'));
+  assert.equal(thread.querySelector('summary').textContent, '2 replies');
+  assert.equal(section.querySelector('.editorial-comment-more').textContent, '2 more comments…');
   dom.window.close();
 });
 
@@ -114,10 +161,11 @@ test('Latest comments shows only the three most recent root previews and preserv
   dom.window.close();
 });
 
-test('an empty published discussion says no comments without inventing recent previews', () => {
+test('an empty published discussion hides its empty-state text and more-comments link', () => {
   const dom = new JSDOM('');
   const section = ArticleComments({ ...article, engagement: { likes: 0, comments: 0, preview: [] } }, { doc: dom.window.document, ui, text, bind });
-  assert.equal(section.querySelector('.editorial-comments-empty').textContent, ui.writingPage.noComments);
+  assert.equal(section.querySelector('.editorial-comments-empty'), null);
+  assert.equal(section.querySelector('.editorial-comment-more'), null);
   assert.equal(section.querySelector('.editorial-latest-comments'), null);
   assert.equal(section.querySelector('.editorial-comment-cta').dataset.substackAction, 'comments');
   dom.window.close();
@@ -194,9 +242,9 @@ test('comment likes open the exact public comment through the provider notice wi
   dialog.showModal = () => { dialog.open = true; };
   dialog.close = () => { dialog.open = false; dialog.dispatchEvent(new dom.window.Event('close')); };
   const like = container.querySelector('.editorial-comment-likes');
-  assert.equal(like.tagName, 'A'); assert.equal(like.href, sourceUrl); assert.equal(like.target, '_blank');
+  assert.equal(like.tagName, 'A'); assert.equal(like.href, 'https://substack.com/note/c-351689555'); assert.equal(like.target, '_blank');
   like.click(); assert.equal(dialog.open, true);
-  assert.equal(dialog.querySelector('a').href, sourceUrl);
+  assert.equal(dialog.querySelector('a').href, 'https://substack.com/note/c-351689555');
   assert.equal(dialog.querySelector('p').textContent, ui.writingPage.likesNotice);
   assert.equal(like.textContent, '♡ 2'); dialog.querySelector('button').click();
   assert.equal(doc.activeElement, like); dispose(); dom.window.close();

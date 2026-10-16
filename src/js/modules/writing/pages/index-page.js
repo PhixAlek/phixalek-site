@@ -1,3 +1,4 @@
+import { isArticleType } from '../../../../shared/writing/taxonomy.js';
 import { createWritingHeading } from '../../../../shared/writing/hero-heading.js';
 import { ui, text, bind, releaseBindings } from '../../../../content/index.js';
 import { writingConfig } from '../../../../shared/writing/config.js';
@@ -51,7 +52,8 @@ export function listing(container, articles, fallback, view = window) {
   search.value = typeof saved?.query === 'string' ? saved.query : '';
   search.maxLength = 500;
   let category = currentCategories.some(item => item.id === saved?.category) ? saved.category : '';
-  let language = ['en', 'es'].includes(saved?.language) ? saved.language : '';
+  const availableLanguages = [...new Set(articles.map(article => article.language).filter(code => /^[a-z]{2}$/.test(code)))].sort();
+  let language = currentCategories.length && availableLanguages.length > 1 && availableLanguages.includes(saved?.language) ? saved.language : '';
   const languageButtons = [];
   let mode = saved?.mode === 'grid' ? 'grid' : 'list', disposeFeed = () => {}, restoring = true;
   const categories = [{ id: '', labels: null }, ...currentCategories];
@@ -133,6 +135,7 @@ export function listing(container, articles, fallback, view = window) {
   categories.forEach((item, index) => {
     const button = document.createElement('button'); button.type = 'button';
     text(button, () => item.labels ? item.labels[document.documentElement.lang] || item.labels.en : ui.writingPage.all);
+    if (item.labels && isArticleType(item.labels.en)) button.dataset.filterType = 'type';
     button.addEventListener('click', () => {
       category = item.id;
       if (!category) { search.value = ''; language = ''; }
@@ -144,15 +147,14 @@ export function listing(container, articles, fallback, view = window) {
   const languageGroup = document.createElement('div'); languageGroup.className = 'editorial-language-filters';
   languageGroup.dataset.filterSection = 'language'; languageGroup.setAttribute('role', 'group');
   bind(languageGroup, 'attr:aria-label', () => ui.writingPage.languageFilter);
-  const languageHeading = document.createElement('p'); text(languageHeading, () => ui.writingPage.languageFilter);
-  languageGroup.append(languageHeading);
-  for (const code of ['en', 'es']) {
+  for (const code of currentCategories.length && availableLanguages.length > 1 ? availableLanguages : []) {
     const button = document.createElement('button'); button.type = 'button'; button.dataset.languageFilter = code;
-    text(button, () => code === 'en' ? ui.writingPage.english : ui.writingPage.spanish);
-    button.addEventListener('click', () => { language = code; filterPopover?.close(true); update(); });
+    text(button, () => availableLanguages.length > 2 || !['en', 'es'].includes(code) ? code.toUpperCase() : code === 'en' ? ui.writingPage.english : ui.writingPage.spanish);
+    button.addEventListener('click', () => { language = language === code ? '' : code; filterPopover?.close(true); update(); });
     languageButtons.push([button, code]); languageGroup.append(button);
   }
-  panel.append(languageGroup); filters.append(overflow);
+  if (languageButtons.length) panel.append(languageGroup);
+  filters.append(overflow);
   filterPopover = mountFilterPopover(overflow, moreFilters, panel);
   for (const value of ['list', 'grid']) {
     const button = document.createElement('button'); button.type = 'button'; button.dataset.view = value;

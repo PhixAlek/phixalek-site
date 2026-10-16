@@ -1,3 +1,4 @@
+import { JSON_HEADERS } from './security.js';
 import { readPublicTags, readPublicLanguage } from '../../scripts/lib/writing-tags.mjs';
 import { readFeedText } from '../../src/shared/writing/feed-response.js';
 import { PUBLICATION, SUBSTACK_FEED } from '../../src/shared/writing/config.js';
@@ -33,7 +34,7 @@ export function createSubstackHandler({ fetchFeed = fetch, fetchPage = fetchFeed
           try {
             const response = await fetchPage(source, { signal: AbortSignal.timeout(Math.max(1, Math.min(3000, deadline - Date.now()))), redirect: 'error', cache: 'no-store', headers: { Accept: 'text/html' } });
             if (!response.ok) return;
-            const html = await response.text();
+            const html = await readFeedText(response);
             const tags = readPublicTags(html, source);
             const language = readPublicLanguage(html, source);
             if (language) languagesBySource[source] = language;
@@ -53,7 +54,7 @@ export function createSubstackHandler({ fetchFeed = fetch, fetchPage = fetchFeed
     } catch {
       return {
         statusCode: 503,
-        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+        headers: JSON_HEADERS,
         body: JSON.stringify({ error: 'writing_unavailable' }),
       };
     }

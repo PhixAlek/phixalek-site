@@ -11,7 +11,7 @@ export function safeImageURL(value) {
 export function articleLanguage(value) {
   if (typeof value !== 'string') return null;
   const language = value.toLowerCase().split('-')[0];
-  return ['en', 'es'].includes(language) ? language : null;
+  return /^[a-z]{2}$/.test(language) ? language : null;
 }
 
 function publicationDate(value) {

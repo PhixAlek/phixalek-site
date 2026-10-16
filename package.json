@@ -14,7 +14,8 @@
     "prebuild": "npm run validate:content && node scripts/generate-writing-categories.mjs",
     "test": "node --test tests/*.test.js",
     "writing:update": "node scripts/update-writing.mjs",
-    "postbuild": "node scripts/generate-writing.mjs",
+    "postbuild": "node scripts/generate-writing.mjs && node scripts/validate-security.mjs",
+    "security:check": "node scripts/validate-security.mjs",
     "predev:web": "node scripts/generate-writing-categories.mjs --local",
     "pretest": "node scripts/generate-writing-categories.mjs",
     "writing:engagement": "node scripts/update-writing-engagement.mjs"

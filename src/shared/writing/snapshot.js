@@ -36,7 +36,7 @@ export function validateSnapshot(snapshot) {
       const ids = new Set([root.id, ...rows.map(reply => reply.id)]);
       if (ids.size !== rows.length + 1 || !rows.every(reply =>
         Number.isSafeInteger(reply.id) && ids.has(reply.parentId) && reply.parentId !== reply.id
-        && /^https:\/\/substack\.com\/(?:profile\/\d+(?:-[\w-]+)?|@[\w-]+)\/note\/c-\d+$/.test(reply.sourceUrl)
+        && /^https:\/\/substack\.com\/(?:(?:profile\/\d+(?:-[\w-]+)?|@[\w-]+)\/)?note\/c-\d+$/.test(reply.sourceUrl)
         && reply.sourceUrl.endsWith(`/c-${reply.id}`) && typeof reply.author === 'string' && reply.author.length <= 200
         && typeof reply.body === 'string' && reply.body.length <= 20000 && Number.isFinite(Date.parse(reply.date))
         && (reply.avatar === null || safeImageURL(reply.avatar) === reply.avatar)

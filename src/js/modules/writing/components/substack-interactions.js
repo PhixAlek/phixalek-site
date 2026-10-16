@@ -1,5 +1,6 @@
 import { writingConfig } from '../../../../shared/writing/config.js';
 import { SubscriptionEmbed } from './subscription-embed.js';
+import { commentURL } from '../../../../shared/writing/comment-url.js';
 
 /** Only the configured publication can receive a provider interaction. */
 export function substackDestination(kind, article, origin = writingConfig.source.origin) {
@@ -62,9 +63,11 @@ export function mountSubstackInteractions(container, { article = null, outboundL
     if (event.defaultPrevented || event.target.closest('.editorial-provider-dialog')) return;
     const button = event.target.closest('[data-substack-action]');
     if (button && container.contains(button) && !button.disabled && !outboundLinks) {
-      const destination = button.tagName === 'A' && button.dataset.substackAction === 'likes'
+      const comment = button.tagName === 'A' && button.dataset.substackAction === 'comments' && button.dataset.commentId
+        ? commentURL({ id: Number(button.dataset.commentId), sourceUrl: button.href }) : null;
+      const destination = comment || (button.tagName === 'A' && button.dataset.substackAction === 'likes'
         ? substackLinkDestination(button.href) || substackDestination('likes', article)
-        : substackDestination(button.dataset.substackAction, article);
+        : substackDestination(button.dataset.substackAction, article));
       if (!destination) return;
       event.preventDefault(); open(button, destination, button.dataset.substackAction); return;
     }

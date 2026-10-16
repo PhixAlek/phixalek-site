@@ -23,7 +23,9 @@ test('unknown article language stays unknown; explicit metadata and author overr
   assert.equal(normalizeArticle(source('unknown')).language, null);
   assert.equal(normalizeArticle(source('spanish', undefined, { language: 'es-MX' })).language, 'es');
   assert.equal(normalizeArticle(source('test-post-1')).language, 'en');
-  assert.equal(normalizeArticle(source('unsupported', undefined, { language: 'fr' })).language, null);
+  assert.equal(normalizeArticle(source('french', undefined, { language: 'fr' })).language, 'fr');
+  assert.equal(normalizeArticle(source('portuguese', undefined, { language: 'pt-BR' })).language, 'pt');
+  assert.equal(normalizeArticle(source('unsupported', undefined, { language: 'invalid' })).language, null);
   assert.equal(normalizeArticle(source('original', undefined, { language: 'en', html: '<p>Original</p>' })).html, undefined);
 });
 
@@ -56,7 +58,7 @@ test('invalid blog configuration fails before publishing routes or source overri
   const config = structuredClone(writingConfig);
   config.routes.index = '/blog/../';
   config.categories = [{ id: 'software', labels: { en: 'Software', es: 'Software' } }, { id: 'software' }];
-  config.articleOverrides = { 'https://other.example/p/post': { language: 'xx' } };
+  config.articleOverrides = { 'https://other.example/p/post': { language: 'invalid' } };
   const errors = validateWritingConfig(config);
   assert.ok(errors.some(e => e.includes('routes.index')));
   assert.ok(errors.some(e => e.includes('duplicate identifier')));

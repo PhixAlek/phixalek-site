@@ -1,3 +1,4 @@
+import { tagDefinition } from './taxonomy.js';
 // Match CSS: portrait tablets use the feed; wide landscape screens use list/grid.
 export const EDITORIAL_DESKTOP_QUERY = '(min-width: 1024px) and (orientation: landscape), (min-width: 1200px)';
 
@@ -28,7 +29,10 @@ export function deriveCategories(articles, { definitions = [], removedSlugs = []
       if (!seen.has(id)) { group.count++; seen.add(id); }
     }
   }
-  return [...groups.values()];
+  return [...groups.values()].sort((a, b) => {
+    const rank = group => { const definition = tagDefinition(group.labels.en, definitions); return definition?.kind === 'type' ? definitions.indexOf(definition) : Infinity; };
+    return rank(a) - rank(b);
+  });
 }
 
 export function filterArticles(articles, { query = '', category = '', language = '', categories = [] } = {}) {

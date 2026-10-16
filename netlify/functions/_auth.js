@@ -3,6 +3,11 @@ import { google } from 'googleapis';
 import fs from 'node:fs';
 import path from 'node:path';
 
+export const CALENDAR_SCOPES = Object.freeze([
+  'https://www.googleapis.com/auth/calendar.events',
+  'https://www.googleapis.com/auth/calendar.events.freebusy',
+]);
+
 function normalizeKey(key) {
   if (!key) return '';
   return key.includes('\\n') ? key.replace(/\\n/g, '\n') : key;
@@ -18,7 +23,7 @@ export function getAuth() {
     return new google.auth.JWT({
       email: json.client_email,
       key: normalizeKey(json.private_key),
-      scopes: ['https://www.googleapis.com/auth/calendar'],
+      scopes: CALENDAR_SCOPES,
     });
   }
 
@@ -29,7 +34,7 @@ export function getAuth() {
     return new google.auth.JWT({
       email,
       key,
-      scopes: ['https://www.googleapis.com/auth/calendar'],
+      scopes: CALENDAR_SCOPES,
     });
   }
 

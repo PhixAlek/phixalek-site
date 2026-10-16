@@ -23,7 +23,7 @@ export function parseArticles(xml, Parser = globalThis.DOMParser, view = globalT
     const prose = body.text;
     const description = child('description')?.textContent || '';
     const excerpt = (importArticleBody(description, { view, sourceUrl: article.sourceUrl }).text || prose).slice(0, 240);
-    unique.set(article.id, { ...article, html: body.html, widgets: body.widgets, excerpt,
+    unique.set(article.id, { ...article, image: body.cover?.src || article.image, cover: body.cover, html: body.html, widgets: body.widgets, excerpt,
       categories: [...new Set([...item.children].filter(node => node.localName === 'category').map(node => node.textContent.trim()).filter(value => value && value.length <= 100))],
       readingMinutes: Math.max(1, Math.ceil(prose.split(/\s+/).filter(Boolean).length / 200)),
     });

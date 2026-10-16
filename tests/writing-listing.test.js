@@ -160,7 +160,7 @@ test('reusable cards keep content literal, isolate actions from article links an
   const image = card.querySelector('img'); image.onerror();
   assert.equal(image.getAttribute('src'), '/media/mountains.svg');
   assert.equal(image.onerror, null);
-  assert.equal(image.loading, 'lazy');
+  assert.equal(image.getAttribute('loading'), 'lazy');
 });
 
 
@@ -214,9 +214,9 @@ test('cards place the image first and prioritize only the featured cover', () =>
   const options = { doc: f.doc, ui, bind, text, getLocale: () => 'en' };
   const featured = createArticleCard(record, { src: '/media/mountains.svg' }, { ...options, featured: true });
   assert.equal(featured.querySelector('.editorial-card-link > figure').className, 'editorial-thumbnail');
-  assert.equal(featured.querySelector('img').loading, 'eager');
+  assert.equal(featured.querySelector('img').getAttribute('loading'), 'eager');
   const regular = createArticleCard(record, { src: '/media/mountains.svg' }, options);
-  assert.equal(regular.querySelector('img').loading, 'lazy');
+  assert.equal(regular.querySelector('img').getAttribute('loading'), 'lazy');
 });
 
 test('finite desktop batches load automatically without a load-more button', () => {
@@ -251,7 +251,9 @@ test('cards retain four original tags without inventing tags for untagged posts'
   const record = { ...data[0], published: '2026-10-01T12:00:00Z', readingMinutes: 3, categories: ['Design', 'Portfolio', 'Writing', 'Notes', 'Other'] };
   const options = { doc: f.doc, ui, bind, text, getLocale: () => 'en' };
   const card = createArticleCard(record, { src: '/media/mountains.svg' }, options);
-  assert.deepEqual([...card.querySelectorAll('.editorial-tags button')].map(node => node.textContent), record.categories.slice(0, 4));
+  assert.equal(card.querySelector('.editorial-card-copy .article-language'), null);
+  assert.deepEqual([...card.querySelectorAll('.editorial-tags button')].map(node => node.textContent), ['Notes', 'Design', 'Portfolio', 'Writing']);
+  assert.equal(card.querySelectorAll('[data-article-type]').length, 1);
   const untagged = createArticleCard({ ...record, categories: [] }, { src: '/media/mountains.svg' }, options);
   assert.equal(untagged.querySelectorAll('.editorial-tags button').length, 0);
 });
@@ -272,6 +274,7 @@ test('thumbnail overlay uses source metadata without duplicating the featured la
   assert.equal(caption.querySelector('.editorial-thumbnail-author'), null);
   const card = createArticleCard(record, { src: '/media/mountains.svg' }, options);
   assert.ok(card.querySelector('.editorial-thumbnail-meta').textContent.includes('3 min read'));
+  assert.equal(card.querySelector('.editorial-card-copy .article-language'), null);
   assert.equal(card.querySelector('h2').textContent, record.title);
   assert.equal(card.querySelector('.editorial-thumbnail-title').textContent, record.title);
   assert.equal(card.querySelectorAll('.editorial-title-line').length, 2);

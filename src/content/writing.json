@@ -8,7 +8,116 @@
     "index": "/blog"
   },
   "fallbackImageId": "mountains",
-  "categories": [],
+  "categories": [
+    {
+      "id": "notes",
+      "kind": "type",
+      "labels": {
+        "en": "Notes",
+        "es": "Notes"
+      },
+      "aliases": []
+    },
+    {
+      "id": "thoughts",
+      "kind": "type",
+      "labels": {
+        "en": "Thoughts",
+        "es": "Thoughts"
+      },
+      "aliases": []
+    },
+    {
+      "id": "guides",
+      "kind": "type",
+      "labels": {
+        "en": "Guides",
+        "es": "Guides"
+      },
+      "aliases": []
+    },
+    {
+      "id": "dotnet",
+      "kind": "topic",
+      "labels": {
+        "en": "C# / .NET",
+        "es": "C# / .NET"
+      },
+      "aliases": [
+        "C#",
+        ".NET",
+        "dotnet",
+        "CSharp"
+      ]
+    },
+    {
+      "id": "angular",
+      "kind": "topic",
+      "labels": {
+        "en": "Angular",
+        "es": "Angular"
+      },
+      "aliases": []
+    },
+    {
+      "id": "architecture",
+      "kind": "topic",
+      "labels": {
+        "en": "Architecture",
+        "es": "Architecture"
+      },
+      "aliases": []
+    },
+    {
+      "id": "ai",
+      "kind": "topic",
+      "labels": {
+        "en": "AI",
+        "es": "AI"
+      },
+      "aliases": []
+    },
+    {
+      "id": "software",
+      "kind": "topic",
+      "labels": {
+        "en": "Software",
+        "es": "Software"
+      },
+      "aliases": []
+    },
+    {
+      "id": "design",
+      "kind": "topic",
+      "labels": {
+        "en": "Design",
+        "es": "Design"
+      },
+      "aliases": []
+    },
+    {
+      "id": "web-dev",
+      "kind": "topic",
+      "labels": {
+        "en": "Web Dev",
+        "es": "Web Dev"
+      },
+      "aliases": [
+        "Web Development"
+      ]
+    },
+    {
+      "id": "game-dev",
+      "kind": "topic",
+      "labels": {
+        "en": "Game Dev",
+        "es": "Game Dev"
+      },
+      "aliases": [
+        "Game Development"
+      ]
+    }
+  ],
   "articleOverrides": {
     "https://phixalek.substack.com/p/test-post-1": {
       "language": "en"

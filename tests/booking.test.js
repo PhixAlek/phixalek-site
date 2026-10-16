@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { TIME_ZONE, localToISO, localParts, daySlots, validateSlot, firstBookingDate } from '../src/shared/booking-policy.js';
 import { createBookingHandlers } from '../netlify/lib/booking.js';
 const now = Date.parse('2026-10-04T12:00:00Z'); // Sunday: first bookable day is Monday
-const request = data => ({ httpMethod: 'POST', body: JSON.stringify(data) });
+const request = data => ({ httpMethod: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(data) });
 const valid = { name: 'Visitor', email: 'visitor@example.com', when: '2026-10-05T09:00:00-07:00', duration: 30 };
 function setup(entry = { busy: [] }) {
   const calls = { queries: [], inserts: [] };
@@ -97,7 +97,7 @@ test('bad payloads and methods never reach Google', async () => {
   const { api, calls } = setup();
   for (const method of [api.book, api.availability]) {
     assert.equal((await method({ httpMethod:'GET' })).statusCode, 405);
-    for (const body of ['{','null','[]']) assert.equal((await method({httpMethod:'POST', body})).statusCode, 400);
+    for (const body of ['{','null','[]']) assert.equal((await method({httpMethod:'POST', headers: {'content-type':'application/json'}, body})).statusCode, 400);
   }
   assert.equal(calls.queries.length, 0);
 });

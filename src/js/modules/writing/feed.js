@@ -15,7 +15,6 @@ const mergeFreshFeed = (saved, incoming, tagsBySource = {}, languagesBySource = 
   const fresh = incoming.map(article => tags(article) !== null ? { ...article, categories: [...new Set([...article.categories, ...tags(article)])] } : article);
   return mergeFeedArticles(base, fresh);
 };
-const immutableArticles = articles => Object.freeze(articles.map(article => Object.freeze(article)));
 
 export async function loadArticles({ fetchFeed = fetch, storage, force = false, preferSnapshot = false, writingVisit = false, Parser = globalThis.DOMParser, view = globalThis.window } = {}) {
   if (writingVisit && !writingVisitStarted) { writingVisitStarted = true; force = true; }
@@ -23,10 +22,12 @@ export async function loadArticles({ fetchFeed = fetch, storage, force = false, 
   if (pending) return pending;
   if (memory && !force) return memory;
   pending = (async () => {
+    const { withOpeningCover } = await import('../../../shared/writing/article-body.js');
+    const immutableArticles = (articles, view) => Object.freeze(articles.map(article => Object.freeze(withOpeningCover(article, view))));
     const { default: preview } = await import('../../../content/writing-local.generated.json', { with: { type: 'json' } });
     if (preview.enabled && ['localhost', '127.0.0.1', '[::1]'].includes(view?.location?.hostname)) {
       const { default: original } = await import('../../../content/writing-snapshot.json', { with: { type: 'json' } });
-      memory = immutableArticles(mergeArticles(availableArticles(validateSnapshot(original).articles), preview.articles)); return memory;
+      memory = immutableArticles(mergeArticles(availableArticles(validateSnapshot(original).articles), preview.articles), view); return memory;
     }
     // Parsing and HTML sanitization are loaded only when writing content is requested.
     const [{ parseArticles }, { default: snapshot }] = await Promise.all([
@@ -39,13 +40,13 @@ export async function loadArticles({ fetchFeed = fetch, storage, force = false, 
         if (saved) {
           const cached = JSON.parse(saved);
           if (cached.snapshotFetchedAt === snapshot.fetchedAt && typeof cached.xml === 'string') {
-            memory = immutableArticles(mergeFreshFeed(savedArticles, parseArticles(cached.xml, Parser, view), cached.tagsBySource, cached.languagesBySource)); return memory;
+            memory = immutableArticles(mergeFreshFeed(savedArticles, parseArticles(cached.xml, Parser, view), cached.tagsBySource, cached.languagesBySource), view); return memory;
           }
         }
       } catch { /* Invalid caches are refetched, never rendered. */ }
     }
     // Render the compiled copy immediately; only explicit refresh waits for the provider.
-    if (!force && preferSnapshot && savedArticles.length) { memory = immutableArticles(savedArticles); return memory; }
+    if (!force && preferSnapshot && savedArticles.length) { memory = immutableArticles(savedArticles, view); return memory; }
     try {
       const response = await fetchFeed('/.netlify/functions/latest-writing?tags=1', { signal: AbortSignal.timeout(8000), cache: 'no-store' });
       if (!response.ok) throw new Error('Writing unavailable');
@@ -53,12 +54,12 @@ export async function loadArticles({ fetchFeed = fetch, storage, force = false, 
       const payload = response.headers.get('content-type')?.includes('application/json') ? JSON.parse(body) : { xml: body };
       const xml = payload.xml; const tagsBySource = payload.tagsBySource || {}; const languagesBySource = payload.languagesBySource || {};
       const articles = parseArticles(xml, Parser, view);
-      memory = immutableArticles(mergeFreshFeed(savedArticles, articles, tagsBySource, languagesBySource));
+      memory = immutableArticles(mergeFreshFeed(savedArticles, articles, tagsBySource, languagesBySource), view);
       try { storage?.setItem(FEED_SESSION_KEY, JSON.stringify({ snapshotFetchedAt: snapshot.fetchedAt, xml, tagsBySource, languagesBySource })); } catch { /* Storage quotas do not break reading. */ }
       return memory;
     } catch {
       // Keep the last successfully rendered copy when an explicit refresh or the provider fails.
-      memory = immutableArticles(availableArticles(memory || savedArticles));
+      memory = immutableArticles(availableArticles(memory || savedArticles), view);
       return memory;
     }
   })();
