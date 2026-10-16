@@ -92,7 +92,7 @@
       {
         "id": "phixalek-site",
         "publication": "published",
-        "title": "PhixAlek — Portafolio",
+        "title": "PhixAlek • Portafolio",
         "desc": "Este sitio usa JavaScript para la interfaz, EmailJS para los mensajes de contacto y la API de Google Calendar para consultar disponibilidad y agendar llamadas.",
         "tags": [
           "JavaScript",

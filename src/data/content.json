@@ -92,7 +92,7 @@
       {
         "id": "phixalek-site",
         "publication": "published",
-        "title": "PhixAlek — Portfolio",
+        "title": "PhixAlek • Portfolio",
         "desc": "This site uses JavaScript for the interface, EmailJS for contact messages, and the Google Calendar API to check availability and book calls.",
         "tags": [
           "JavaScript",
