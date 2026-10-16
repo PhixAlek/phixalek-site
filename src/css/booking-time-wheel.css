@@ -14,9 +14,9 @@
 .booking-duration legend { margin-bottom:8px; }
 .booking-duration label { flex:1; position:relative; cursor:pointer; }
 .booking-duration input { position:absolute; opacity:0; width:1px; height:1px; }
-.booking-duration span { display:grid; place-items:center; min-height:44px; border:1px solid var(--neutral-border); border-radius:10px; box-shadow:0 2px 5px rgb(12 18 32 / 3%); }
-.booking-duration input:checked + span { border-color:var(--neutral-border-hover); background:var(--neutral-surface-active); font-weight:700; }
-.booking-duration input:focus-visible + span { outline:none; box-shadow:var(--soft-focus-shadow); }
+.booking-duration span { display:grid; place-items:center; min-height:44px; border:1px solid var(--line-strong); border-radius:10px; }
+.booking-duration input:checked + span { border-color:var(--accent); background:var(--accent-soft); }
+.booking-duration input:focus-visible + span { outline:2px solid var(--accent-2); outline-offset:2px; }
 .booking-duration input:disabled + span { opacity:.6; cursor:default; }
 .booking-details summary { cursor:pointer; padding-block:12px; }
 .booking-details .booking-input { width:100%; margin-bottom:8px; }
