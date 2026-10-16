@@ -35,6 +35,10 @@
   --overlay: rgb(30 36 43 / 35%);
   --shadow: 0 16px 48px rgb(30 36 43 / 10%);
   --focus: var(--accent);
+  --neutral-border: rgb(12 18 32 / 14%);
+  --neutral-border-hover: rgb(12 18 32 / 24%);
+  --neutral-surface-active: #f5f6f7;
+  --neutral-focus: #707784;
 
   --font-ui: 'Nunito', system-ui, 'Segoe UI', Arial, sans-serif;
   --measure: 72ch;

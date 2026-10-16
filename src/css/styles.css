@@ -876,3 +876,43 @@ html,body{ background:#fff; }
 .editorial-dialog-close { position: absolute; right: 12px; top: 12px; display: grid; place-items: center; width: 44px; height: 44px; font-size: 28px; background: transparent; border: 0; color: inherit; cursor: pointer; }
 .editorial-dialog-controls { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 12px; margin-top: 24px; }
 .editorial-dialog-controls button { padding: 12px; background: transparent; color: var(--muted); border: 0; cursor: pointer; min-height: 44px; }
+
+/* Neutral actions retain a quiet edge and tactile response; primary CTAs keep their palette. */
+:is(.writing-all,.contact-actions .btn-outline,.project [data-book],.booking-secondary,.editorial-error-controls .btn){
+  --focus:var(--neutral-focus);
+  border-color:var(--neutral-border); background:var(--panel); color:var(--fg);
+  box-shadow:0 2px 5px rgb(12 18 32 / 5%);
+}
+:is(.writing-all,.contact-actions .btn-outline,.project [data-book],.booking-secondary,.editorial-error-controls .btn):hover:not(:disabled){
+  background:var(--neutral-surface-active); color:var(--fg); border-color:var(--neutral-border-hover);
+  box-shadow:0 3px 8px rgb(12 18 32 / 7%); text-decoration:none;
+}
+:is(.writing-all,.contact-actions .btn-outline,.project [data-book],.booking-secondary,.editorial-error-controls .btn):active:not(:disabled){
+  background:var(--neutral-surface-active); box-shadow:0 1px 3px rgb(12 18 32 / 5%);
+}
+:is(.writing-all,.contact-actions .btn-outline,.project [data-book],.booking-secondary,.editorial-error-controls .btn):focus-visible{
+  outline:1px solid var(--neutral-focus); outline-offset:3px;
+}
+/* Text-entry focus is neutral and only gains a surface while selected. */
+:is(.form input,.form textarea,.booking-input,.editorial-search input,.editorial-subscribe-fields input[type="email"],.editorial-share-dialog input){
+  --focus:var(--neutral-focus); border:1px solid var(--neutral-border);
+}
+:is(.form input,.form textarea,.booking-input,.editorial-search input,.editorial-subscribe-fields input[type="email"],.editorial-share-dialog input):focus{
+  border-color:var(--neutral-border-hover); background:var(--neutral-surface-active);
+  box-shadow:0 0 0 3px rgb(12 18 32 / 4%);
+}
+:is(.form input,.form textarea,.booking-input,.editorial-search input,.editorial-subscribe-fields input[type="email"],.editorial-share-dialog input):focus-visible{
+  outline:1px solid var(--neutral-focus); outline-offset:2px;
+}
+@media(prefers-reduced-motion:no-preference){
+  :is(.writing-all,.contact-actions .btn-outline,.project [data-book],.booking-secondary,.editorial-error-controls .btn){
+    transition:background-color 160ms ease,border-color 160ms ease,box-shadow 160ms ease,transform 160ms ease;
+  }
+  :is(.form input,.form textarea,.booking-input,.editorial-search input,.editorial-subscribe-fields input[type="email"],.editorial-share-dialog input){
+    transition:background-color 160ms ease,border-color 160ms ease,box-shadow 160ms ease;
+  }
+  @media(hover:hover){
+    :is(.writing-all,.contact-actions .btn-outline,.project [data-book],.booking-secondary,.editorial-error-controls .btn):hover:not(:disabled){ transform:scale(1.015); }
+  }
+  :is(.writing-all,.contact-actions .btn-outline,.project [data-book],.booking-secondary,.editorial-error-controls .btn):active:not(:disabled){ transform:scale(.99); }
+}
