@@ -39,6 +39,7 @@
   --neutral-border-hover: rgb(12 18 32 / 24%);
   --neutral-surface-active: #f5f6f7;
   --neutral-focus: #707784;
+  --neutral-focus-shadow: 0 0 0 1px rgb(12 18 32 / 12%), 0 0 12px rgb(12 18 32 / 8%);
 
   --font-ui: 'Nunito', system-ui, 'Segoe UI', Arial, sans-serif;
   --measure: 72ch;

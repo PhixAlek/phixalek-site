@@ -891,28 +891,37 @@ html,body{ background:#fff; }
   background:var(--neutral-surface-active); box-shadow:0 1px 3px rgb(12 18 32 / 5%);
 }
 :is(.writing-all,.contact-actions .btn-outline,.project [data-book],.booking-secondary,.editorial-error-controls .btn):focus-visible{
-  outline:1px solid var(--neutral-focus); outline-offset:3px;
+  outline:none; box-shadow:var(--neutral-focus-shadow);
 }
 /* Text-entry focus is neutral and only gains a surface while selected. */
-:is(.form input,.form textarea,.booking-input,.editorial-search input,.editorial-subscribe-fields input[type="email"],.editorial-share-dialog input){
+:is(input,textarea,select,.form input,.form textarea,.booking-input,.editorial-search input,.editorial-subscribe-fields input[type="email"],.editorial-share-dialog input){
   --focus:var(--neutral-focus); border:1px solid var(--neutral-border);
 }
-:is(.form input,.form textarea,.booking-input,.editorial-search input,.editorial-subscribe-fields input[type="email"],.editorial-share-dialog input):focus{
+:is(input,textarea,select,.form input,.form textarea,.booking-input,.editorial-search input,.editorial-subscribe-fields input[type="email"],.editorial-share-dialog input):focus{
   border-color:var(--neutral-border-hover); background:var(--neutral-surface-active);
-  box-shadow:0 0 0 3px rgb(12 18 32 / 4%);
+  box-shadow:var(--neutral-focus-shadow);
 }
-:is(.form input,.form textarea,.booking-input,.editorial-search input,.editorial-subscribe-fields input[type="email"],.editorial-share-dialog input):focus-visible{
-  outline:1px solid var(--neutral-focus); outline-offset:2px;
+:is(input,textarea,select,.form input,.form textarea,.booking-input,.editorial-search input,.editorial-subscribe-fields input[type="email"],.editorial-share-dialog input):focus-visible{
+  outline:none; box-shadow:var(--neutral-focus-shadow);
 }
 @media(prefers-reduced-motion:no-preference){
   :is(.writing-all,.contact-actions .btn-outline,.project [data-book],.booking-secondary,.editorial-error-controls .btn){
     transition:background-color 160ms ease,border-color 160ms ease,box-shadow 160ms ease,transform 160ms ease;
   }
-  :is(.form input,.form textarea,.booking-input,.editorial-search input,.editorial-subscribe-fields input[type="email"],.editorial-share-dialog input){
+  :is(input,textarea,select,.form input,.form textarea,.booking-input,.editorial-search input,.editorial-subscribe-fields input[type="email"],.editorial-share-dialog input){
     transition:background-color 160ms ease,border-color 160ms ease,box-shadow 160ms ease;
   }
   @media(hover:hover){
     :is(.writing-all,.contact-actions .btn-outline,.project [data-book],.booking-secondary,.editorial-error-controls .btn):hover:not(:disabled){ transform:scale(1.015); }
   }
   :is(.writing-all,.contact-actions .btn-outline,.project [data-book],.booking-secondary,.editorial-error-controls .btn):active:not(:disabled){ transform:scale(.99); }
+}
+
+/* Navigation focuses sections programmatically; their cue must not frame the page in green. */
+:is(main.site,.site section,.contact-panel)[tabindex="-1"]:focus-visible{
+  outline:none; box-shadow:0 0 0 1px rgb(12 18 32 / 6%),0 0 12px rgb(12 18 32 / 4%);
+}
+@media(forced-colors:active){
+  :is(input,textarea,select,.writing-all,.contact-actions .btn-outline,.project [data-book],.booking-secondary,.editorial-error-controls .btn):focus-visible,
+  :is(main.site,.site section,.contact-panel)[tabindex="-1"]:focus-visible{ outline:2px solid Highlight; outline-offset:2px; }
 }
