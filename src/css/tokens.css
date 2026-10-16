@@ -39,8 +39,8 @@
   --neutral-border-hover: rgb(12 18 32 / 24%);
   --neutral-surface-active: #f5f6f7;
   --neutral-focus: #707784;
-  --soft-focus-shadow: 0 0 0 1px color-mix(in srgb, var(--sage) 22%, transparent), 0 0 12px color-mix(in srgb, var(--sage) 14%, transparent);
-  --section-focus-shadow: 0 0 0 1px color-mix(in srgb, var(--sage) 10%, transparent), 0 0 12px color-mix(in srgb, var(--sage) 8%, transparent);
+  --soft-focus-shadow: 0 0 0 1px color-mix(in srgb, var(--sage) 24.86%, transparent), 0 0 12px color-mix(in srgb, var(--sage) 15.82%, transparent);
+  --section-focus-shadow: 0 0 0 1px color-mix(in srgb, var(--sage) 11.3%, transparent), 0 0 12px color-mix(in srgb, var(--sage) 9.04%, transparent);
 
   --font-ui: 'Nunito', system-ui, 'Segoe UI', Arial, sans-serif;
   --measure: 72ch;
