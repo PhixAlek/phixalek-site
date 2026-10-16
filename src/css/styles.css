@@ -205,7 +205,7 @@ main.site{
 .project p{ color:var(--muted); margin:var(--space-4) 0; }
 .media{ overflow:hidden; background:var(--bg); }
 .media img{ width:100%; height:100%; object-fit:cover; display:block; }
-.badges{ display:flex; gap:var(--space-2); flex-wrap:wrap; }
+.badges{ display:block; font-size:.8rem; }
 .badges span{ font-size:.8rem; color:var(--accent); font-weight:700; }
 .tags{ display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-4); }
 .tags span{ font-size:.8rem; padding:4px 8px; border:1px solid var(--line); border-radius:var(--radius-sm); color:var(--muted); }
