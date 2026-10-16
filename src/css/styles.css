@@ -891,7 +891,7 @@ html,body{ background:#fff; }
   background:var(--neutral-surface-active); box-shadow:0 1px 3px rgb(12 18 32 / 5%);
 }
 :is(.writing-all,.contact-actions .btn-outline,.project [data-book],.booking-secondary,.editorial-error-controls .btn):focus-visible{
-  outline:none; box-shadow:var(--neutral-focus-shadow);
+  outline:none; box-shadow:var(--soft-focus-shadow);
 }
 /* Text-entry focus is neutral and only gains a surface while selected. */
 :is(input,textarea,select,.form input,.form textarea,.booking-input,.editorial-search input,.editorial-subscribe-fields input[type="email"],.editorial-share-dialog input){
@@ -899,10 +899,10 @@ html,body{ background:#fff; }
 }
 :is(input,textarea,select,.form input,.form textarea,.booking-input,.editorial-search input,.editorial-subscribe-fields input[type="email"],.editorial-share-dialog input):focus{
   border-color:var(--neutral-border-hover); background:var(--neutral-surface-active);
-  box-shadow:var(--neutral-focus-shadow);
+  box-shadow:var(--soft-focus-shadow);
 }
 :is(input,textarea,select,.form input,.form textarea,.booking-input,.editorial-search input,.editorial-subscribe-fields input[type="email"],.editorial-share-dialog input):focus-visible{
-  outline:none; box-shadow:var(--neutral-focus-shadow);
+  outline:none; box-shadow:var(--soft-focus-shadow);
 }
 @media(prefers-reduced-motion:no-preference){
   :is(.writing-all,.contact-actions .btn-outline,.project [data-book],.booking-secondary,.editorial-error-controls .btn){
@@ -917,9 +917,9 @@ html,body{ background:#fff; }
   :is(.writing-all,.contact-actions .btn-outline,.project [data-book],.booking-secondary,.editorial-error-controls .btn):active:not(:disabled){ transform:scale(.99); }
 }
 
-/* Navigation focuses sections programmatically; their cue must not frame the page in green. */
+/* Navigation focus uses a faint sage halo instead of a solid frame. */
 :is(main.site,.site section,.contact-panel)[tabindex="-1"]:focus-visible{
-  outline:none; box-shadow:0 0 0 1px rgb(12 18 32 / 6%),0 0 12px rgb(12 18 32 / 4%);
+  outline:none; box-shadow:var(--section-focus-shadow);
 }
 @media(forced-colors:active){
   :is(input,textarea,select,.writing-all,.contact-actions .btn-outline,.project [data-book],.booking-secondary,.editorial-error-controls .btn):focus-visible,
