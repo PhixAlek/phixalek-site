@@ -1,5 +1,9 @@
+import { articlePath } from '../../../shared/writing/routes.js';
+import { writingConfig } from '../../../shared/writing/config.js';
+import { normalizeArticle } from '../../../shared/writing/model.js';
+import { ArticleLanguage } from '../writing/components/article-language.js';
 import { afterFirstPaint } from '../common/after-first-paint.js';
-import { loadWritingState, applyPostImage, openLatestArticle } from '../writing/latest.js';
+import { loadWritingState, applyPostImage } from '../writing/latest.js';
 import { mountNavigationWave } from '../common/navigation-wave.js';
 import { writingContent, ui, bind, text, locale } from '../../../content/index.js';
 import { publishedItems, validDestination } from '../../../content/model.js';
@@ -27,9 +31,7 @@ export function Writing() {
   header.className = 'writing-header';
   const allPosts = document.createElement('a');
   allPosts.className = 'writing-all';
-  allPosts.href = source;
-  allPosts.target = '_blank';
-  allPosts.rel = 'noopener noreferrer';
+  allPosts.href = writingConfig.routes.index;
   const allText = document.createElement('span');
   text(allText, () => ui.writing.allPosts);
   const allArrow = document.createElement('span');
@@ -39,9 +41,7 @@ export function Writing() {
   header.append(heading, allPosts);
   const link = document.createElement('a');
   link.className = 'writing-entry';
-  link.href = entry?.kind === 'article' ? entry.url : source;
-  link.target = '_blank';
-  link.rel = 'noopener noreferrer';
+  link.href = writingConfig.routes.index;
   const mark = document.createElement('span');
   mark.className = 'writing-mark';
   mark.setAttribute('aria-hidden', 'true');
@@ -68,7 +68,10 @@ export function Writing() {
     bind(copy, 'attr:aria-busy', () => String(state === 'loading'));
   };
   refreshStatus();
-  copy.append(label, title, status);
+  const languageSlot = document.createElement('span');
+  languageSlot.className = 'writing-language';
+  languageSlot.hidden = true;
+  copy.append(label, languageSlot, title, status);
   const action = document.createElement('span');
   action.className = 'writing-action';
   const arrow = document.createElement('span');
@@ -106,19 +109,29 @@ export function Writing() {
     accessedAt = new Date(result.accessedAt);
     state = result.status;
     latestPost = result.post;
-    link.href = latestPost?.url || source;
+    const language = ArticleLanguage(latestPost?.language);
+    languageSlot.replaceChildren(...(language ? [language] : []));
+    languageSlot.hidden = !language;
+    link.href = latestPost ? articlePath(normalizeArticle(latestPost).slug) : writingConfig.routes.index;
     text(label, labelText);
     bind(label, 'attr:datetime', () => latestPost?.published || accessedAt.toISOString());
     refreshTitle();
     refreshStatus();
     const current = latestPost;
     if (coverImage) applyPostImage(coverImage, current?.image, fallbackImage, () => latestPost === current);
-    return latestPost?.url || source;
+    return link.href;
   };
   afterFirstPaint(() => { if (section.isConnected) refreshWriting(); });
-  allPosts.addEventListener('click', () => { refreshWriting(true); });
-  link.addEventListener('click', event => {
-    openLatestArticle(event, () => refreshWriting(true), ui.writing.states.loading.title);
+  // Preserve explicit refresh without opening Substack or reloading the SPA.
+  for (const destination of [allPosts, link]) destination.addEventListener('click', async event => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
+    event.preventDefault();
+    const origin = window.location.href;
+    const href = await refreshWriting(true);
+    if (window.location.href !== origin || section.closest('main')?.hidden) return;
+    document.dispatchEvent(new CustomEvent('site:navigate', {
+      detail: destination === allPosts ? writingConfig.routes.index : href,
+    }));
   });
   container.append(header, link);
   // Keep the primary preview before the external archive in mobile reading order.

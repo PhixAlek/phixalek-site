@@ -1,6 +1,6 @@
 {
   "hero": {
-    "name": "Phixalek",
+    "name": "PhixAlek",
     "subtitle": "Desarrollador de software enfocado en [[.NET]], [[Angular]] y [[complement:aplicaciones web]].",
     "ctaPrimary": {
       "text": "Hablemos",
@@ -13,15 +13,15 @@
     "avatarId": "phixalek-profile"
   },
   "about": {
-    "eyebrow": "Software • Consulting • Game Dev",
-    "title": "¿Quién es Phixalek?",
-    "lead": "Alejandro Segura nació en Colombia y estudia [[Ingeniería Multimedia]]. Su trabajo combina el [[desarrollo de software]] y proyectos personales que unen tecnología y narrativa.",
-    "body": "Está desarrollando **Flowly**, un proyecto de finanzas personales que comienza con [[.NET 10]], y **Bloomink**, su estudio independiente, donde trabaja en *No Witness*: una experiencia narrativa de supervivencia inspirada en Resident Evil y Silent Hill, creada con [[UE5 + C++]].\n\nActualmente vive en Sonora, México, estudia [[Ingeniería Multimedia]] y enseña programación.",
+    "eyebrow": "Software • Consultoría • Videojuegos",
+    "title": "Más sobre mí",
+    "lead": "Alejandro Segura es un [[desarrollador de software]] de Colombia que actualmente vive en Sonora, México. Está cursando la carrera de [[Ingeniería Multimedia]].",
+    "body": "Su trayectoria profesional incluye el desarrollo de aplicaciones para el sector salud y empresas B2B con [[.NET]] y [[Angular]]. También ha trabajado en consultoría de software y ha impartido clases de programación. Su experiencia abarca la refactorización, la optimización del rendimiento y el mantenimiento de aplicaciones existentes.\n\nActualmente está desarrollando **Flowly**, una aplicación de finanzas personales con [[.NET 10]]. También está creando **Bloomink**, su estudio independiente de videojuegos, donde trabaja en *No Witness*, un juego narrativo de supervivencia desarrollado con [[UE5 y C++]].",
     "bullets": [
-      "Backend: [[.NET, C#, DDD, Clean Architecture]] → sistemas escalables y fáciles de mantener",
-      "Frontend: [[Angular, TypeScript]] → aplicaciones con una experiencia de uso clara",
-      "Videojuegos: [[UE5, C++]] + [[Pixel Art]] → procesos optimizados y narrativa",
-      "Prácticas: [[CI/CD, Clean Code]]"
+      "Backend: [[C#, .NET, APIs, SQL]], **Azure, Docker**",
+      "Frontend: [[Angular, TypeScript]]",
+      "Videojuegos: [[UE5, C++]], [[Pixel Art]]",
+      "Prácticas: [[CI/CD]], **Testing**, [[Refactorización, Código limpio]]"
     ]
   },
   "projects": {
@@ -66,7 +66,7 @@
           "Refactorización"
         ],
         "badges": [
-          "Freelance",
+          "Independiente",
           "Por contrato"
         ],
         "actions": [
@@ -85,14 +85,14 @@
           "Implementación guiada"
         ],
         "tagStyles": {
-          "Integrations": "primary",
-          "Refactoring": "primary"
+          "Integraciones": "primary",
+          "Refactorización": "primary"
         }
       },
       {
         "id": "phixalek-site",
         "publication": "published",
-        "title": "PhixAlek — Portafolio",
+        "title": "PhixAlek Portafolio",
         "desc": "Este sitio usa JavaScript para la interfaz, EmailJS para los mensajes de contacto y la API de Google Calendar para consultar disponibilidad y agendar llamadas.",
         "tags": [
           "JavaScript",

@@ -1,6 +1,6 @@
 {
   "name": "phixalek-site",
-  "version": "2.0.11",
+  "version": "2.4.0",
   "private": true,
   "scripts": {
     "dev": "netlify dev",
@@ -8,11 +8,17 @@
     "build": "webpack --config webpack.config.mjs --mode production",
     "start": "npm run dev",
     "dev:web": "webpack serve --config webpack.config.mjs --mode development",
-    "predev": "node scripts/check-node.mjs",
-    "predev:netlify": "node scripts/check-node.mjs",
+    "predev": "node scripts/check-node.mjs && node scripts/generate-writing-categories.mjs --local",
+    "predev:netlify": "node scripts/check-node.mjs && node scripts/generate-writing-categories.mjs --local",
     "validate:content": "node scripts/validate-content.mjs",
-    "prebuild": "npm run validate:content",
-    "test": "node --test tests/*.test.js"
+    "prebuild": "npm run validate:content && node scripts/generate-writing-categories.mjs",
+    "test": "node --test tests/*.test.js",
+    "writing:update": "node scripts/update-writing.mjs",
+    "postbuild": "node scripts/generate-writing.mjs && node scripts/validate-seo.mjs && node scripts/validate-security.mjs",
+    "security:check": "node scripts/validate-security.mjs",
+    "predev:web": "node scripts/generate-writing-categories.mjs --local",
+    "pretest": "node scripts/generate-writing-categories.mjs",
+    "writing:engagement": "node scripts/update-writing-engagement.mjs"
   },
   "type": "module",
   "devDependencies": {
@@ -20,6 +26,7 @@
     "css-loader": "^7.1.5",
     "dotenv": "^18.0.4",
     "html-webpack-plugin": "^5.6.8",
+    "jsdom": "^30.1.2",
     "netlify-cli": "^27.10.2",
     "style-loader": "^4.0.0",
     "webpack": "^5.111.1",
@@ -28,6 +35,7 @@
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
+    "dompurify": "^3.4.16",
     "googleapis": "^182.0.0"
   },
   "engines": {

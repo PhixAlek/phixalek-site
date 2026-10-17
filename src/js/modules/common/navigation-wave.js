@@ -14,8 +14,12 @@ export function mountNavigationWave(node, section, getText, { after, hover = fal
     bind(node, 'innerHTML', render);
   };
   refreshText();
+  const ready = () => {
+    const main = section.closest('main');
+    return section.isConnected && !main?.hidden && main?.dataset.navigationReady !== 'false';
+  };
   const wave = () => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!ready() || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const letters = [...node.querySelectorAll('.navigation-wave-letter')];
     const stagger = Math.min(18, 400 / Math.max(1, letters.length));
     const precedingLetters = after?.querySelectorAll('.navigation-wave-letter').length || 0;
@@ -38,11 +42,22 @@ export function mountNavigationWave(node, section, getText, { after, hover = fal
     trigger.addEventListener('focus', wave);
   }
   let pendingWave = 0;
+  document.addEventListener('site:home-paused', () => {
+    cancelAnimationFrame(pendingWave);
+    node.querySelectorAll('.navigation-wave-letter').forEach(letter =>
+      letter.getAnimations().forEach(animation => animation.cancel()));
+  });
+  document.addEventListener('site:home-arrived', event => {
+    if (event.detail.hash !== `#${section.id}` || !ready()) return;
+    const inset = document.querySelector('.header')?.getBoundingClientRect().height || 0;
+    const bounds = node.getBoundingClientRect();
+    if (bounds.top >= inset && bounds.bottom <= window.innerHeight) wave();
+  });
   document.addEventListener('click', event => {
     const link = event.target.closest('a[href^="#"]');
     if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
     cancelAnimationFrame(pendingWave);
-    if (link.hash !== `#${section.id}`) return;
+    if (link.hash !== `#${section.id}` || !ready()) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const inset = document.querySelector('.header')?.getBoundingClientRect().height || 0;
     const bounds = node.getBoundingClientRect();
@@ -54,7 +69,7 @@ export function mountNavigationWave(node, section, getText, { after, hover = fal
       let previousY = window.scrollY, stableFrames = 0;
       const waitForArrival = () => {
         pendingWave = 0;
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || performance.now() - started > 4000) return;
+        if (!ready() || window.matchMedia('(prefers-reduced-motion: reduce)').matches || performance.now() - started > 4000) return;
         const margin = parseFloat(getComputedStyle(section).scrollMarginTop) || 0;
         const maximum = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
         const destination = Math.max(0, Math.min(maximum, section.getBoundingClientRect().top + window.scrollY - margin));

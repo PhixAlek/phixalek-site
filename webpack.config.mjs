@@ -1,6 +1,9 @@
+import { createSubstackHandler } from './netlify/lib/substack.js';
 import path from 'path';
 import { readFileSync } from 'node:fs';
+import { WritingCategoriesPlugin } from './scripts/lib/writing-categories.mjs';
 import { buildSeo } from './scripts/lib/seo.mjs';
+import { developmentCSP } from './scripts/lib/dev-security.mjs';
 import webpack from 'webpack';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
@@ -12,16 +15,19 @@ dotenv.config(); // carga .env
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
 
-export default {
-  mode: 'development',
+export default (_env, argv = {}) => ({
+  mode: argv.mode || 'development',
   entry: './src/js/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
+    publicPath: '/',
     clean: true,
   },
-  devtool: 'source-map',
+  devtool: argv.mode === 'production' ? false : 'source-map',
   devServer: {
+    headers: { 'Content-Security-Policy': developmentCSP },
+    host: '127.0.0.1',
     static: [
       { directory: path.join(__dirname, 'public') }, // sirve /public (imagenes, etc.)
       { directory: path.join(__dirname, 'dist') },   // y dist
@@ -31,6 +37,15 @@ export default {
     hot: true,
     compress: true,
     historyApiFallback: true,
+    setupMiddlewares(middlewares) {
+      // Standalone webpack serves the same fixed-source RSS route as Netlify.
+      const writingFeed = createSubstackHandler();
+      middlewares.unshift({ name: 'writing-feed', path: '/.netlify/functions/latest-writing', middleware: async (request, response) => {
+        const result = await writingFeed({ httpMethod: request.method, queryStringParameters: request.query });
+        response.status(result.statusCode).set(result.headers).send(result.body);
+      } });
+      return middlewares;
+    },
   },
   experiments: { topLevelAwait: true },
   module: {
@@ -47,6 +62,7 @@ export default {
     ],
   },
   plugins: [
+    new WritingCategoriesPlugin(),
     new HtmlWebpackPlugin({
       template: 'public/index.html',
       templateParameters: (compilation, assets, assetTags, options) => {
@@ -74,4 +90,4 @@ export default {
     })
   ],
   resolve: { extensions: ['.js'] },
-};
+});

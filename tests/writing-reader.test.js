@@ -1,0 +1,141 @@
+import snapshot from '../src/content/writing-snapshot.json' with { type: 'json' };
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { JSDOM } from 'jsdom';
+import { articleFragment } from '../src/js/modules/writing/article-html.js';
+import { parseArticles } from '../src/js/modules/writing/import-feed.js';
+import { loadArticles } from '../src/js/modules/writing/feed.js';
+import { selectLatestPost } from '../src/js/modules/writing/latest.js';
+
+const view = new JSDOM('').window;
+const feed = `<rss xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel>
+  <item><title>Older</title><link>https://phixalek.substack.com/p/older</link><pubDate>2026-10-01</pubDate>
+  <content:encoded><![CDATA[<h2>Introduction</h2><p>Real article body.</p>]]></content:encoded><category>Software</category></item>
+  <item><title>Newest</title><link>https://phixalek.substack.com/p/newest</link><pubDate>2026-10-05</pubDate>
+  <description>Actual excerpt</description><content:encoded><![CDATA[<p>Complete newest post.</p>]]></content:encoded></item>
+</channel></rss>`;
+test('reader receives all available articles and full RSS bodies independently of the latest preview', () => {
+  const items = parseArticles(feed, view.DOMParser, view);
+  assert.deepEqual(items.map(item => item.slug), ['newest', 'older']);
+  assert.ok(items[1].html.includes('Real article body.'));
+  assert.equal(items[0].excerpt, 'Actual excerpt');
+  assert.deepEqual(items[1].categories, ['Software']);
+  assert.equal(items[0].readingMinutes, 1);
+});
+test('Home preview accepts normalized feed articles and opens the actual latest post', () => {
+  const post = selectLatestPost(parseArticles(feed, view.DOMParser, view));
+  assert.equal(post.title, 'Newest');
+  assert.equal(post.url, 'https://phixalek.substack.com/p/newest');
+});
+test('article HTML preserves prose but removes scripts, handler attributes, dangerous URLs and provider forms', () => {
+  const fragment = articleFragment(`<h2 id="app">Safe heading</h2><script>alert(1)</script>
+    <img src="https://example.com/image.jpg" onerror="alert(1)"><a href="javascript:alert(1)">Bad link</a>
+    <iframe src="https://attacker.example"></iframe><form action="https://attacker.example"><input name="password"></form>
+    <div class="subscription-widget-wrap-editor"><p>Provider widget</p></div><p>Actual content.</p>`, view);
+  assert.equal(fragment.querySelectorAll('script,iframe,form,input,[onerror],#app').length, 0);
+  assert.ok(!fragment.textContent.includes('Provider widget'));
+  assert.ok(fragment.textContent.includes('Actual content.'));
+  assert.ok(!fragment.querySelector('a').hasAttribute('href'));
+  assert.equal(fragment.querySelector('img').getAttribute('loading'), 'lazy');
+});
+test('reader links have safe external navigation and relative links resolve against the publication', () => {
+  const fragment = articleFragment('<a href="/p/post">Source</a><img src="data:text/html,unsafe"><svg onload="alert(1)"></svg>', view);
+  const anchor = fragment.querySelector('a');
+  assert.equal(anchor.href, 'https://phixalek.substack.com/p/post');
+  assert.equal(anchor.rel, 'noopener noreferrer');
+  assert.equal(fragment.querySelector('svg'), null);
+  assert.equal(fragment.querySelector('img').hasAttribute('src'), false);
+});
+test('reading, list navigation and reload reuse the session feed; explicit refresh refetches', async () => {
+  const storage = { value: JSON.stringify({ snapshotFetchedAt: snapshot.fetchedAt, xml: feed }), getItem() { return this.value; }, setItem(_, value) { this.value = value; } };
+  let requests = 0;
+  const fetchFeed = async () => { requests++; return new Response(feed); };
+  const options = { storage, fetchFeed, Parser: view.DOMParser, view };
+  await loadArticles(options); await loadArticles(options);
+  assert.equal(requests, 0);
+  await loadArticles({ ...options, force: true });
+  await loadArticles(options); assert.equal(requests, 1);
+});
+test('entity declarations and invalid feeds cannot enter the reader', () => {
+  assert.throws(() => parseArticles('<!DOCTYPE rss><rss/>', view.DOMParser));
+  assert.throws(() => parseArticles('<html/>', view.DOMParser));
+});
+test('simultaneous refreshes share one request and reuse immutable imported articles', async () => {
+  let requests = 0;
+  const options = { storage: null, Parser: view.DOMParser, view, force: true,
+    fetchFeed: async () => { requests++; return new Response(feed); } };
+  const [first, second, third] = await Promise.all([loadArticles(options), loadArticles(options), loadArticles({ ...options, force: false })]);
+  assert.equal(requests, 1);
+  assert.equal(first, second); assert.equal(first, third);
+  assert.ok(Object.isFrozen(first));
+  assert.ok(Object.isFrozen(first[0]));
+});
+
+
+test('failed explicit refresh preserves the current reader content; failed first load uses the versioned copy', async () => {
+  const fresh = await import('../src/js/modules/writing/feed.js?fallback-test');
+  const options = { storage: null, Parser: view.DOMParser, view, force: true };
+  const fallback = await fresh.loadArticles({ ...options, fetchFeed: async () => new Response('', { status: 503 }) });
+  assert.ok(fallback.some(item => item.slug === 'test-post-1'));
+  const loaded = await fresh.loadArticles({ ...options, fetchFeed: async () => new Response(feed) });
+  const retained = await fresh.loadArticles({ ...options, fetchFeed: async () => { throw new Error('Network failure'); } });
+  assert.deepEqual(retained, loaded);
+});
+
+
+test('a new deployed snapshot invalidates old session content without refetching on later navigation', async () => {
+  const fresh = await import('../src/js/modules/writing/feed.js?revision-test');
+  const storage = { value: JSON.stringify({ snapshotFetchedAt: '2020-01-01T00:00:00Z', xml: feed }),
+    getItem() { return this.value; }, setItem(_, value) { this.value = value; } };
+  let requests = 0;
+  const options = { storage, Parser: view.DOMParser, view, fetchFeed: async () => { requests++; return new Response(feed); } };
+  await fresh.loadArticles(options); await fresh.loadArticles(options);
+  assert.equal(requests, 1);
+  assert.equal(JSON.parse(storage.value).snapshotFetchedAt, snapshot.fetchedAt);
+});
+
+
+test('Writing page renders its compiled copy without waiting for an external request', async () => {
+  const fresh = await import('../src/js/modules/writing/feed.js?immediate-snapshot-test');
+  let requested = false;
+  const items = await fresh.loadArticles({ storage: null, preferSnapshot: true, Parser: view.DOMParser, view,
+    fetchFeed: async () => { requested = true; throw new Error('Provider must not block the page'); } });
+  assert.equal(requested, false);
+  assert.ok(items.some(item => item.slug === 'test-post-1'));
+});
+
+test('first Writing entry fetches current content once even when Home has populated the cache', async () => {
+  const fresh = await import('../src/js/modules/writing/feed.js?first-writing-visit');
+  let requests = 0;
+  const options = { storage: null, Parser: view.DOMParser, view, fetchFeed: async () => { requests++; return new Response(feed); } };
+  await fresh.loadArticles({ ...options, preferSnapshot: true }); assert.equal(requests, 0);
+  await fresh.loadArticles({ ...options, preferSnapshot: true, writingVisit: true }); assert.equal(requests, 1);
+  await fresh.loadArticles({ ...options, preferSnapshot: true, writingVisit: true });
+  await fresh.loadArticles(options); assert.equal(requests, 1);
+  await fresh.loadArticles({ ...options, writingVisit: true, force: true }); assert.equal(requests, 2);
+});
+
+test('linked decorative images have an accessible action name without inventing an image description', () => {
+  const fragment = articleFragment('<p><a href="https://example.org/cover.png"><img src="https://example.org/cover.png" alt=""></a><a href="https://example.org/chart.png"><img src="https://example.org/chart.png" alt="Expense chart"></a></p>', view);
+  const links = fragment.querySelectorAll('a');
+  assert.equal(links[0].getAttribute('aria-label'), 'Open image in a new tab');
+  assert.equal(links[0].querySelector('img').alt, '');
+  assert.equal(links[1].getAttribute('aria-label'), null);
+  assert.equal(links[1].querySelector('img').alt, 'Expense chart');
+});
+
+test('live language metadata reaches articles and survives the session cache independently of UI locale', async () => {
+  const fresh = await import('../src/js/modules/writing/feed.js?public-language-refresh');
+  let cached;
+  const storage = { getItem: () => null, setItem: (key, value) => { cached = JSON.parse(value); } };
+  const languagesBySource = { 'https://phixalek.substack.com/p/newest': 'es', 'https://phixalek.substack.com/p/older': 'en' };
+  const items = await fresh.loadArticles({ force: true, storage, Parser: view.DOMParser, view,
+    fetchFeed: async () => new Response(JSON.stringify({ xml: feed, tagsBySource: {}, languagesBySource }), { headers: { 'Content-Type': 'application/json' } }) });
+  assert.equal(items.find(item => item.slug === 'newest').language, 'es');
+  assert.equal(items.find(item => item.slug === 'older').language, 'en');
+  assert.deepEqual(cached.languagesBySource, languagesBySource);
+  const fromCache = await import('../src/js/modules/writing/feed.js?public-language-cache');
+  const restored = await fromCache.loadArticles({ storage: { getItem: () => JSON.stringify(cached) }, Parser: view.DOMParser, view,
+    fetchFeed: async () => { assert.fail('A valid session cache should not fetch again'); } });
+  assert.equal(restored.find(item => item.slug === 'newest').language, 'es');
+});

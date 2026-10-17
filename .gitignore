@@ -141,3 +141,14 @@ vite.config.ts.timestamp-*
 # Local Netlify folder
 .netlify
 netlify/creds/
+
+# Generated Writing taxonomy (recreated before compilation)
+src/content/writing-categories.generated.json
+
+# Local-only Writing examples and generated development data
+src/content/writing.fake.local.json
+src/content/writing-local.generated.json
+src/content/writing-categories.production.generated.json
+
+# Production snapshot refreshed during each deployment; never overwrite editorial source
+src/content/writing-build.generated.json

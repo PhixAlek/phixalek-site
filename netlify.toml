@@ -2,6 +2,9 @@
   command = "npm run build"
   publish = "dist"
 
+[build.processing.html]
+  pretty_urls = true
+
 [build.environment]
   SECRETS_SCAN_ENABLED = "true"
   # Timezone names are public configuration, not credentials.
@@ -20,3 +23,25 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
   external_node_modules = ["googleapis"]
+
+# SPA routes only; missing assets and function endpoints keep their real status.
+[[redirects]]
+  from = "/blog"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/blog/*"
+  to = "/index.html"
+  status = 200
+
+# Static responses only. Functions define their own response headers.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
+    Strict-Transport-Security = "max-age=31536000"
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://api.emailjs.com; form-action 'self' https://phixalek.substack.com; frame-src 'none'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'; upgrade-insecure-requests"

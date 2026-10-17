@@ -2,6 +2,7 @@ import { mountNavigationWave } from '../common/navigation-wave.js';
 import { content, ui, format, bind, text } from '../../../content/index.js';
 import { loadImageRegistry, resolveImage } from '../images/registry.js';
 import { mountReveal } from '../common/reveal.js';
+import { projectTagClass } from '../../../content/model.js';
 
 export function Projects(){
   const sec  = document.createElement('section');
@@ -46,7 +47,7 @@ export function Projects(){
 
 // ------------------------------ card --------------------------------
 
-function card({ id, title, desc, tags = [], tagStyles = {}, actions = [], badges = [], bullets = [], image, featured }){
+function card({ id, title, desc, tags = [], actions = [], badges = [], bullets = [], image, featured }){
   const current = () => content.projects.items.find(item => item.id === id);
   const art   = document.createElement('article');
   art.className = featured ? 'project project-featured' : 'project project-secondary';
@@ -83,6 +84,7 @@ function card({ id, title, desc, tags = [], tagStyles = {}, actions = [], badges
     meta = document.createElement('div');
     meta.className = 'badges';
     badges.forEach((b, i) => {
+      if (i > 0) meta.append(document.createTextNode(' '));
       const s = document.createElement('span');
       text(s, () => current().badges[i]);
       meta.appendChild(s);
@@ -107,7 +109,7 @@ function card({ id, title, desc, tags = [], tagStyles = {}, actions = [], badges
   tagsBox.className = 'tags';
   tags.forEach((t, i) => {
     const s = document.createElement('span');
-    s.className = `tag-${tagStyles[t] || 'neutral'}`;
+    bind(s, 'className', () => projectTagClass(current(), i));
     text(s, () => current().tags[i]);
     tagsBox.appendChild(s);
   });

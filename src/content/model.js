@@ -3,6 +3,14 @@
 /** @typedef {{id:string, publication:Publication, role:string, organization:string, dates:{start:string,end:string|null}, industry:string, context:string, technologies:string[], responsibilities:string[], outcomes:Array<{description:string,evidence?:string}>, links:Action[]}} Experience */
 /** @typedef {{id:string, slug:string, publication:Publication, title:string, status:'planned'|'in-progress'|'released', overview:string, problem:string, role:string, implementedStack:string[], inProgress:string[], planned:string[], screenshots:Array<{src:string,alt:string,width:number,height:number}>, decisions:string[], architecture:string[], repository:string|null, liveDemo:string|null, lessons:string[]}} Project */
 
+const PROJECT_TAG_STYLES = new Set(['primary', 'complement', 'neutral']);
+
+/** Resolve presentation from the current localized label, including language switches. */
+export function projectTagClass(project, index) {
+  const style = project?.tagStyles?.[project?.tags?.[index]];
+  return `tag-${PROJECT_TAG_STYLES.has(style) ? style : 'neutral'}`;
+}
+
 export const ANCHORS = ['home', 'about', 'work', 'writing', 'contact'];
 export function validDestination(value) {
   if (typeof value !== 'string' || value !== value.trim() || !value) return false;
@@ -53,6 +61,24 @@ export function validateContent(content, catalogs, sections) {
     if (item.publication !== 'published') continue;
     requireText(item.title, `${item.id}.title`); requireText(item.desc, `${item.id}.desc`);
     for (const action of item.actions || []) if (!validAction(action)) errors.push(`${item.id}: invalid action`);
+    for (const field of ['tags', 'badges', 'bullets']) {
+      if (item[field] == null) continue;
+      if (!Array.isArray(item[field])) { errors.push(`${item.id}.${field}: expected array`); continue; }
+      const labels = new Set();
+      for (const label of item[field]) {
+        requireText(label, `${item.id}.${field}`);
+        if (typeof label !== 'string') continue;
+        if (label !== label.trim() || labels.has(label.trim().toLowerCase())) errors.push(`${item.id}.${field}: duplicate or untrimmed label`);
+        labels.add(label.trim().toLowerCase());
+      }
+    }
+    if (item.tagStyles != null) {
+      if (typeof item.tagStyles !== 'object' || Array.isArray(item.tagStyles)) errors.push(`${item.id}.tagStyles: expected object`);
+      else for (const [label, style] of Object.entries(item.tagStyles)) {
+        if (!Array.isArray(item.tags) || !item.tags.includes(label)) errors.push(`${item.id}.tagStyles.${label}: no matching tag`);
+        if (!PROJECT_TAG_STYLES.has(style)) errors.push(`${item.id}.tagStyles.${label}: invalid style`);
+      }
+    }
   }
   for (const link of content.footer?.social || []) if (!validDestination(link.href)) errors.push('footer: invalid social URL');
   const base = catalogs.en?.messages;
@@ -115,6 +141,17 @@ export function validateTranslation(base, translated) {
       if (!b || typeof b !== 'object') { errors.push(`${path}: missing object`); return; }
       Object.keys(a).forEach(key => {
         if (['href','id','imageId','avatarId','kind','publication','className','mailTo','email','icon','name'].includes(key) && a[key] !== b[key]) errors.push(`${path}.${key}: translated invariant`);
+        if (key === 'tagStyles') {
+          // Map keys are localized labels; compare the semantic role by tag position.
+          if (!b[key] || typeof b[key] !== 'object' || Array.isArray(b[key])) errors.push(`${path}.tagStyles: missing object`);
+          else {
+            for (const label of Object.keys(b[key])) if (!b.tags?.includes(label)) errors.push(`${path}.tagStyles.${label}: no matching tag`);
+            if (Array.isArray(a.tags) && Array.isArray(b.tags)) a.tags.forEach((_, index) => {
+              if (projectTagClass(a, index) !== projectTagClass(b, index)) errors.push(`${path}.tagStyles.${index}: translated invariant`);
+            });
+          }
+          return;
+        }
         walk(a[key], b[key], `${path}.${key}`);
       });
     } else if (typeof a !== typeof b || (typeof b === 'string' && (!b.trim() || /\bTODO\b/.test(b)))) errors.push(`${path}: missing translation`);

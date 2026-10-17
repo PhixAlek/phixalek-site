@@ -1,17 +1,11 @@
+import { JSON_HEADERS, parseBookingRequest } from './security.js';
 import { randomUUID } from 'node:crypto';
 import { BookingError, TIME_ZONE, daySlots, validateSlot } from '../../src/shared/booking-policy.js';
 
-const response = (statusCode, body) => ({ statusCode, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }, body: JSON.stringify(body) });
-function payload(event) {
-  if (event.httpMethod !== 'POST') throw new BookingError('method_not_allowed', 405);
-  let data;
-  try { data = JSON.parse(event.body || '{}'); } catch { throw new BookingError('invalid_json'); }
-  if (!data || Array.isArray(data) || typeof data !== 'object') throw new BookingError('invalid_json');
-  return data;
-}
+const response = (statusCode, body) => ({ statusCode, headers: { ...JSON_HEADERS, ...(statusCode === 405 ? { Allow: 'POST' } : {}) }, body: JSON.stringify(body) });
 function text(value, max, required = false) {
   if (value === undefined && !required) return '';
-  if (typeof value !== 'string' || value.trim().length > max || (required && !value.trim())) throw new BookingError('invalid_fields');
+  if (typeof value !== 'string' || /[\u0000-\u001f\u007f<>]/.test(value) || value.trim().length > max || (required && !value.trim())) throw new BookingError('invalid_fields');
   return value.trim();
 }
 function fail(error) {
@@ -27,10 +21,19 @@ async function busyRanges(calendar, calendarId, start, end) {
     return { start, end };
   });
 }
+const escapeHTML = value => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const overlaps = (slot, busy) => busy.some(b => Date.parse(slot.start) < b.end && Date.parse(slot.end) > b.start);
 
 // Dependency injection keeps all automated tests away from credentials and live calendars.
-export function createBookingHandlers({ getCalendar, getCalendarId, now = () => Date.now() }) {
+export function createBookingHandlers({ getCalendar, getCalendarId, now = () => Date.now(), allowedOrigins, log = () => {} }) {
+  const payload = event => parseBookingRequest(event, allowedOrigins);
+  const reject = error => {
+    const result = fail(error);
+    if ([403, 413, 503].includes(result.statusCode)) {
+      try { log({ event: 'booking_request_rejected', code: JSON.parse(result.body).error, status: result.statusCode }); } catch { /* Logging cannot break the error response. */ }
+    }
+    return result;
+  };
   function client() {
     const id = getCalendarId();
     if (!id) throw new BookingError('calendar_unavailable', 503);
@@ -45,7 +48,7 @@ export function createBookingHandlers({ getCalendar, getCalendarId, now = () => 
         const { calendar, id } = client();
         const busy = await busyRanges(calendar, id, candidates[0].start, candidates.at(-1).end);
         return response(200, { slots: candidates.filter(s => !overlaps(s, busy)), tz: TIME_ZONE });
-      } catch (error) { return fail(error); }
+      } catch (error) { return reject(error); }
     },
     async book(event) {
       try {
@@ -63,18 +66,19 @@ export function createBookingHandlers({ getCalendar, getCalendarId, now = () => 
         const eventResult = await calendar.events.insert({
           calendarId: id, conferenceDataVersion: 1,
           requestBody: {
-            summary: `${subject} — ${name}`, description: `Intro call with ${name} <${email}>`, location,
+            summary: `${subject} — ${name}`, description: `Intro call with ${escapeHTML(name)} &lt;${escapeHTML(email)}&gt;`, location,
             start: { dateTime: slot.start, timeZone: TIME_ZONE },
             end: { dateTime: slot.end, timeZone: TIME_ZONE },
             transparency: 'opaque', reminders: { useDefault: true },
             conferenceData: { createRequest: { requestId: randomUUID() } },
           },
         });
-        const result = eventResult.data;
+        const result = eventResult?.data;
+        if (!result || typeof result.id !== 'string' || !result.id) throw new BookingError('calendar_unavailable', 503);
         return response(200, { ok: true, id: result.id, start: slot.start, end: slot.end, tz: TIME_ZONE,
           meet: result.hangoutLink || result.conferenceData?.entryPoints?.find(e => e.entryPointType === 'video')?.uri || null,
           htmlLink: result.htmlLink || null });
-      } catch (error) { return fail(error); }
+      } catch (error) { return reject(error); }
     },
   };
 }

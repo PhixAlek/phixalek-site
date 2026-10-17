@@ -22,7 +22,6 @@ export function Contact(){
   const form = document.createElement('form');
   form.id = 'contact-form';
   form.className = 'form';
-  form.setAttribute('novalidate','true');
 
   const name  = Object.assign(document.createElement('input'), {
     type:'text', name:'name',

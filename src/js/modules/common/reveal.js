@@ -5,9 +5,13 @@ export function mountReveal(root, view = window, { selector = '.project', pendin
   if (preference.matches || !view.IntersectionObserver) return () => {};
 
   const show = node => node.classList.remove(pendingClass);
+  const ready = () => {
+    const main = root.closest?.('main');
+    return !main?.hidden && main?.dataset?.navigationReady !== 'false';
+  };
   const observer = new view.IntersectionObserver(entries => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
+      if (entry.isIntersecting && ready()) {
         show(entry.target);
         observer.unobserve(entry.target);
       }
@@ -18,11 +22,19 @@ export function mountReveal(root, view = window, { selector = '.project', pendin
     projects.forEach(show);
     preference.removeEventListener('change', onPreference);
     root.removeEventListener('focusin', onFocus);
+    root.ownerDocument?.removeEventListener('site:home-arrived', onArrival);
   };
   const onPreference = event => { if (event.matches) stop(); };
   const onFocus = event => {
+    if (!ready()) return;
     const project = event.target.closest(selector);
     if (project) { show(project); observer.unobserve(project); }
+  };
+  const onArrival = () => {
+    if (!ready()) return;
+    projects.filter(project => project.classList.contains(pendingClass)).forEach(project => {
+      observer.unobserve(project); observer.observe(project);
+    });
   };
   projects.forEach(project => {
     project.classList.add(pendingClass);
@@ -30,5 +42,6 @@ export function mountReveal(root, view = window, { selector = '.project', pendin
   });
   preference.addEventListener('change', onPreference);
   root.addEventListener('focusin', onFocus);
+  root.ownerDocument?.addEventListener('site:home-arrived', onArrival);
   return stop;
 }

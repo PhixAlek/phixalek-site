@@ -3,6 +3,11 @@ export function mountMetricMotion(list, view = window) {
   const items = [...list.querySelectorAll('.evidence-item')];
   const clinical = items.find(item => item.dataset.metric === 'clinical');
   let running = false, sequence = 0, clinicalRun;
+  let observeCenter;
+  const ready = () => {
+    const main = list.closest?.('main');
+    return !main?.hidden && main?.dataset?.navigationReady !== 'false';
+  };
   const centered = item => {
     const bounds = item.querySelector('.evidence-value').getBoundingClientRect();
     const center = (bounds.top + bounds.bottom) / 2;
@@ -18,7 +23,7 @@ export function mountMetricMotion(list, view = window) {
     ], { duration, delay, easing: 'ease-in-out' });
   };
   const playCount = item => {
-    if (preference.matches) return;
+    if (preference.matches || !ready()) return;
     const animations = [
       animate(item.querySelector('.metric-count'), 'translateY(-4px) scale(1.09)', 1400),
       animate(item.querySelector('[data-motion="plus"]'), 'translateY(-2px) scale(1.22)', 1200),
@@ -26,7 +31,7 @@ export function mountMetricMotion(list, view = window) {
     return Promise.all(animations.filter(Boolean).map(animation => animation.finished)).catch(() => {});
   };
   const playTime = () => {
-    if (preference.matches || !clinical) return;
+    if (preference.matches || !clinical || !ready()) return;
     const animations = [...clinical.querySelectorAll('.metric-symbol')].map(symbol => {
       const motion = symbol.dataset.motion;
       const middle = motion === 'before' ? 'scale(1.16)' : motion === 'after' ? 'scale(.86)' : 'translateX(5px)';
@@ -36,7 +41,7 @@ export function mountMetricMotion(list, view = window) {
     return clinicalRun;
   };
   const playClinical = async () => {
-    if (preference.matches || !clinical || running) return;
+    if (preference.matches || !clinical || running || !ready()) return;
     running = true;
     const version = ++sequence;
     let current = playTime();
@@ -66,14 +71,14 @@ export function mountMetricMotion(list, view = window) {
   });
   if (view.IntersectionObserver) {
     let observer;
-    const observeCenter = () => {
+    observeCenter = () => {
       observer?.disconnect();
       const visible = new Set();
       const inset = view.innerHeight * .4;
       observer = new view.IntersectionObserver(entries => {
         entries.forEach(entry => {
           const item = entry.target.closest('.evidence-item');
-          const inCenter = entry.isIntersecting && entry.intersectionRatio >= .5 && centered(item);
+          const inCenter = ready() && entry.isIntersecting && entry.intersectionRatio >= .5 && centered(item);
           if (inCenter && !visible.has(item)) {
             if (item === clinical) playClinical();
           }
@@ -86,6 +91,12 @@ export function mountMetricMotion(list, view = window) {
     observeCenter();
     view.addEventListener('resize', observeCenter);
   }
+  list.ownerDocument?.addEventListener('site:home-paused', () => {
+    sequence++; running = false;
+    list.querySelectorAll('.metric-symbol, .metric-count, [data-motion="plus"]').forEach(node =>
+      node.getAnimations?.().forEach(animation => animation.cancel()));
+  });
+  list.ownerDocument?.addEventListener('site:home-arrived', () => { if (ready()) observeCenter?.(); });
   preference.addEventListener('change', event => {
     if (!event.matches) return;
     sequence++;

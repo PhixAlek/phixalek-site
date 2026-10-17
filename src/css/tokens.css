@@ -18,6 +18,12 @@
   --sage: #81b29a;
   --terracotta: #e07a5f;
   /* Dark variants keep small text and white-on-accent actions readable. */
+  --action-secondary: #59616b;
+  --sage-ink: #35664f;
+  --action-green: #40734e;
+  --action-green-hover: #386b49;
+  --action-substack: #bf4b2a;
+  --action-substack-hover: #923f2c;
   --accent: #35664f;
   --accent-hover: #294f3d;
   --accent-soft: #edf4ef;
@@ -29,6 +35,12 @@
   --overlay: rgb(30 36 43 / 35%);
   --shadow: 0 16px 48px rgb(30 36 43 / 10%);
   --focus: var(--accent);
+  --neutral-border: rgb(12 18 32 / 14%);
+  --neutral-border-hover: rgb(12 18 32 / 24%);
+  --neutral-surface-active: #f5f6f7;
+  --neutral-focus: #707784;
+  --soft-focus-shadow: 0 0 0 1px color-mix(in srgb, var(--sage) 24.86%, transparent), 0 0 12px color-mix(in srgb, var(--sage) 15.82%, transparent);
+  --section-focus-shadow: 0 0 0 1px color-mix(in srgb, var(--sage) 11.3%, transparent), 0 0 12px color-mix(in srgb, var(--sage) 9.04%, transparent);
 
   --font-ui: 'Nunito', system-ui, 'Segoe UI', Arial, sans-serif;
   --measure: 72ch;
@@ -48,6 +60,9 @@
   --space-12: 48px;
   --space-16: 64px;
   --space-24: 96px;
+  --control-height: 44px;
+  --radius-pill: 999px;
+  --radius-external: 8px;
   --radius: 16px;
   --radius-sm: 10px;
   --pad: clamp(16px, 3vw, 32px);

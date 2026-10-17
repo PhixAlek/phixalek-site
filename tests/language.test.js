@@ -32,3 +32,19 @@ test('Spanish preserves every route, image and action', () => {
   es.hero.avatarId='another-avatar';
   assert.ok(validateTranslation(en,es).some(e=>e.includes('avatarId')));
 });
+
+test('localized project tags preserve their palette roles and reject stale English keys', async () => {
+  const { projectTagClass } = await import('../src/content/model.js');
+  const read=p=>JSON.parse(readFileSync(new URL(p,import.meta.url),'utf8'));
+  const en=read('../src/data/content.json'),es=read('../src/data/content.es.json');
+  const project = data => data.projects.items.find(item => item.id === 'consulting');
+  for (const data of [en, es, en]) {
+    assert.equal(projectTagClass(project(data), 0), 'tag-primary');
+    assert.equal(projectTagClass(project(data), 1), 'tag-neutral');
+    assert.equal(projectTagClass(project(data), 2), 'tag-primary');
+  }
+  project(es).tagStyles = { Integrations:'primary', Refactoring:'primary' };
+  assert.ok(validateTranslation(en,es).some(e=>e.includes('no matching tag')));
+  project(es).tagStyles = { Integraciones:'complement', Refactorización:'primary' };
+  assert.ok(validateTranslation(en,es).some(e=>e.includes('translated invariant')));
+});

@@ -1,4 +1,6 @@
 import { content, ui, bind, text, languageButton } from '../../../content/index.js';
+import { homeNavigationHref } from '../../../shared/writing/routes.js';
+import { mountMobileReadingShortcut } from './mobile-reading-shortcut.js';
 // src/js/modules/header/header.js
 export function Header(){
   const header = document.createElement('header');
@@ -15,6 +17,7 @@ export function Header(){
   brand.className = 'brand';
   const home = document.createElement('a');
   home.href = '#home';
+  home.dataset.homeHref = '#home';
   home.textContent = content.hero.name;
   brand.appendChild(home);
 
@@ -23,16 +26,19 @@ export function Header(){
   nav.className = 'nav';
   const fillNavigation = (target, destinations = ui.navigation.items.map(item => item.href)) => {
     destinations.forEach(href => {
-      const link = document.createElement('a'); link.href = href;
+      const link = document.createElement('a');
+      link.dataset.homeHref = href;
+      link.href = homeNavigationHref(href, window.location.pathname === '/');
       text(link, () => ui.navigation.items.find(item => item.href === href).label);
       target.append(link);
     });
   };
   // Brand returns home; only implemented destinations enter desktop navigation.
-  fillNavigation(nav, ['#work', '#writing', '#about']);
+  fillNavigation(nav, ['#work', '#about', '#writing']);
   const contact = document.createElement('a');
   contact.className = 'btn header-contact';
-  bind(contact, 'attr:href', () => content.hero.ctaPrimary.href);
+  contact.dataset.homeHref = content.hero.ctaPrimary.href;
+  bind(contact, 'attr:href', () => `${window.location.pathname === '/' ? '' : '/'}${content.hero.ctaPrimary.href}`);
   text(contact, () => content.hero.ctaPrimary.text);
   nav.append(contact, languageButton('language-desktop'));
 
@@ -63,7 +69,7 @@ export function Header(){
   fillNavigation(mobileNav);
   drawer.append(closeButton, mobileNav, languageButton('language-drawer'));
 
-  const desktop = window.matchMedia('(min-width: 768px)');
+  const desktop = window.matchMedia('(min-width: 768px) and (orientation: landscape), (min-width: 1200px)');
   let previousOverflow = '';
   let background = [];
   const controls = () => [...drawer.querySelectorAll('button, a[href]')];
@@ -117,7 +123,11 @@ export function Header(){
   }));
   desktop.addEventListener('change', () => { if (desktop.matches) close(); });
 
-  wrap.append(brand, nav, btn);
+  const readingShortcut = document.createElement('button');
+  readingShortcut.type = 'button'; readingShortcut.className = 'mobile-reading-shortcut';
+  bind(readingShortcut, 'attr:aria-label', () => window.location.pathname === '/' ? ui.writingPage.headerShortcutHome : ui.writingPage.headerShortcut);
+  mountMobileReadingShortcut(readingShortcut);
+  wrap.append(brand, readingShortcut, nav, btn);
   header.append(skip, wrap);
   // Keep the fixed dialog outside the glass header’s backdrop containing block.
   document.body.append(drawer);
