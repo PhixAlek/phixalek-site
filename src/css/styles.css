@@ -206,9 +206,9 @@ main.site{
 .media{ overflow:hidden; background:var(--bg); }
 .media img{ width:100%; height:100%; object-fit:cover; display:block; }
 .badges{ display:block; font-size:.8rem; }
-.badges span{ font-size:.8rem; color:var(--accent); font-weight:700; }
+.badges > span{ font-size:.8rem; color:var(--accent); font-weight:700; }
 .tags{ display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-4); }
-.tags span{ font-size:.8rem; padding:4px 8px; border:1px solid var(--line); border-radius:var(--radius-sm); color:var(--muted); }
+.tags > span{ font-size:.8rem; padding:4px 8px; border:1px solid var(--line); border-radius:var(--radius-sm); color:var(--muted); }
 .card-actions{ display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-6); }
 .project-details summary{ width:fit-content; min-height:44px; padding:10px 0; cursor:pointer; font-weight:600; }
 .project-details summary:focus-visible{ outline:2px solid var(--focus); outline-offset:4px; border-radius:4px; }
@@ -727,7 +727,7 @@ html,body{ background:#fff; }
 }
 
 /* Editorial hierarchy: primary skills green, supporting stack red. */
-.project .tags span{ padding:8px 16px; border-radius:999px; font-weight:600; background:#f7f7f8; border-color:#e5e5e7; color:#596477; }
+.project .tags > span{ padding:8px 16px; border-radius:999px; font-weight:600; background:#f7f7f8; border-color:#e5e5e7; color:#596477; }
 .project .tags .tag-primary{ font-weight:700; color:#08764f; background:#edf6f0; border-color:#d5e8dc; }
 .project .tags .tag-complement{ font-weight:700; color:#cf3d16; background:#fff2ec; border-color:#ffdfd0; }
 .project .tags .tag-neutral{ font-weight:400; }

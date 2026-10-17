@@ -57,3 +57,21 @@ test('duplicate project identifiers and invalid actions fail validation', () => 
   assert.ok(check(f).some(e=>e.includes('duplicate id')));
   assert.ok(check(f).some(e=>e.includes('invalid action')));
 });
+
+test('project labels reject duplicates, whitespace, and malformed lists', () => {
+  const f = fixtures(), project = f.content.projects.items[0];
+  project.tags = ['Angular', 'angular', ' SQL '];
+  project.badges = 'In development';
+  project.bullets = [''];
+  const errors = check(f);
+  assert.ok(errors.some(e => e.includes('tags: duplicate or untrimmed')));
+  assert.ok(errors.some(e => e.includes('badges: expected array')));
+  assert.ok(errors.some(e => e.includes('bullets: required approved text')));
+});
+
+test('project styles must refer to an existing tag and supported palette role', () => {
+  const f = fixtures();
+  f.content.projects.items[1].tagStyles = { Missing: 'primary', Integrations: 'green' };
+  assert.ok(check(f).some(e => e.includes('Missing: no matching tag')));
+  assert.ok(check(f).some(e => e.includes('Integrations: invalid style')));
+});
