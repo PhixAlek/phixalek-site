@@ -13,14 +13,17 @@ function normalizeKey(key) {
   return key.includes('\\n') ? key.replace(/\\n/g, '\n') : key;
 }
 
+let cachedAuth;
+
 export function getAuth() {
+  if (cachedAuth) return cachedAuth;
   // 1) Si hay ruta a archivo JSON
   const credPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
   if (credPath) {
     const abs = path.resolve(process.cwd(), credPath);
     const raw = fs.readFileSync(abs, 'utf8');
     const json = JSON.parse(raw);
-    return new google.auth.JWT({
+    return cachedAuth = new google.auth.JWT({
       email: json.client_email,
       key: normalizeKey(json.private_key),
       scopes: CALENDAR_SCOPES,
@@ -31,7 +34,7 @@ export function getAuth() {
   const email = process.env.GOOGLE_CLIENT_EMAIL;
   const key = normalizeKey(process.env.GOOGLE_PRIVATE_KEY);
   if (email && key) {
-    return new google.auth.JWT({
+    return cachedAuth = new google.auth.JWT({
       email,
       key,
       scopes: CALENDAR_SCOPES,

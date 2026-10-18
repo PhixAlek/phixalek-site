@@ -87,6 +87,8 @@
       "unconfirmed": "Booking could not be confirmed",
       "unconfirmedHelp": "The booking could not be confirmed. Check your calendar or contact me before retrying.",
       "errors": {
+        "request_timeout": "The calendar took too long to respond. Please try again.",
+        "rate_limited": "Too many requests. Wait a minute before trying again.",
         "slot_not_available": "That time was just booked. Please choose another time.",
         "next_business_day_required": "Choose the next business day or later.",
         "past_slot": "That time has passed. Please choose another time.",

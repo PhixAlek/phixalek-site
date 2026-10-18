@@ -87,6 +87,8 @@
       "unconfirmed": "No se pudo confirmar la reserva",
       "unconfirmedHelp": "No se pudo confirmar la reserva. Revisa tu calendario o contáctame antes de volver a intentarlo.",
       "errors": {
+        "request_timeout": "La agenda tardó demasiado en responder. Inténtalo de nuevo.",
+        "rate_limited": "Demasiadas consultas. Espera un minuto antes de volver a intentarlo.",
         "slot_not_available": "Alguien acaba de reservar ese horario. Elige otro.",
         "next_business_day_required": "Elige el siguiente día hábil o una fecha posterior.",
         "past_slot": "Ese horario ya pasó. Elige otro.",
