@@ -107,3 +107,32 @@ test('Google transport failures return a generic error, not credential details',
   const result = await api.book(request(valid));
   assert.equal(result.statusCode, 503); assert.equal(result.body.includes('sensitive'), false);
 });
+
+test('Google requests have bounded waits and event creation is never auto-retried', async () => {
+  const { api, calendar } = setup();
+  calendar.freebusy.query = async (_body, options) => {
+    assert.deepEqual(options, { timeout:8000, retry:false });
+    return { data: { calendars: { test: { busy:[] } } } };
+  };
+  let inserts = 0;
+  calendar.events.insert = async (_body, options) => {
+    inserts++;
+    assert.deepEqual(options, { timeout:12000, retry:false });
+    throw new Error('Connection lost after possible insertion');
+  };
+  const result = await api.book(request(valid));
+  assert.equal(result.statusCode, 503);
+  assert.equal(JSON.parse(result.body).error, 'booking_unconfirmed');
+  assert.equal(inserts, 1);
+});
+
+test('availability diagnostics distinguish access failures without logging private provider text', async () => {
+  const logs = [];
+  const api = createBookingHandlers({ getCalendarId: () => 'test', now: () => now, log: event => logs.push(event), getCalendar: () => ({
+    freebusy: { query: async () => { throw { response:{ status:403 }, message:'PRIVATE KEY calendar-id visitor@example.com' }; } },
+  }) });
+  const result = await api.availability(request({ date:'2026-10-05', duration:30 }));
+  assert.equal(result.body, '{"error":"calendar_unavailable"}');
+  assert.deepEqual(logs[0], { event:'booking_calendar_failed', code:'calendar_access_denied', status:403 });
+  assert.equal(JSON.stringify(logs).includes('PRIVATE'), false);
+});

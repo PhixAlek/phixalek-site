@@ -109,7 +109,7 @@
             "kind": "link",
             "className": "btn-ghost",
             "text": "Documentación",
-            "href": "https://github.com/PhixAlek/phixalek-site/blob/AS-arquitectura-contenido-2026-09-28/docs/ARCHITECTURE.md"
+            "href": "https://github.com/PhixAlek/phixalek-site/blob/main/docs/ARCHITECTURE.md"
           }
         ],
         "imageId": "demome-01",

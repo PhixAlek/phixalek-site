@@ -12,9 +12,26 @@ function fail(error) {
   return response(error instanceof BookingError ? error.status : 503, { error: error instanceof BookingError ? error.message : 'calendar_unavailable' });
 }
 async function busyRanges(calendar, calendarId, start, end) {
-  const result = await calendar.freebusy.query({ requestBody: { timeMin: start, timeMax: end, timeZone: TIME_ZONE, items: [{ id: calendarId }] } });
+  let result;
+  try {
+    result = await calendar.freebusy.query({ requestBody: { timeMin: start, timeMax: end, timeZone: TIME_ZONE, items: [{ id: calendarId }] } }, { timeout: 8000, retry: false });
+  } catch (cause) {
+    const error = new BookingError('calendar_unavailable', 503);
+    const status = Number(cause?.response?.status);
+    const timeout = ['ETIMEDOUT', 'ECONNABORTED'].includes(cause?.code);
+    error.diagnostic = {
+      code: timeout ? 'calendar_timeout' : [401, 403].includes(status) ? 'calendar_access_denied' : status === 429 ? 'calendar_rate_limited' : 'calendar_transport_failed',
+      status: Number.isInteger(status) && status >= 400 && status <= 599 ? status : 503,
+    };
+    throw error;
+  }
   const entry = result.data?.calendars?.[calendarId];
-  if (!entry || entry.errors?.length || !Array.isArray(entry.busy)) throw new BookingError('calendar_unavailable', 503);
+  if (!entry || entry.errors?.length || !Array.isArray(entry.busy)) {
+    const error = new BookingError('calendar_unavailable', 503);
+    const reasons = (entry?.errors || []).map(item => item.reason);
+    error.diagnostic = { code: reasons.includes('forbidden') ? 'calendar_access_denied' : reasons.includes('notFound') ? 'calendar_not_found' : 'calendar_invalid_response', status:503 };
+    throw error;
+  }
   return entry.busy.map(range => {
     const start = Date.parse(range.start), end = Date.parse(range.end);
     if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) throw new BookingError('calendar_unavailable', 503);
@@ -28,6 +45,9 @@ const overlaps = (slot, busy) => busy.some(b => Date.parse(slot.start) < b.end &
 export function createBookingHandlers({ getCalendar, getCalendarId, now = () => Date.now(), allowedOrigins, log = () => {} }) {
   const payload = event => parseBookingRequest(event, allowedOrigins);
   const reject = error => {
+    if (error?.diagnostic) {
+      try { log({ event: 'booking_calendar_failed', ...error.diagnostic }); } catch { /* Logging cannot break availability. */ }
+    }
     const result = fail(error);
     if ([403, 413, 503].includes(result.statusCode)) {
       try { log({ event: 'booking_request_rejected', code: JSON.parse(result.body).error, status: result.statusCode }); } catch { /* Logging cannot break the error response. */ }
@@ -51,6 +71,7 @@ export function createBookingHandlers({ getCalendar, getCalendarId, now = () => 
       } catch (error) { return reject(error); }
     },
     async book(event) {
+      let insertionStarted = false;
       try {
         const data = payload(event);
         if (data.hp) throw new BookingError('invalid_fields');
@@ -63,6 +84,7 @@ export function createBookingHandlers({ getCalendar, getCalendarId, now = () => 
         const busy = await busyRanges(calendar, id, slot.start, slot.end);
         if (overlaps(slot, busy)) throw new BookingError('slot_not_available', 409);
         validateSlot(slot.start, data.duration ?? 30, now());
+        insertionStarted = true;
         const eventResult = await calendar.events.insert({
           calendarId: id, conferenceDataVersion: 1,
           requestBody: {
@@ -72,13 +94,13 @@ export function createBookingHandlers({ getCalendar, getCalendarId, now = () => 
             transparency: 'opaque', reminders: { useDefault: true },
             conferenceData: { createRequest: { requestId: randomUUID() } },
           },
-        });
+        }, { timeout: 12000, retry: false });
         const result = eventResult?.data;
-        if (!result || typeof result.id !== 'string' || !result.id) throw new BookingError('calendar_unavailable', 503);
+        if (!result || typeof result.id !== 'string' || !result.id) throw new BookingError('booking_unconfirmed', 503);
         return response(200, { ok: true, id: result.id, start: slot.start, end: slot.end, tz: TIME_ZONE,
           meet: result.hangoutLink || result.conferenceData?.entryPoints?.find(e => e.entryPointType === 'video')?.uri || null,
           htmlLink: result.htmlLink || null });
-      } catch (error) { return reject(error); }
+      } catch (error) { return reject(insertionStarted ? new BookingError('booking_unconfirmed', 503) : error); }
     },
   };
 }

@@ -1,3 +1,4 @@
+import { bookingRequest } from './booking-request.js';
 import { createDisclosure } from './disclosure.js';
 import { ui, format, bind, text, locale, unbind } from '../../../content/index.js';
 import { attachCalendar } from './date-calendar.js';
@@ -20,7 +21,6 @@ export function mountBooking(){
 
   // --- Base URL para Netlify Functions ---
   // Use Netlify Dev (port 8888) locally so page and functions share an origin.
-  const FN_BASE = '/.netlify/functions';
   const tz = TIME_ZONE;
 
   // --- UI modal ---
@@ -186,14 +186,11 @@ export function mountBooking(){
         text(statusEl, () => copy.emptyHelp);
         return;
       }
-      const res = await fetch(`${FN_BASE}/freebusy`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: abortAvailability.signal,
-        body: JSON.stringify({ date: inputDate.value, duration: Number(inputDuration.value) }),
-      });
-      if (res.status === 404 || !(res.headers.get('content-type') || '').includes('application/json')) throw new Error('functions_unavailable');
-      const data = await res.json();
+      const data = await bookingRequest('freebusy', {
+        date: inputDate.value, duration: Number(inputDuration.value),
+      }, { signal: abortAvailability.signal });
       if (version !== requestVersion) return;
-      if (!res.ok || !Array.isArray(data.slots) || data.tz !== tz) throw new Error('calendar_unavailable');
+      if (!Array.isArray(data.slots) || data.tz !== tz) throw new Error('calendar_unavailable');
       slots = data.slots;
       inputTime.ready(slots, previous);
       text(statusEl, () => slots.length ? '' : copy.emptyHelp);
@@ -204,7 +201,7 @@ export function mountBooking(){
       const local = ['localhost','127.0.0.1'].includes(location.hostname);
       text(statusEl, () => local && error.message === 'functions_unavailable'
         ? copy.localHelp
-        : copy.availabilityError);
+        : messages[error.message] || copy.availabilityError);
     } finally {
       if (version === requestVersion) { loading = false; updateSummary(); }
     }
@@ -238,17 +235,11 @@ export function mountBooking(){
     controls.forEach(n => n.disabled = true);
     text(statusEl, () => copy.sending);
     try {
-      const res = await fetch(`${FN_BASE}/create-event`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: inputName.value.trim(), email: inputEmail.value.trim(), when: slot.start,
-          duration, subject: inputSubject.value.trim(), location: inputLocation.value.trim(), hp: inputHp.value }),
-      });
-      const data = await res.json();
-      if (!res.ok || !data.ok) {
-        if (data.error === 'slot_not_available' || data.error === 'past_slot') await refreshSlots();
-        text(statusEl, () => messages[data.error] || copy.failed);
-        return;
-      }
+      const data = await bookingRequest('create-event', {
+        name: inputName.value.trim(), email: inputEmail.value.trim(), when: slot.start,
+        duration, subject: inputSubject.value.trim(), location: inputLocation.value.trim(), hp: inputHp.value,
+      }, { timeoutMs: 20000 });
+      if (!data.ok) throw new Error('booking_unconfirmed');
       booked = true;
       text(statusEl, () => ''); unbind(statusEl, 'textContent');
       const successText = document.createTextNode('');
@@ -260,7 +251,15 @@ export function mountBooking(){
         text(link, () => data.meet ? copy.openMeeting : copy.openCalendar);
         statusEl.appendChild(link);
       }
-    } catch {
+    } catch (error) {
+      const knownRejection = ['slot_not_available', 'past_slot', 'next_business_day_required',
+        'outside_hours', 'weekday_required', 'invalid_email', 'invalid_fields', 'invalid_duration',
+        'invalid_date', 'invalid_time', 'timezone_required', 'calendar_unavailable', 'rate_limited'];
+      if (knownRejection.includes(error.message)) {
+        if (['slot_not_available', 'past_slot', 'next_business_day_required'].includes(error.message)) await refreshSlots();
+        text(statusEl, () => messages[error.message] || copy.failed);
+        return;
+      }
       // A dropped response may still mean Google created the event; do not auto-retry insertion.
       slots = []; inputTime.setEmpty(() => copy.unconfirmed);
       text(statusEl, () => copy.unconfirmedHelp);

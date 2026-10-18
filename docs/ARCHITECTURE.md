@@ -8,7 +8,7 @@ The contact form uses EmailJS in the browser to send a message through a configu
 
 ## Call booking
 
-The browser requests available slots from a Netlify Function. The function queries Google Calendar and filters slots using the shared booking policy. When a visitor submits a booking, the server validates the request and checks availability again before creating the event.
+The booking modal opens without waiting for Google. After a visitor chooses a date, the browser requests available slots from a Netlify Function. The function queries Google Calendar and filters slots using the shared booking policy. When a visitor submits a booking, the server validates the request and checks availability again before creating the event.
 
 Appointments use America/Hermosillo, weekdays from 07:00 to 16:00 with a 13:00–14:00 lunch break. Booking starts on the next business day. Durations are 15, 30, 45 or 60 minutes.
 
@@ -26,3 +26,9 @@ The content adapter supplies JSON data and interface messages to components. Dra
 - `npm run dev`: run the frontend and Netlify Functions together.
 
 See [content editing guide](CONTENT.md) for the current content structure. Automated tests do not establish real email delivery or Google account configuration; those require separate integration checks.
+
+## Production SEO verification
+
+`npm run seo:live` performs read-only requests to the published sitemap, robots.txt, and every sitemap URL. It verifies HTTP 200 without redirects, a matching canonical, absence of noindex, title, description, and Open Graph URL. It does not build or deploy. See [production SEO runbook](SEO-PRODUCTION.md) for Search Console and new-post workflow.
+
+Project Documentation links use the stable `main` branch. Spanish project tag labels have their own style keys; translation validation preserves the palette roles across languages.

@@ -21,7 +21,7 @@ Deploy the frontend and both functions together: the availability API contract c
 
 ## Local verification
 
-Use Node 24.18.0 (see `.nvmrc`). Run `nvm use` before starting development. Netlify CLI 21.6.0 contains a transitive dependency on SlowBuffer that crashes on Node 25+; the predev check provides an actionable message.
+Use the version currently declared in `.nvmrc` and `package.json`; run `nvm use` before development. Changes to the runtime version must be reviewed separately. This update does not change Node, npm or dependency versions.
 
 ```sh
 node --test tests/booking.test.js
@@ -50,3 +50,20 @@ Existing GOOGLE_CALENDAR_ID and the existing Google authentication method are st
 - No production deployment or real booking was performed in this change.
 
 The time selector is a scroll-snap wheel of complete available times. Scroll, click or keyboard arrows update the same selected instant used for booking. `npm run dev:web` runs only Webpack and cannot serve Calendar functions. Stop an existing standalone Webpack process before starting the full stack.
+
+## Latency and failure handling
+
+The booking modal opens locally; Google availability is requested only after selecting a date. A warm function reuses its JWT client, including the library's refreshable access token. Busy periods are still queried live; no availability cache is used to accept a booking.
+
+- Availability browser request: 15-second limit, cancelled when superseded or the modal closes.
+- Google free/busy request options: 8-second timeout, transport retry disabled.
+- Google insertion options: 12-second timeout, transport retry disabled. The browser waits at most 20 seconds for booking.
+- HTTP 429 is shown as a request limit, including when Netlify returns a non-JSON body.
+- A pre-insertion Calendar failure is distinct from an occupied slot.
+- A lost/malformed insertion response returns `booking_unconfirmed`. It never automatically creates another event. Contact the owner or inspect the calendar before retrying an uncertain booking.
+
+These are bounded HTTP waits, not a guarantee that cold-start/authentication work or an aborted server request has stopped. The browser timing out cannot undo an event already created by Google.
+
+Availability logs include a separate `booking_calendar_failed` event with an allowlisted reason code and HTTP status (no raw Google error).
+
+Production diagnosis requires the timestamp and the failing request's status, plus Netlify function logs. Do not share private keys, request bodies, names, or email addresses in screenshots/log exports. A manual integration test should use an isolated test calendar; automated tests do not create real reservations.
